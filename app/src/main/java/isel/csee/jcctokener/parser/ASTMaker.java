@@ -3,6 +3,7 @@ package isel.csee.jcctokener.parser;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Statement;
 
 public class ASTMaker {
     private String sourceCodes;
@@ -32,6 +33,8 @@ public class ASTMaker {
         System.out.println("Method Declaration List -> " + astChecker.getMethodDeclarationList());
         System.out.println("Variable List -> " + astChecker.getVariableList());
         System.out.println("Method Invocation List -> " + astChecker.getMethodInvocationList());
+        System.out.println("Total Variable -> " + astChecker.getTotalVariableList());
+        System.out.println("Argument -> " + astChecker.getArgumentList());
 
 
         return parser;
