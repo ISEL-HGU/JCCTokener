@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class ASTMaker {
@@ -47,6 +48,7 @@ public class ASTMaker {
         System.out.println("Method Invocation List -> " + astChecker.getMethodInvocationList());
         System.out.println("Total Variable -> " + astChecker.getTotalVariableList());
         System.out.println("Argument -> " + astChecker.getArgumentList());
+        System.out.println("Operator -> " + astChecker.getOperatorList());
 
 
         return parser;
