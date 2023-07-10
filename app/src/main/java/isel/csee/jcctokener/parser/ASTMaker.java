@@ -1,9 +1,12 @@
 package isel.csee.jcctokener.parser;
 
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
+
+import java.util.Map;
 
 public class ASTMaker {
     private String sourceCodes;
@@ -22,7 +25,16 @@ public class ASTMaker {
         // K_STATEMENTS - 문장을 나타내는 상수, 코드 블록 내의 문장들을 파싱
         // K_EXPRESSION - 표현식을 나타내는 상수, 단일 표현식을 파싱
 
-        parser.setSource(contents);
+        Map<String, String> options = JavaCore.getOptions();
+        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+        options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_7);
+        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+
+        parser.setResolveBindings(true);
+        parser.setCompilerOptions(options);
+
+        parser.setIgnoreMethodBodies(false);
+        parser.setBindingsRecovery(true);
 
         CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 

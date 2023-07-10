@@ -58,15 +58,22 @@ public class ASTChecker extends ASTVisitor {
         return super.visit(node);
     }
 
-    @Override
-    public boolean visit(SimpleType node) { // 확인 필요
-        return super.visit(node);
-    }
+//    @Override
+//    public boolean visit(SimpleType node) { // 확인 필요
+//        return super.visit(node);
+//    }
 
     @Override
     public boolean visit(EnhancedForStatement node) {
         System.out.println("For condition: " + node.getExpression());
         System.out.println("For body: " + node.getBody());
+        return super.visit(node);
+    }
+
+    @Override
+    public boolean visit(Block node) {
+        System.out.println("Block: " + node.statements().toString());
+
         return super.visit(node);
     }
 
@@ -129,6 +136,14 @@ public class ASTChecker extends ASTVisitor {
     public boolean visit(MethodDeclaration node) {
         System.out.println("Method name: " + node.getName().getIdentifier());
         methodDeclarationList.add(node.getName().getIdentifier());
+
+//        System.out.println(node.getBody());
+
+        Block methodBody = node.getBody();
+
+//        if(methodBody != null) {
+//            methodBody.accept(this);
+//        }
         return super.visit(node);
     }
 
@@ -161,10 +176,11 @@ public class ASTChecker extends ASTVisitor {
     @Override
     public boolean visit(ExpressionStatement node) {
         Expression expression = node.getExpression();
-        System.out.println(expression.toString() + "    testing");
+        System.out.println(expression.toString());
 
         return super.visit(node);
     }
+
 
     @Override
     public boolean visit(Assignment node) {
@@ -179,7 +195,7 @@ public class ASTChecker extends ASTVisitor {
 
     @Override
     public boolean visit(SimpleName node) {
-        System.out.println("Simple name: " + node.getIdentifier());
+//        System.out.println("Simple name: " + node.getIdentifier());
 
         return super.visit(node);
     }
