@@ -39,6 +39,11 @@ public class ASTChecker extends ASTVisitor {
     }
 
     @Override
+    public boolean visit(ArrayAccess node) { // 배열에서 인덱스 부분 ex) a[1] -> [1] 이 부분
+        return super.visit(node);
+    }
+
+    @Override
     public boolean visit(ThrowStatement node) { // 확인 필요
         System.out.println("Throw statement: " + node.getExpression());
         return super.visit(node);
