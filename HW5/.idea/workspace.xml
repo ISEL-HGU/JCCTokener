@@ -5,7 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b01ddfd9-1077-40f5-bb15-0406d5de98a7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2023-1-hw5-ehdrb01" beforeDir="false" afterPath="$PROJECT_DIR$/2023-1-hw5-ehdrb01" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/2023-1-hw5-ehdrb01/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/2023-1-hw5-ehdrb01/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/isel/csee/jcctokener/parser/ASTChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/isel/csee/jcctokener/parser/ASTChecker.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +39,12 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="2023-1-hw5-ehdrb01" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -61,7 +74,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/kimdong-gyu/Desktop/23-1학기/23-1_자바 프로그래밍/HW5",
+    "last_opened_file_path": "/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/HW5",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -87,6 +100,7 @@
       <workItem from="1686979065460" duration="591000" />
       <workItem from="1686979733580" duration="21286000" />
       <workItem from="1688695419266" duration="130000" />
+      <workItem from="1689057333597" duration="2180000" />
     </task>
     <servers />
   </component>

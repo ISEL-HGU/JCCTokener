@@ -1,6 +1,7 @@
 package isel.csee.jcctokener.parser;
 
 
+import isel.csee.jcctokener.types.NodeType;
 import org.eclipse.jdt.core.dom.*;
 
 
@@ -35,47 +36,61 @@ public class ASTChecker extends ASTVisitor {
         System.out.println("For condition: " + node.getExpression());
         System.out.println("For updater: " + node.updaters());
         System.out.println("For body: " + node.getBody());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(ArrayAccess node) { // 배열에서 인덱스 부분 ex) a[1] -> [1] 이 부분
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(ThrowStatement node) { // 확인 필요
         System.out.println("Throw statement: " + node.getExpression());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(CatchClause node) { // Catch 부분을 가져올 수 있음 / 근데 TryStatement에서 통합적으로 수행 가능
         System.out.println("Catch clause: " + node.getException());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(SingleVariableDeclaration node) { // 확인 필요
         System.out.println("Single variable declaration: " + node.getName());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
-    @Override
-    public boolean visit(VariableDeclarationFragment node) { // 변수 이름과 초기화 식을 포함하는 개념 / 변수의 선언 부분은 사용하지 않음
-        return super.visit(node);
-    }
+//    @Override
+//    public boolean visit(VariableDeclarationFragment node) { // 변수 이름과 초기화 식을 포함하는 개념 / 변수의 선언 부분은 사용하지 않음
+//        System.out.println(NodeType.searchType(node));
+//        return super.visit(node);
+//    }
 
     @Override
     public boolean visit(ArrayType node) { // 배열의 dimension / data type을 확인
         Type elementType = node.getElementType(); // data type 추출
         int dimensions = node.getDimensions(); // dimension 추출
-
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(ParameterizedType node) { // 확인 필요
+        System.out.println(NodeType.searchType(node));
+        return super.visit(node);
+    }
+
+    @Override
+    public boolean visit(ClassInstanceCreation node) {
+        System.out.println(NodeType.searchType(node));
+        System.out.println("Test");
         return super.visit(node);
     }
 
@@ -88,13 +103,14 @@ public class ASTChecker extends ASTVisitor {
     public boolean visit(EnhancedForStatement node) { // Enhanced For Loop
         System.out.println("For condition: " + node.getExpression());
         System.out.println("For body: " + node.getBody());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(Block node) {
 //        System.out.println("Block: " + node.statements().toString());
-
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
@@ -135,17 +151,19 @@ public class ASTChecker extends ASTVisitor {
                 }
             }
         }
-
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(ConstructorInvocation node) { // constructor 사용 부분
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(LambdaExpression node) { // 람다식에 대한 처리 부분 -> 이 부분은 필요한지에 대해 더 생각
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
@@ -166,16 +184,19 @@ public class ASTChecker extends ASTVisitor {
 
             }
         }
+        System.out.println(NodeType.searchType(node));
 
         return super.visit(node);
     }
     @Override
     public boolean visit(ArrayCreation node) { // Array 생성 부분
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(ReturnStatement node) { // return statement 사용
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
@@ -183,12 +204,14 @@ public class ASTChecker extends ASTVisitor {
     public boolean visit(TypeDeclaration node) {
         System.out.println("Class name: " + node.getName().getIdentifier()); // 클래스인 경우에 name, identifier print
         classList.add(node.getName().getIdentifier());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(FieldDeclaration node) {
         System.out.println("Field name: " + node.fragments()); // Field 경우에 name, identifier print
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
@@ -208,15 +231,17 @@ public class ASTChecker extends ASTVisitor {
 //        if(methodBody != null) {
 //            methodBody.accept(this);
 //        }
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
-    public boolean visit(VariableDeclarationStatement node) { // 변수의 선언을 포함하는 statement
+    public boolean visit(VariableDeclarationExpression node) { // 변수의 선언을 포함하는 statement
         List<VariableDeclarationFragment> variableDeclarationFragmentList = node.fragments();
 
         variableList.add(variableDeclarationFragmentList.get(0).getName().toString());
         System.out.println("Variable: " + variableDeclarationFragmentList.get(0).getName().toString());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
@@ -224,6 +249,7 @@ public class ASTChecker extends ASTVisitor {
     public boolean visit(MethodInvocation node) { // method 사용 부분 / 호출을 의미 -> Callee
         System.out.println("Method Invocation: " + node.getName().getIdentifier());
         methodInvocationList.add(node.getName().getIdentifier());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
@@ -232,6 +258,7 @@ public class ASTChecker extends ASTVisitor {
     public boolean visit(InfixExpression node) { // Operator -> 이 method 내부에서 operator의 차이를 두어야 함 / Numeric, Logical, Condition etc.
         System.out.println("Operator: " + node.getOperator().toString());
         operatorList.add(node.getOperator().toString());
+        System.out.println(NodeType.searchType(node));
 
         return super.visit(node);
     }
@@ -239,12 +266,14 @@ public class ASTChecker extends ASTVisitor {
     @Override
     public boolean visit(SwitchCase node) { // switch case / switch 안에 존재하는 여러가지 case 각각을 의미
         System.out.println("Switch Case: " + node.toString());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
     @Override
     public boolean visit(SwitchStatement node) { // switch statement / switch 전체를 의미
         System.out.println("Switch Statement: " + node.getExpression().toString());
+        System.out.println(NodeType.searchType(node));
         return super.visit(node);
     }
 
@@ -252,7 +281,8 @@ public class ASTChecker extends ASTVisitor {
     public boolean visit(ExpressionStatement node) {
         Expression expression = node.getExpression();
         System.out.println(expression.toString());
-//        totalVariableList.add(expression.toString());
+        totalVariableList.add(expression.toString());
+        System.out.println(NodeType.searchType(node));
 
         return super.visit(node);
     }
@@ -267,12 +297,15 @@ public class ASTChecker extends ASTVisitor {
         Expression rightHandSide = node.getRightHandSide();
         System.out.println("Right side: " + rightHandSide);
 
+        System.out.println(NodeType.searchType(node));
+
         return super.visit(node);
     }
 
     @Override
     public boolean visit(SimpleName node) {
 //        System.out.println("Simple name: " + node.getIdentifier());
+        System.out.println(NodeType.searchType(node));
 
         return super.visit(node);
     }
