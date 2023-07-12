@@ -4,7 +4,7 @@ import org.eclipse.jdt.core.dom.*;
 
 public class NodeType {
     public static int searchType(ASTNode astNode) {
-        if(astNode.getParent() instanceof IfStatement && ((IfStatement) astNode.getParent()).getExpression() == astNode) { // Type 1 (If Condition)
+        if(astNode instanceof IfStatement && ((IfStatement) astNode).getExpression() == astNode) { // Type 1 (If Condition)
             return 1;
         }
 
@@ -57,7 +57,7 @@ public class NodeType {
         }
 
         if(astNode instanceof InfixExpression && ((InfixExpression) astNode).getOperator() == InfixExpression.Operator.GREATER) { // type 7 (Logical Expression)
-            return 74;
+            return 7;
         }
 
         if(astNode instanceof InfixExpression && ((InfixExpression) astNode).getOperator() == InfixExpression.Operator.LESS) { // type 7 (Logical Expression)
@@ -125,6 +125,7 @@ public class NodeType {
         }
 
         if(astNode instanceof Assignment) { // type 10 (Assignment Expression)
+
             return 10;
         }
 
@@ -136,9 +137,9 @@ public class NodeType {
             return 12;
         }
 
-        if(astNode instanceof SwitchCase) { // type 13 (Switch Case Body)
-            return 13;
-        }
+//        if(astNode instanceof SwitchCase) { // type 13 (Switch Case Body)
+//            return 13;
+//        }
 
         if(astNode instanceof SwitchStatement) { // type 14 (Switch Body)
             return 14;
@@ -160,7 +161,7 @@ public class NodeType {
             return 18;
         }
 
-        if(astNode.getParent() instanceof ThrowStatement && ((ThrowStatement) astNode.getParent()).getExpression() == astNode) { // type 19 (Throw Body)
+        if(astNode instanceof ThrowStatement) { // type 19 (Throw Body)
             return 19;
         }
 
