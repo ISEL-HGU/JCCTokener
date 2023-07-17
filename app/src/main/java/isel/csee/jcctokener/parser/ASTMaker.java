@@ -41,15 +41,6 @@ public class ASTMaker {
 
         compilationUnit.accept(astChecker);
 
-        System.out.println("---");
-        System.out.println("Class List -> " + astChecker.getClassList());
-        System.out.println("Method Declaration List -> " + astChecker.getMethodDeclarationList());
-        System.out.println("Variable List -> " + astChecker.getVariableList());
-        System.out.println("Method Invocation List -> " + astChecker.getMethodInvocationList());
-        System.out.println("Total Variable -> " + astChecker.getTotalVariableList());
-        System.out.println("Argument -> " + astChecker.getArgumentList());
-        System.out.println("Operator -> " + astChecker.getOperatorList());
-
 
         return parser;
     }
