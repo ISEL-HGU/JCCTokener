@@ -3,12 +3,9 @@ package isel.csee.jcctokener.parser;
 
 import isel.csee.jcctokener.types.NodeType;
 import org.eclipse.jdt.core.dom.*;
-import org.w3c.dom.Node;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -22,7 +19,7 @@ import java.util.List;
 
 
 
-public class ASTChecker extends ASTVisitor {
+public class jCCVisitor extends ASTVisitor {
     private List<int[]> structureVectorList = new ArrayList<>();
 
 

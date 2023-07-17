@@ -1,18 +1,20 @@
 package isel.csee.jcctokener.parser;
 
+import isel.csee.jcctokener.token.TokenGenerator;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Statement;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
-public class ASTMaker {
+public class jCCParser {
     private String sourceCodes;
     private ASTParser parser;
-    private ASTChecker astChecker = new ASTChecker();
+    private jCCVisitor jCCVisitor = new jCCVisitor();
+
+    private TokenGenerator tokenGenerator;
 
     public ASTParser parserCodes() {
         char[] contents = sourceCodes.toCharArray();
@@ -39,14 +41,18 @@ public class ASTMaker {
 
         CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 
-        compilationUnit.accept(astChecker);
+        compilationUnit.accept(jCCVisitor);
+
+        tokenGenerator = new TokenGenerator(jCCVisitor.getStructureVectorList());
+
+        List<int[]> structureVectorList = tokenGenerator.toLexicalOrder();
 
 
         return parser;
     }
 
 
-    public ASTMaker(String sourceCodes) {
+    public jCCParser(String sourceCodes) {
         this.sourceCodes = sourceCodes;
     }
 }

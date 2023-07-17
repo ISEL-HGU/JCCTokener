@@ -1,13 +1,10 @@
 package isel.csee.jcctokener;
 
-import isel.csee.jcctokener.parser.ASTMaker;
-import org.eclipse.jdt.core.dom.ASTParser;
+import isel.csee.jcctokener.parser.jCCParser;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import static org.eclipse.osgi.storage.StorageUtil.readFile;
 
 public class jCCTokener {
 
@@ -28,8 +25,8 @@ public class jCCTokener {
 
 
 
-        ASTMaker astMaker = new ASTMaker(source);
+        jCCParser jCCParser = new jCCParser(source);
 
-        astMaker.parserCodes();
+        jCCParser.parserCodes();
     }
 }
