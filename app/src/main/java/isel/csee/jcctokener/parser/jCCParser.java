@@ -1,5 +1,6 @@
 package isel.csee.jcctokener.parser;
 
+import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.token.TokenGenerator;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -47,7 +48,15 @@ public class jCCParser {
 
         List<int[]> structureVectorList = tokenGenerator.toLexicalOrder();
 
-
+        for(jCCNode tempNode : jCCVisitor.getjCCNodeList()) {
+            System.out.println("class: " + tempNode.getClassName());
+            System.out.println("method: " + tempNode.getMethodName());
+            System.out.println("variable: " + tempNode.getVariableName());
+            for(int i : tempNode.getStructureVector()) {
+                System.out.print(i + " ");
+            }
+            System.out.println("");
+        }
         return parser;
     }
 

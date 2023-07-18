@@ -1,6 +1,7 @@
 package isel.csee.jcctokener;
 
 import isel.csee.jcctokener.parser.jCCParser;
+import org.eclipse.jdt.core.dom.ASTParser;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -27,6 +28,6 @@ public class jCCTokener {
 
         jCCParser jCCParser = new jCCParser(source);
 
-        jCCParser.parserCodes();
+        ASTParser parser = jCCParser.parserCodes();
     }
 }

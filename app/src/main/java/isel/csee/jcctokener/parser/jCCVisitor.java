@@ -1,6 +1,7 @@
 package isel.csee.jcctokener.parser;
 
 
+import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.types.NodeType;
 import org.eclipse.jdt.core.dom.*;
 
@@ -17,10 +18,13 @@ import java.util.List;
 
 // line 기준으로 사용? 코드 내부에서 몇 번 째 라인에 존재하는 지에 대한 정보를 가지고 vector 값 가져오기?
 
+// visit method 실행 순서는 JDT 내부적으로 구현 / 보통 구체적인 명시가 되어있는 부분 먼저 실행이 된다 - Assignment -> SimpleName
+
 
 
 public class jCCVisitor extends ASTVisitor {
     private List<int[]> structureVectorList = new ArrayList<>();
+    private List<jCCNode> jCCNodeList = new ArrayList<>();
 
 
     @Override
@@ -123,12 +127,6 @@ public class jCCVisitor extends ASTVisitor {
         return super.visit(node);
     }
 
-
-    @Override
-    public boolean visit(InfixExpression node) {
-        return super.visit(node);
-    }
-
     @Override
     public boolean visit(SwitchCase node) {
         return super.visit(node);
@@ -144,34 +142,76 @@ public class jCCVisitor extends ASTVisitor {
         return super.visit(node);
     }
 
-
     @Override
-    public boolean visit(Assignment node) {
+    public boolean visit(SimpleName node) {
+        int[] structureVector = new int[25];
+        ASTNode tempNode = node;
+        jCCNode jCCNode = new jCCNode();
+
+        if(tempNode.getParent() instanceof QualifiedName) {
+            return super.visit(node);
+        }
+
+
+        while(tempNode != null) {
+            structureVector = NodeType.searchType(tempNode, structureVector);
+
+            if(tempNode instanceof MethodDeclaration) {
+                // method declaration case
+                jCCNode.setMethodName(((MethodDeclaration) tempNode).getName().toString());
+            }
+
+            if(tempNode instanceof TypeDeclaration) {
+                // class declaration case
+                jCCNode.setClassName(((TypeDeclaration) tempNode).getName().toString());
+            }
+
+            tempNode = tempNode.getParent();
+        }
+
+        jCCNode.setVariableName(node.getIdentifier());
+        jCCNode.setStructureVector(structureVector);
+
+        jCCNodeList.add(jCCNode);
+        structureVectorList.add(structureVector);
+
+        tempNode = node;
+
         return super.visit(node);
     }
 
     @Override
-    public boolean visit(SimpleName node) {
-        int[] structureVector = new int[26];
+    public boolean visit(InfixExpression node) {
+        int[] structureVector = new int[25];
+        jCCNode jCCNode = new jCCNode();
+
         ASTNode tempNode = node;
 
-        if(!(node.getParent() instanceof PackageDeclaration)) {
-            while(tempNode != null && !(tempNode instanceof TypeDeclaration)) {
-                structureVector = NodeType.searchType(tempNode, structureVector);
+        while(tempNode != null) {
+            structureVector = NodeType.searchType(tempNode, structureVector);
 
-                tempNode = tempNode.getParent();
+            if(tempNode instanceof MethodDeclaration) {
+                // method declaration case
+                jCCNode.setMethodName(((MethodDeclaration) tempNode).getName().toString());
             }
-
-            if(structureVector[25] != 0) {
-                System.out.println("Simple name: " + node.getIdentifier());
-                for(int i : structureVector) {
-                    System.out.print(i + " ");
-                }
-                System.out.println("");
-
-                structureVectorList.add(structureVector);
+            if(tempNode instanceof TypeDeclaration) {
+                // class declaration case
+                jCCNode.setClassName(((TypeDeclaration) tempNode).getName().toString());
             }
+            tempNode = tempNode.getParent();
         }
+
+        jCCNode.setStructureVector(structureVector);
+        jCCNode.setVariableName(node.getOperator().toString());
+
+        jCCNodeList.add(jCCNode);
+        structureVectorList.add(structureVector);
+
+        return super.visit(node);
+    }
+
+    @Override
+    public boolean visit(Assignment node) {
         return super.visit(node);
     }
 
@@ -181,5 +221,13 @@ public class jCCVisitor extends ASTVisitor {
 
     public void setStructureVectorList(List<int[]> structureVectorList) {
         this.structureVectorList = structureVectorList;
+    }
+
+    public List<jCCNode> getjCCNodeList() {
+        return jCCNodeList;
+    }
+
+    public void setjCCNodeList(List<jCCNode> jCCNodeList) {
+        this.jCCNodeList = jCCNodeList;
     }
 }
