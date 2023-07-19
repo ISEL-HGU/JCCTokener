@@ -8,8 +8,7 @@ public class jCCNode {
     private String methodName;
     private String variableName;
     private int[] structureVector;
-
-
+    private int[] semanticVector;
 
 
 
@@ -52,5 +51,13 @@ public class jCCNode {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public int[] getSemanticVector() {
+        return semanticVector;
+    }
+
+    public void setSemanticVector(int[] semanticVector) {
+        this.semanticVector = semanticVector;
     }
 }

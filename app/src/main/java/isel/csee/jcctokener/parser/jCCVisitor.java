@@ -118,12 +118,19 @@ public class jCCVisitor extends ASTVisitor {
     }
 
     @Override
-    public boolean visit(VariableDeclarationExpression node) {
+    public boolean visit(VariableDeclarationFragment node) {
+//        System.out.println(node.getInitializer());
         return super.visit(node);
     }
 
     @Override
     public boolean visit(MethodInvocation node) {
+        Expression expression = node.getExpression();
+
+        if(expression instanceof SimpleName) {
+            SimpleName name = (SimpleName) expression;
+            System.out.println(name.getIdentifier());
+        }
         return super.visit(node);
     }
 
@@ -212,6 +219,7 @@ public class jCCVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(Assignment node) {
+//        System.out.println(node.getRightHandSide());
         return super.visit(node);
     }
 
