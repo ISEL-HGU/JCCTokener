@@ -23,6 +23,9 @@ import java.util.List;
 
 
 public class jCCVisitor extends ASTVisitor {
+    private final int semanticType1 = 1;
+    private final int semanticType2 = 2;
+    private final int semanticType3 = 3;
     private List<int[]> structureVectorList = new ArrayList<>();
     private List<jCCNode> jCCNodeList = new ArrayList<>();
 
@@ -119,6 +122,7 @@ public class jCCVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(VariableDeclarationFragment node) {
+//        System.out.println(node.getName());
 //        System.out.println(node.getInitializer());
         return super.visit(node);
     }
@@ -127,9 +131,16 @@ public class jCCVisitor extends ASTVisitor {
     public boolean visit(MethodInvocation node) {
         Expression expression = node.getExpression();
 
+        System.out.println(node);
+
+        System.out.println("name : " + node.getName());
+        System.out.println("expression : " + node.getExpression());
+        System.out.println("argument : " + node.arguments()); // argument는 list의 형태로 불러와짐
+
+
         if(expression instanceof SimpleName) {
             SimpleName name = (SimpleName) expression;
-            System.out.println(name.getIdentifier());
+//            System.out.println(name.getIdentifier());
         }
         return super.visit(node);
     }
@@ -159,6 +170,10 @@ public class jCCVisitor extends ASTVisitor {
             return super.visit(node);
         }
 
+        if(tempNode.getParent() instanceof InfixExpression) {
+            return super.visit(node);
+        }
+
 
         while(tempNode != null) {
             structureVector = NodeType.searchType(tempNode, structureVector);
@@ -178,6 +193,20 @@ public class jCCVisitor extends ASTVisitor {
 
         jCCNode.setVariableName(node.getIdentifier());
         jCCNode.setStructureVector(structureVector);
+
+        tempNode = node;
+
+        if(tempNode.getParent() instanceof VariableDeclarationFragment) { // 변수의 선언 부분에서는 structure vector를 그대로 사용 ,, ?
+            if(tempNode == ((VariableDeclarationFragment) tempNode.getParent()).getName()) { // 이 부분 조금 더 생각
+                jCCNode.setSemanticVector(structureVector);
+            }
+        }
+
+        if(tempNode.getParent() instanceof MethodInvocation) {
+            jCCNode.setSemanticType(semanticType3);
+        } else {
+            jCCNode.setSemanticType(semanticType1);
+        }
 
         jCCNodeList.add(jCCNode);
         structureVectorList.add(structureVector);
@@ -210,6 +239,7 @@ public class jCCVisitor extends ASTVisitor {
 
         jCCNode.setStructureVector(structureVector);
         jCCNode.setVariableName(node.getOperator().toString());
+        jCCNode.setSemanticType(semanticType2);
 
         jCCNodeList.add(jCCNode);
         structureVectorList.add(structureVector);

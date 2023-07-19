@@ -7,16 +7,19 @@ public class jCCNode {
     private String className;
     private String methodName;
     private String variableName;
+    private int semanticType;
     private int[] structureVector;
-    private int[] semanticVector;
+    private int[] semanticVector = new int[25];
 
 
 
-    public jCCNode(String methodName, String variableName, int[] structureVector) {
+    public jCCNode(String className, String methodName, String variableName, int[] structureVector) {
+        this.className = className;
         this.methodName = methodName;
         this.variableName = variableName;
         this.structureVector = structureVector;
     }
+
 
     public jCCNode() {
     }
@@ -59,5 +62,13 @@ public class jCCNode {
 
     public void setSemanticVector(int[] semanticVector) {
         this.semanticVector = semanticVector;
+    }
+
+    public int getSemanticType() {
+        return semanticType;
+    }
+
+    public void setSemanticType(int semanticType) {
+        this.semanticType = semanticType;
     }
 }
