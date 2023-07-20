@@ -193,6 +193,8 @@ public class jCCVisitor extends ASTVisitor {
 
         jCCNode.setVariableName(node.getIdentifier());
         jCCNode.setStructureVector(structureVector);
+        jCCNode.setParentNodeType(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName());
+
 
         tempNode = node;
 
