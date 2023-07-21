@@ -2,6 +2,7 @@ package isel.csee.jcctokener.parser;
 
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.token.TokenGenerator;
+import isel.csee.jcctokener.token.VariableTokenGenerator;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -14,6 +15,7 @@ public class jCCParser {
     private String sourceCodes;
     private ASTParser parser;
     private jCCVisitor jCCVisitor = new jCCVisitor();
+    private VariableTokenGenerator variableTokenGenerator;
 
     private TokenGenerator tokenGenerator;
 
@@ -49,14 +51,27 @@ public class jCCParser {
         List<int[]> structureVectorList = tokenGenerator.toLexicalOrder();
 
         for(jCCNode tempNode : jCCVisitor.getjCCNodeList()) {
-            System.out.println("class: " + tempNode.getClassName());
-            System.out.println("method: " + tempNode.getMethodName());
             System.out.println("variable: " + tempNode.getVariableName());
-            for(int i : tempNode.getStructureVector()) {
+            for(int i : tempNode.getSemanticVector()) {
                 System.out.print(i + " ");
             }
             System.out.println("");
         }
+        variableTokenGenerator = new VariableTokenGenerator(jCCVisitor.getjCCNodeList());
+
+        compilationUnit.accept(variableTokenGenerator);
+        for(jCCNode tempNode : variableTokenGenerator.getjCCNodeList()) {
+            System.out.println("variable: " + tempNode.getVariableName());
+            for(int i : tempNode.getSemanticVector()) {
+                System.out.print(i + " ");
+            }
+            System.out.println("");
+        }
+
+
+
+
+
         return parser;
     }
 

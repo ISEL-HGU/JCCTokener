@@ -20,6 +20,8 @@ import java.util.List;
 
 // visit method 실행 순서는 JDT 내부적으로 구현 / 보통 구체적인 명시가 되어있는 부분 먼저 실행이 된다 - Assignment -> SimpleName
 
+// method 내부에서 InfixExpression node 우변의 값을 하나만 가지고 오는 문제가 있는데, 이 부분 해결해야 함
+
 
 
 public class jCCVisitor extends ASTVisitor {
@@ -178,6 +180,10 @@ public class jCCVisitor extends ASTVisitor {
             tempNode = tempNode.getParent();
         }
 
+        if(jCCNode.getMethodName() == null) {
+            jCCNode.setMethodName(jCCNode.getClassName());
+        }
+
         jCCNode.setVariableName(node.getIdentifier());
         jCCNode.setStructureVector(structureVector);
         jCCNode.setNodeType(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName());
@@ -209,6 +215,9 @@ public class jCCVisitor extends ASTVisitor {
     public boolean visit(InfixExpression node) {
         int[] structureVector = new int[25];
         jCCNode jCCNode = new jCCNode();
+
+        System.out.println("left: " + node.getLeftOperand());
+        System.out.println("right: " + node.getRightOperand());
 
         ASTNode tempNode = node;
 

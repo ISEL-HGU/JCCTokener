@@ -8,35 +8,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.*;
 
-// 파싱은 차례대로 진행 -> 정렬되지 않은 리스트에서 데이터를 찾을 때, 해당 데이터를 만나면 종료하는 로직으로 구현
-// structure vector 구한 다음 vector-vector 동일(?) / 동일한 지점에 도착하면 반복문 종료 그 전까지 반복문을 사용해서 모든 변수 다 더해서 가져오기 / 재귀적으로 구현해서 우변의 값들도 다 가져올 수 있도록 구현
-// AST Visitor 하나 더 생성해서 차례대로 돌린다고 생각..?
-// semantic vector를 쭉 더해준다고 생각
-// 1번 케이스에서 semantic vector를 어떤 케이스마다 만들어서 넣어 줄 것인 지에 대해서도 생각
-// 처음 선언하는 부분에서 semantic vector 부분에 structure vector 넣어주기 (vector 초기화의 개념)
-// 전체적인 프로세스는 이전에 선언 되어있는 같은 이름의 변수가 가지는 semantic vector를 가지고 와서 더해주는 개념
-// 좌변의 값은 제일 위 쪽 method에서 사용
-
-// type 1의 semantic vector는 이 class 내부적으로만 추가해줘야 함 / 만약에 a의 semantic vector를 만들어 주고, 그 다음 a를 사용하는 경우에는 사용되는 a의 semantic vector는 이전의 semantic vector와 같은 구조를 가져야 함
-// 결론적으로 모든 node는 semantic vector를 가져야 하는데, 여기서 이 class에서 다루지 않는 부분은 이전에 사용했던 semantic vector와 같은 구조를 가지고 있어야 함
-// method invocation의 경우에서는 argument로 사용된 변수는 semantic vector가 변하지 않아야 함
-// 모든 노드에 대해서 처음 선언 부분에서 semantic vector를 structure vector로 초기화 해주는 것이 옳은 방법인지 판단 필요
-// semantic vector를 더해주는 방법은 괜찮아 보이는데 여기서 어떻게 semantic vector를 업데이트 해줄 것인지 -> 이 부분이 중요하다고 판단
-// 반복문을 사용해서 이후에 값의 structure vector가 비어있다면, 이전의 값을 찾아서 대입해주는 방식? - 시간이 오래 걸릴 듯
-// 선언 및 할당 해주는 부분이 아닌 다른 부분에서는 이전에 사용했던 semantic vector값을 그대로 사용해야 됨
-
-// Assignment node 부분은 여러가지 case 분리해서 생각해야 됨 / arr[i]인 경우에는 어디에 값을 추가해줄 것인지?
-
-
-// Variable Declaration Fragment node 부분에서는 semantic vector를 생성 해놨다고 가정하고 사용? 일단 0이라고 생각하고 하자
-// Variable Declaration Fragment + Assignment node에서는 전체 노드 리스트에서 해당 노드 이후에 존재하는 변수 선언 / 할당이 아닌 노드들의 semantic vector 값을 업데이트
-// 반복문을 돌다가 이후에 같은 이름인데 부모 타입이 할당인 노드를 발견하게 되면 stop
-// 이렇게 되면 type 1에 해당하는 모든 노드들의 semantic vector 값을 update 해주는 것이 가능
-
-// Assignment의 경우에는 left 부분에 대해서도 case 분리
-// 그냥 변수에 할당할 수도 있고, method의 arugument 부분에 할당해줄 수도 있음
-
-// 처음 변수를 선언할 때 structure vector를 semantic vector로 설정 해줘야 함
+// Assignment node 방문 시에 문제 발생 / InfixExpression 인식 오류
+// 여러 개의 항을 가지는 InfixExpression node 방문 시에 처리하는 method를 하나 더 추가해서 재귀적으로 구현
+// 하나는 Infix인 경우에 2개로 나누는 method이고, 다른 하나는 semantic vector 처리해주는 용도로 구현
 
 
 public class VariableTokenGenerator extends ASTVisitor {
@@ -93,7 +67,9 @@ public class VariableTokenGenerator extends ASTVisitor {
 
             updateSemanticVector(targetNode, semanticVector);
         }
+        targetNode.setSemanticVector(semanticVector);
 
+        applyToOtherNodes(targetNode);
 
         return super.visit(node);
     }
@@ -103,6 +79,8 @@ public class VariableTokenGenerator extends ASTVisitor {
         Expression rightHand = node.getRightHandSide();
         Expression leftHand = node.getLeftHandSide();
         int[] structureVector = new int[25];
+
+
 
         ASTNode tempNode = node;
         jCCNode targetNode = new jCCNode();
@@ -130,7 +108,7 @@ public class VariableTokenGenerator extends ASTVisitor {
         if(rightHand instanceof InfixExpression) {
             InfixExpression infixExpression = (InfixExpression) rightHand;
             semanticVector = processInfixExpression(infixExpression, targetNode.getClassName(), targetNode.getMethodName(), targetNode.getStructureVector());
-            semanticVector = addSemanticVector(targetNode, semanticVector);
+
             updateSemanticVector(targetNode, semanticVector);
         } else if(rightHand instanceof MethodInvocation) {
             MethodInvocation methodInvocation = (MethodInvocation) rightHand;
@@ -142,6 +120,8 @@ public class VariableTokenGenerator extends ASTVisitor {
             semanticVector = processSimpleName(simpleName, targetNode.getClassName(), targetNode.getMethodName(), targetNode.getStructureVector());
             updateSemanticVector(targetNode, semanticVector);
         }
+        targetNode.setSemanticVector(semanticVector);
+        applyToOtherNodes(targetNode);
 
 
         return super.visit(node);
@@ -180,12 +160,12 @@ public class VariableTokenGenerator extends ASTVisitor {
     public int[] processInfixExpression(InfixExpression node, String className, String methodName, int[] structureVector) {
         Expression leftHands = node.getLeftOperand();
         Expression rightHands = node.getRightOperand();
-
+        System.out.println(leftHands + " " + rightHands);
         int[] semanticVector = new int[25];
 
         if(leftHands instanceof SimpleName) { // 해당 값의 semantic vector를 가지고 와야함
             jCCNode tempNode = new jCCNode(className, methodName, ((SimpleName) leftHands).getIdentifier(), structureVector);
-
+            System.out.println(leftHands + " is simple name");
             semanticVector = addSemanticVector(tempNode, semanticVector);
         }
 
@@ -195,8 +175,8 @@ public class VariableTokenGenerator extends ASTVisitor {
             semanticVector = addSemanticVector(tempNode, semanticVector);
 
         } else if(rightHands instanceof InfixExpression) {
-            int[] tempArray = new int[25];
-            tempArray = processInfixExpression((InfixExpression) rightHands, className, methodName, structureVector);
+            int[] tempArray = processInfixExpression((InfixExpression) rightHands, className, methodName, structureVector);
+
 
             for(int i = 0; i < 25; i++) {
                 semanticVector[i] += tempArray[i];
@@ -206,9 +186,23 @@ public class VariableTokenGenerator extends ASTVisitor {
         return semanticVector;
     }
 
+    public int[] extractSemanticVector(Expression expression, String className, String methodName, int[] structureVector) {
+
+
+        if(expression instanceof SimpleName) {
+            jCCNode tempNode = new jCCNode(className, methodName, ((SimpleName) expression).getIdentifier(), structureVector);
+        } else if(expression instanceof InfixExpression) {
+
+        }
+
+
+
+        return null;
+    }
+
     public int[] getTargetNodeSemanticVector(jCCNode targetNode) {
         int[] semanticVector = new int[25];
-        
+
         for(int i = 0; i < jCCNodeList.size(); i++) {
             if(jCCNodeList.get(i).getClassName().equals(targetNode.getClassName())) { // 클래스 이름
                 if (jCCNodeList.get(i).getMethodName().equals(targetNode.getMethodName())) { // 메소드 이름
@@ -221,7 +215,6 @@ public class VariableTokenGenerator extends ASTVisitor {
                 }
             }
         }
-        
         return semanticVector;
     }
 
@@ -263,13 +256,17 @@ public class VariableTokenGenerator extends ASTVisitor {
     public void applyToOtherNodes(jCCNode node) {
         int index = findNodeIndex(node);
 
-
-
         for(int i = index; i < jCCNodeList.size(); i++) {
-            if(jCCNodeList.get(i).getNodeType().equals("Assignment") || jCCNodeList.get(i).getNodeType().equals("VariableDeclarationFragment")) {
-                break;
-            } else {
-                jCCNodeList.get(i).setSemanticVector(node.getSemanticVector());
+            if(jCCNodeList.get(i).getClassName().equals(node.getClassName())) { // 클래스 이름
+                if (jCCNodeList.get(i).getMethodName().equals(node.getMethodName())) { // 메소드 이름
+                    if (jCCNodeList.get(i).getVariableName().equals(node.getVariableName())) { // 변수 이름
+                        if(jCCNodeList.get(i).getNodeType().equals("Assignment")) {
+                            break;
+                        } else {
+                            jCCNodeList.get(i).setSemanticVector(node.getSemanticVector());
+                        }
+                    }
+                }
             }
         }
     }
@@ -291,6 +288,14 @@ public class VariableTokenGenerator extends ASTVisitor {
         }
 
         return index;
+    }
+
+    public List<jCCNode> getjCCNodeList() {
+        return jCCNodeList;
+    }
+
+    public void setjCCNodeList(List<jCCNode> jCCNodeList) {
+        this.jCCNodeList = jCCNodeList;
     }
 
     public VariableTokenGenerator(List<jCCNode> jCCNodeList) {
