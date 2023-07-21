@@ -10,10 +10,8 @@
       <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/node/jCCNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/node/jCCNode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/token/MethodTokenGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/token/MethodTokenGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/token/OperatorTokenGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/token/OperatorTokenGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/token/VariableTokenGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/token/VariableTokenGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -132,7 +130,7 @@
       <workItem from="1689643048466" duration="4621000" />
       <workItem from="1689650424128" duration="23767000" />
       <workItem from="1689732184052" duration="2594000" />
-      <workItem from="1689736563005" duration="25524000" />
+      <workItem from="1689736563005" duration="29705000" />
     </task>
     <servers />
   </component>

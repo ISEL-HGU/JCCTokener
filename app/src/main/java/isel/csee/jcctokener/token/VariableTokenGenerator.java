@@ -103,7 +103,7 @@ public class VariableTokenGenerator extends ASTVisitor {
     }
 
     public int[] processMethodInvocation(MethodInvocation node, String className, String methodName, int[] structureVector) {
-        List<Expression> argumentList = new ArrayList<>();
+        List<Expression> argumentList = node.arguments();
         Expression instanceName = node.getExpression();
         int[] semanticVector = new int[25];
 

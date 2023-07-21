@@ -169,10 +169,10 @@ public class jCCVisitor extends ASTVisitor {
         if(tempNode.getParent() instanceof QualifiedName) {
             return super.visit(node);
         }
-
-        if(tempNode.getParent() instanceof InfixExpression) {
-            return super.visit(node);
-        }
+//
+//        if(tempNode.getParent() instanceof InfixExpression) {
+//            return super.visit(node);
+//        }
 
 
         while(tempNode != null) {
