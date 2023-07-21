@@ -4,7 +4,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 public class jCCNode {
-    private String parentNodeType;
+    private String nodeType;
     private String className;
     private String methodName;
     private String variableName;
@@ -73,11 +73,11 @@ public class jCCNode {
         this.semanticType = semanticType;
     }
 
-    public String getParentNodeType() {
-        return parentNodeType;
+    public String getNodeType() {
+        return nodeType;
     }
 
-    public void setParentNodeType(String parentNodeType) {
-        this.parentNodeType = parentNodeType;
+    public void setNodeType(String nodeType) {
+        this.nodeType = nodeType;
     }
 }

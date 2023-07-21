@@ -129,19 +129,6 @@ public class jCCVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(MethodInvocation node) {
-        Expression expression = node.getExpression();
-
-        System.out.println(node);
-
-        System.out.println("name : " + node.getName());
-        System.out.println("expression : " + node.getExpression());
-        System.out.println("argument : " + node.arguments()); // argument는 list의 형태로 불러와짐
-
-
-        if(expression instanceof SimpleName) {
-            SimpleName name = (SimpleName) expression;
-//            System.out.println(name.getIdentifier());
-        }
         return super.visit(node);
     }
 
@@ -193,7 +180,7 @@ public class jCCVisitor extends ASTVisitor {
 
         jCCNode.setVariableName(node.getIdentifier());
         jCCNode.setStructureVector(structureVector);
-        jCCNode.setParentNodeType(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName());
+        jCCNode.setNodeType(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName());
 
 
         tempNode = node;
@@ -251,7 +238,7 @@ public class jCCVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(Assignment node) {
-//        System.out.println(node.getRightHandSide());
+        System.out.println("node: " + node);
         return super.visit(node);
     }
 
