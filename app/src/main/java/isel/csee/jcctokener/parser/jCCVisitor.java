@@ -33,124 +33,8 @@ public class jCCVisitor extends ASTVisitor {
 
 
     @Override
-    public boolean visit(ForStatement node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(ArrayAccess node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(ThrowStatement node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(CatchClause node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(SingleVariableDeclaration node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(ArrayType node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(ParameterizedType node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(ClassInstanceCreation node) {
-        return super.visit(node);
-    }
-
-
-    @Override
-    public boolean visit(EnhancedForStatement node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(TryStatement node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(ConstructorInvocation node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(LambdaExpression node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(IfStatement node) {
-        return super.visit(node);
-    }
-    @Override
-    public boolean visit(ArrayCreation node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(ReturnStatement node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(TypeDeclaration node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(FieldDeclaration node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(MethodDeclaration node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(VariableDeclarationFragment node) {
-//        System.out.println(node.getName());
-//        System.out.println(node.getInitializer());
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(MethodInvocation node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(SwitchCase node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(SwitchStatement node) {
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(ExpressionStatement node) {
-        return super.visit(node);
-    }
-
-    @Override
     public boolean visit(SimpleName node) {
+        System.out.println(node);
         int[] structureVector = new int[25];
         ASTNode tempNode = node;
         jCCNode jCCNode = new jCCNode();
@@ -215,9 +99,14 @@ public class jCCVisitor extends ASTVisitor {
     public boolean visit(InfixExpression node) {
         int[] structureVector = new int[25];
         jCCNode jCCNode = new jCCNode();
+        Expression leftExpression = node.getLeftOperand();
+        Expression expression = node.getRightOperand();
 
-        System.out.println("left: " + node.getLeftOperand());
-        System.out.println("right: " + node.getRightOperand());
+
+        System.out.println(leftExpression.getClass());
+        System.out.println(expression.getClass());
+
+
 
         ASTNode tempNode = node;
 
@@ -247,7 +136,11 @@ public class jCCVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(Assignment node) {
-        System.out.println("node: " + node);
+        Expression expression = node.getRightHandSide();
+
+        if(expression instanceof InfixExpression) {
+            InfixExpression infixExpression = (InfixExpression) expression;
+        }
         return super.visit(node);
     }
 

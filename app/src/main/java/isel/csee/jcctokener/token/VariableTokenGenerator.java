@@ -3,6 +3,7 @@ package isel.csee.jcctokener.token;
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.types.NodeType;
 import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.internal.compiler.ast.BinaryExpression;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -160,12 +161,17 @@ public class VariableTokenGenerator extends ASTVisitor {
     public int[] processInfixExpression(InfixExpression node, String className, String methodName, int[] structureVector) {
         Expression leftHands = node.getLeftOperand();
         Expression rightHands = node.getRightOperand();
-        System.out.println(leftHands + " " + rightHands);
+        System.out.println(leftHands.getClass().toString());
+        System.out.println(rightHands.getClass().toString());
+
+        System.out.println(leftHands);
+        System.out.println(rightHands);
+        System.out.println(node);
         int[] semanticVector = new int[25];
 
         if(leftHands instanceof SimpleName) { // 해당 값의 semantic vector를 가지고 와야함
             jCCNode tempNode = new jCCNode(className, methodName, ((SimpleName) leftHands).getIdentifier(), structureVector);
-            System.out.println(leftHands + " is simple name");
+
             semanticVector = addSemanticVector(tempNode, semanticVector);
         }
 
