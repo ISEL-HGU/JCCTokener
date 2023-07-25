@@ -1,4 +1,4 @@
-package isel.csee.jcctokener.parser;
+package isel.csee.jcctokener.generators;
 
 
 import isel.csee.jcctokener.node.jCCNode;
@@ -24,7 +24,7 @@ import java.util.List;
 
 
 
-public class jCCVisitor extends ASTVisitor {
+public class StructureVectorGenerator extends ASTVisitor {
     private final int semanticType1 = 1;
     private final int semanticType2 = 2;
     private final int semanticType3 = 3;
@@ -34,7 +34,6 @@ public class jCCVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(SimpleName node) {
-        System.out.println(node);
         int[] structureVector = new int[25];
         ASTNode tempNode = node;
         jCCNode jCCNode = new jCCNode();
@@ -42,13 +41,10 @@ public class jCCVisitor extends ASTVisitor {
         if(tempNode.getParent() instanceof QualifiedName) {
             return super.visit(node);
         }
-//
-//        if(tempNode.getParent() instanceof InfixExpression) {
-//            return super.visit(node);
-//        }
 
 
         while(tempNode != null) {
+            System.out.println(tempNode.getClass().toString());
             structureVector = NodeType.searchType(tempNode, structureVector);
 
             if(tempNode instanceof MethodDeclaration) {
@@ -68,23 +64,37 @@ public class jCCVisitor extends ASTVisitor {
             jCCNode.setMethodName(jCCNode.getClassName());
         }
 
+
         jCCNode.setVariableName(node.getIdentifier());
         jCCNode.setStructureVector(structureVector);
         jCCNode.setNodeType(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName());
 
 
+
         tempNode = node;
 
-        if(tempNode.getParent() instanceof VariableDeclarationFragment) { // 변수의 선언 부분에서는 structure vector를 그대로 사용 ,, ?
-            if(tempNode == ((VariableDeclarationFragment) tempNode.getParent()).getName()) { // 이 부분 조금 더 생각
+        if(tempNode.getParent() instanceof VariableDeclarationFragment) {
+            if(((VariableDeclarationFragment) tempNode.getParent()).getName() == tempNode) {
                 jCCNode.setSemanticVector(structureVector);
             }
         }
+        tempNode = node;
 
         if(tempNode.getParent() instanceof MethodInvocation) {
             jCCNode.setSemanticType(semanticType3);
         } else {
             jCCNode.setSemanticType(semanticType1);
+        }
+        tempNode = node;
+
+        if(tempNode.getParent() instanceof Assignment) {
+            if(node.equals(((Assignment) tempNode.getParent()).getLeftHandSide())) {
+                jCCNode.setUpdatePossibility(false);
+            } else {
+                jCCNode.setUpdatePossibility(true);
+            }
+        } else {
+            jCCNode.setUpdatePossibility(true);
         }
 
         jCCNodeList.add(jCCNode);
@@ -101,12 +111,6 @@ public class jCCVisitor extends ASTVisitor {
         jCCNode jCCNode = new jCCNode();
         Expression leftExpression = node.getLeftOperand();
         Expression expression = node.getRightOperand();
-
-
-        System.out.println(leftExpression.getClass());
-        System.out.println(expression.getClass());
-
-
 
         ASTNode tempNode = node;
 
@@ -136,11 +140,6 @@ public class jCCVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(Assignment node) {
-        Expression expression = node.getRightHandSide();
-
-        if(expression instanceof InfixExpression) {
-            InfixExpression infixExpression = (InfixExpression) expression;
-        }
         return super.visit(node);
     }
 

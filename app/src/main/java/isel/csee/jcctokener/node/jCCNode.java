@@ -3,14 +3,18 @@ package isel.csee.jcctokener.node;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import java.util.List;
+
 public class jCCNode {
     private String nodeType;
     private String className;
     private String methodName;
     private String variableName;
+    private boolean updatePossibility;
     private int semanticType;
     private int[] structureVector;
     private int[] semanticVector = new int[25];
+    private List<jCCNode> edges;
 
 
 
@@ -79,5 +83,21 @@ public class jCCNode {
 
     public void setNodeType(String nodeType) {
         this.nodeType = nodeType;
+    }
+
+    public boolean isUpdatePossibility() {
+        return updatePossibility;
+    }
+
+    public void setUpdatePossibility(boolean updatePossibility) {
+        this.updatePossibility = updatePossibility;
+    }
+
+    public List<jCCNode> getEdges() {
+        return edges;
+    }
+
+    public void setEdges(List<jCCNode> edges) {
+        this.edges = edges;
     }
 }

@@ -1,4 +1,4 @@
-package isel.csee.jcctokener.token;
+package isel.csee.jcctokener.generators;
 
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.types.NodeType;

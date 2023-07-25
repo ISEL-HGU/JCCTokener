@@ -1,8 +1,6 @@
-package isel.csee.jcctokener.token;
+package isel.csee.jcctokener.generators;
 
 
-import isel.csee.jcctokener.types.NodeType;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.SimpleName;
 

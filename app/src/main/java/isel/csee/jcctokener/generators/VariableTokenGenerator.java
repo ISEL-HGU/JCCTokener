@@ -1,17 +1,12 @@
-package isel.csee.jcctokener.token;
+package isel.csee.jcctokener.generators;
 
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.types.NodeType;
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.internal.compiler.ast.BinaryExpression;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.util.*;
 
-// Assignment node 방문 시에 문제 발생 / InfixExpression 인식 오류
-// 여러 개의 항을 가지는 InfixExpression node 방문 시에 처리하는 method를 하나 더 추가해서 재귀적으로 구현
-// 하나는 Infix인 경우에 2개로 나누는 method이고, 다른 하나는 semantic vector 처리해주는 용도로 구현
+// Assignment node에서 semantic vector 업데이트를 어떻게 해줄 것인지
 
 
 public class VariableTokenGenerator extends ASTVisitor {
@@ -22,7 +17,7 @@ public class VariableTokenGenerator extends ASTVisitor {
     public boolean visit(VariableDeclarationFragment node) { // 선언과 동시에 초기화 / 선언과 동시에 초기화를 진행하기 때문에 변수의 semantic vector는 고려하지 않아도 된다
         // 변수를 할당해주는 부분의 semantic vector만 고려해서 계산
         Expression rightHand = node.getInitializer();
-        SimpleName leftHand = node.getName();
+        Expression leftHand = node.getName();
 
         SimpleName variableName = node.getName();
         int[] structureVector = new int[25];
@@ -64,7 +59,7 @@ public class VariableTokenGenerator extends ASTVisitor {
 
         } else if(rightHand instanceof SimpleName) {
             SimpleName simpleName = (SimpleName) rightHand;
-            semanticVector = processSimpleName(simpleName, targetNode.getClassName(), targetNode.getMethodName(), targetNode.getStructureVector());
+            semanticVector = processSimpleName(simpleName, targetNode.getClassName(), targetNode.getMethodName(), targetNode.getStructureVector(), semanticVector);
 
             updateSemanticVector(targetNode, semanticVector);
         }
@@ -118,7 +113,7 @@ public class VariableTokenGenerator extends ASTVisitor {
 
         } else if(rightHand instanceof SimpleName) {
             SimpleName simpleName = (SimpleName) rightHand;
-            semanticVector = processSimpleName(simpleName, targetNode.getClassName(), targetNode.getMethodName(), targetNode.getStructureVector());
+            semanticVector = processSimpleName(simpleName, targetNode.getClassName(), targetNode.getMethodName(), targetNode.getStructureVector(), semanticVector);
             updateSemanticVector(targetNode, semanticVector);
         }
         targetNode.setSemanticVector(semanticVector);
@@ -128,8 +123,8 @@ public class VariableTokenGenerator extends ASTVisitor {
         return super.visit(node);
     }
 
-    public int[] processSimpleName(SimpleName node, String className, String methodName, int[] structureVector) {
-        int[] semanticVector = new int[25];
+    public int[] processSimpleName(SimpleName node, String className, String methodName, int[] structureVector, int[] semanticVector) {
+
         jCCNode targetNode = new jCCNode(className, methodName, node.getIdentifier().toString(), structureVector);
 
         semanticVector = addSemanticVector(targetNode, semanticVector);
@@ -161,18 +156,22 @@ public class VariableTokenGenerator extends ASTVisitor {
     public int[] processInfixExpression(InfixExpression node, String className, String methodName, int[] structureVector) {
         Expression leftHands = node.getLeftOperand();
         Expression rightHands = node.getRightOperand();
-        System.out.println(leftHands.getClass().toString());
-        System.out.println(rightHands.getClass().toString());
 
-        System.out.println(leftHands);
-        System.out.println(rightHands);
-        System.out.println(node);
+
+
         int[] semanticVector = new int[25];
 
         if(leftHands instanceof SimpleName) { // 해당 값의 semantic vector를 가지고 와야함
             jCCNode tempNode = new jCCNode(className, methodName, ((SimpleName) leftHands).getIdentifier(), structureVector);
 
             semanticVector = addSemanticVector(tempNode, semanticVector);
+        } else if(leftHands instanceof InfixExpression) {
+            int[] tempArray = processInfixExpression((InfixExpression) leftHands, className, methodName, structureVector);
+
+
+            for(int i = 0; i < 25; i++) {
+                semanticVector[i] += tempArray[i];
+            }
         }
 
         if(rightHands instanceof SimpleName) {
@@ -180,13 +179,6 @@ public class VariableTokenGenerator extends ASTVisitor {
 
             semanticVector = addSemanticVector(tempNode, semanticVector);
 
-        } else if(rightHands instanceof InfixExpression) {
-            int[] tempArray = processInfixExpression((InfixExpression) rightHands, className, methodName, structureVector);
-
-
-            for(int i = 0; i < 25; i++) {
-                semanticVector[i] += tempArray[i];
-            }
         }
 
         return semanticVector;
@@ -200,8 +192,6 @@ public class VariableTokenGenerator extends ASTVisitor {
         } else if(expression instanceof InfixExpression) {
 
         }
-
-
 
         return null;
     }
@@ -266,7 +256,7 @@ public class VariableTokenGenerator extends ASTVisitor {
             if(jCCNodeList.get(i).getClassName().equals(node.getClassName())) { // 클래스 이름
                 if (jCCNodeList.get(i).getMethodName().equals(node.getMethodName())) { // 메소드 이름
                     if (jCCNodeList.get(i).getVariableName().equals(node.getVariableName())) { // 변수 이름
-                        if(jCCNodeList.get(i).getNodeType().equals("Assignment")) {
+                        if(jCCNodeList.get(i).getNodeType().equals("Assignment") && jCCNodeList.get(i).isUpdatePossibility() == false) { // 우변의 semantic vector는 바뀌어야 하는데 바뀌지 않는 문제점 발생 / Assignment node의 좌변은 semantic vector를 업데이트 해주면 안 되는 건가
                             break;
                         } else {
                             jCCNodeList.get(i).setSemanticVector(node.getSemanticVector());

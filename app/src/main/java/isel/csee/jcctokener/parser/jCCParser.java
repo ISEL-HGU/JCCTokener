@@ -1,8 +1,9 @@
 package isel.csee.jcctokener.parser;
 
+import isel.csee.jcctokener.generators.StructureVectorGenerator;
 import isel.csee.jcctokener.node.jCCNode;
-import isel.csee.jcctokener.token.TokenGenerator;
-import isel.csee.jcctokener.token.VariableTokenGenerator;
+import isel.csee.jcctokener.generators.TokenGenerator;
+import isel.csee.jcctokener.generators.VariableTokenGenerator;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class jCCParser {
     private String sourceCodes;
     private ASTParser parser;
-    private jCCVisitor jCCVisitor = new jCCVisitor();
+    private isel.csee.jcctokener.generators.StructureVectorGenerator StructureVectorGenerator = new StructureVectorGenerator();
     private VariableTokenGenerator variableTokenGenerator;
 
     private TokenGenerator tokenGenerator;
@@ -44,20 +45,20 @@ public class jCCParser {
 
         CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 
-        compilationUnit.accept(jCCVisitor);
+        compilationUnit.accept(StructureVectorGenerator);
 
-        tokenGenerator = new TokenGenerator(jCCVisitor.getStructureVectorList());
+        tokenGenerator = new TokenGenerator(StructureVectorGenerator.getStructureVectorList());
 
         List<int[]> structureVectorList = tokenGenerator.toLexicalOrder();
 
-        for(jCCNode tempNode : jCCVisitor.getjCCNodeList()) {
+        for(jCCNode tempNode : StructureVectorGenerator.getjCCNodeList()) {
             System.out.println("variable: " + tempNode.getVariableName());
             for(int i : tempNode.getSemanticVector()) {
                 System.out.print(i + " ");
             }
             System.out.println("");
         }
-        variableTokenGenerator = new VariableTokenGenerator(jCCVisitor.getjCCNodeList());
+        variableTokenGenerator = new VariableTokenGenerator(StructureVectorGenerator.getjCCNodeList());
 
         compilationUnit.accept(variableTokenGenerator);
         for(jCCNode tempNode : variableTokenGenerator.getjCCNodeList()) {
