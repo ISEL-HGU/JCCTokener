@@ -15,7 +15,8 @@ import java.util.Map;
 public class jCCParser {
     private String sourceCodes;
     private ASTParser parser;
-    private isel.csee.jcctokener.generators.StructureVectorGenerator StructureVectorGenerator = new StructureVectorGenerator();
+    private List<jCCNode> jCCNodeList;
+    private StructureVectorGenerator structureVectorGenerator= new StructureVectorGenerator();
     private VariableTokenGenerator variableTokenGenerator;
 
     private TokenGenerator tokenGenerator;
@@ -45,29 +46,34 @@ public class jCCParser {
 
         CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 
-        compilationUnit.accept(StructureVectorGenerator);
+        compilationUnit.accept(structureVectorGenerator);
 
-        tokenGenerator = new TokenGenerator(StructureVectorGenerator.getStructureVectorList());
+        tokenGenerator = new TokenGenerator(structureVectorGenerator.getStructureVectorList());
 
         List<int[]> structureVectorList = tokenGenerator.toLexicalOrder();
 
-        for(jCCNode tempNode : StructureVectorGenerator.getjCCNodeList()) {
-            System.out.println("variable: " + tempNode.getVariableName());
-            for(int i : tempNode.getSemanticVector()) {
-                System.out.print(i + " ");
-            }
-            System.out.println("");
-        }
-        variableTokenGenerator = new VariableTokenGenerator(StructureVectorGenerator.getjCCNodeList());
+        jCCNodeList = structureVectorGenerator.getjCCNodeList();
 
-        compilationUnit.accept(variableTokenGenerator);
-        for(jCCNode tempNode : variableTokenGenerator.getjCCNodeList()) {
-            System.out.println("variable: " + tempNode.getVariableName());
-            for(int i : tempNode.getSemanticVector()) {
+
+        for(jCCNode tempNode : jCCNodeList) {
+            System.out.println("variable: " + tempNode.getVariableName() + " Position: " + tempNode.getStartPosition() + " Type: " +
+                    tempNode.getNodeType());
+            for(int i : tempNode.getStructureVector()) {
                 System.out.print(i + " ");
             }
             System.out.println("");
         }
+
+        variableTokenGenerator = new VariableTokenGenerator(structureVectorGenerator.getjCCNodeList());
+
+//        compilationUnit.accept(variableTokenGenerator);
+//        for(jCCNode tempNode : variableTokenGenerator.getjCCNodeList()) {
+//            System.out.println("variable: " + tempNode.getVariableName());
+//            for(int i : tempNode.getSemanticVector()) {
+//                System.out.print(i + " ");
+//            }
+//            System.out.println("");
+//        }
 
 
 

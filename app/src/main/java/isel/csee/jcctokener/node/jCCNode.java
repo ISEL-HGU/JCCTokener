@@ -11,10 +11,11 @@ public class jCCNode {
     private String methodName;
     private String variableName;
     private boolean updatePossibility;
+    private int startPosition;
     private int semanticType;
     private int[] structureVector;
     private int[] semanticVector = new int[25];
-    private List<jCCNode> edges;
+    private List<Integer> IndexListOfEdges;
 
 
 
@@ -93,11 +94,19 @@ public class jCCNode {
         this.updatePossibility = updatePossibility;
     }
 
-    public List<jCCNode> getEdges() {
-        return edges;
+    public int getStartPosition() {
+        return startPosition;
     }
 
-    public void setEdges(List<jCCNode> edges) {
-        this.edges = edges;
+    public void setStartPosition(int startPosition) {
+        this.startPosition = startPosition;
+    }
+
+    public List<Integer> getIndexListOfEdges() {
+        return IndexListOfEdges;
+    }
+
+    public void setIndexListOfEdges(List<Integer> indexListOfEdges) {
+        IndexListOfEdges = indexListOfEdges;
     }
 }
