@@ -47,16 +47,28 @@ public class StructureVectorGenerator extends ASTVisitor {
     private List<int[]> structureVectorList = new ArrayList<>();
     private List<jCCNode> jCCNodeList = new ArrayList<>();
 
+//    @Override
+//    public boolean visit(ArrayAccess node) { // getArray는 array의 이름, getIndex는 array에서 사용된 index 변수 이름
+//        System.out.println("one: " + node.getArray());
+//        System.out.println("2: " + node.getIndex() + node.getClass());
+//
+//        Expression temp = node.getIndex();
+//
+//        System.out.println(temp.getClass());
+//
+//        return super.visit(node);
+//    }
+
     @Override
-    public boolean visit(MethodInvocation node) { // getExpression이 method의 instance / getName이 method의 이름
-//        System.out.println("Expression: " + node.getExpression());
-//        System.out.println("Name: " + node.getName());
-//
-//        List<Expression> list = node.arguments();
-//
-//        for(int i = 0; i < list.size(); i++) {
-//            System.out.println("Here~~~~" + list.get(i).toString() + "   Position: " + list.get(i).getStartPosition());
-//        }
+    public boolean visit(MethodInvocation node) { // expression이 instance name
+        System.out.println("name : " + node.getName());
+        System.out.println("expression : " + node.getExpression());
+
+        List<Expression> temp = node.arguments();
+
+        for(int i = 0; i < temp.size(); i++) {
+            System.out.println("position: " + temp.get(i).getStartPosition() + " name : " + temp.get(i).toString());
+        }
 
         return super.visit(node);
     }
@@ -206,7 +218,9 @@ public class StructureVectorGenerator extends ASTVisitor {
 
     @Override
     public boolean visit(VariableDeclarationFragment node) {
-
+        if(node.getInitializer() instanceof ClassInstanceCreation) {
+            System.out.println("TEST : " + ((ClassInstanceCreation) node.getInitializer()).getType());
+        }
         return super.visit(node);
     }
 

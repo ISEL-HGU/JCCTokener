@@ -1,5 +1,6 @@
 package isel.csee.jcctokener.parser;
 
+import isel.csee.jcctokener.generators.DataDependencyGenerator;
 import isel.csee.jcctokener.generators.StructureVectorGenerator;
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.generators.TokenGenerator;
@@ -18,7 +19,7 @@ public class jCCParser {
     private List<jCCNode> jCCNodeList;
     private StructureVectorGenerator structureVectorGenerator= new StructureVectorGenerator();
     private VariableTokenGenerator variableTokenGenerator;
-
+    private DataDependencyGenerator dataDependencyGenerator;
     private TokenGenerator tokenGenerator;
 
     public ASTParser parserCodes() {
@@ -64,7 +65,26 @@ public class jCCParser {
             System.out.println("");
         }
 
-        variableTokenGenerator = new VariableTokenGenerator(structureVectorGenerator.getjCCNodeList());
+
+        dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);
+
+        compilationUnit.accept(dataDependencyGenerator);
+        jCCNodeList = dataDependencyGenerator.getjCCNodeList();
+
+        for(int i = 0; i < jCCNodeList.size(); i++) {
+            System.out.println(jCCNodeList.get(i).getVariableName());
+            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
+            }
+        }
+
+
+
+
+
+
+
+//        variableTokenGenerator = new VariableTokenGenerator(structureVectorGenerator.getjCCNodeList());
 
 //        compilationUnit.accept(variableTokenGenerator);
 //        for(jCCNode tempNode : variableTokenGenerator.getjCCNodeList()) {

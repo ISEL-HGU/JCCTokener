@@ -2,10 +2,9 @@ package isel.csee.jcctokener.generators;
 
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.types.NodeType;
-import org.checkerframework.checker.units.qual.A;
 import org.eclipse.jdt.core.dom.*;
 
-import java.lang.reflect.Method;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +18,10 @@ import java.util.List;
 
 Operator / MethodInvocation 이 2가지 case에 대해서도 edge를 만들어 줘야 함 -> Method 이름에 대해서
 Operator는 structureVector도 비교해서 동일한지 여부 파악해야함 -> InfixExpression 내부에서 여러 개의 Operator가 존재할 경우에, 같은 Position을 가지게 되는데,
+
+getArray는 array의 이름, getIndex는 array에서 사용된 index 변수 이름
+
+Case의 분리는 5가지로 -> 1. Number 2. SimpleName 3. InfixExpression 4. ArrayAccess 5. MethodInvocation 6. ClassInstanceCreation
  */
 
 public class DataDependencyGenerator extends ASTVisitor {
@@ -31,89 +34,89 @@ public class DataDependencyGenerator extends ASTVisitor {
         String variableName = node.getName().toString();
 
         int targetIndex = findTargetNode(startPosition, variableName);
+        List<Integer> edgeList = new ArrayList<>();
 
         if(node.getInitializer() instanceof InfixExpression) {
-            List<Integer> tempList = new ArrayList<>();
-
-            tempList = processInfixExpression((InfixExpression) node.getInitializer(), tempList);
-            jCCNodeList.get(targetIndex).setIndexListOfEdges(tempList);
-            updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex);
-
-        } else if(node.getInitializer() instanceof MethodInvocation) { // 조금 더 생각
-
+            edgeList = processInfixExpression((InfixExpression) node.getInitializer(), edgeList);
+        } else if(node.getInitializer() instanceof MethodInvocation) {
+            edgeList = processMethodInvocation((MethodInvocation) node.getInitializer(), edgeList);
         } else if(node.getInitializer() instanceof SimpleName) {
-            SimpleName simpleName = (SimpleName) node.getInitializer();
-            List<Integer> tempList = new ArrayList<>();
-            tempList = processSimpleName(simpleName, tempList);
-            jCCNodeList.get(targetIndex).setIndexListOfEdges(tempList);
-            updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex);
+            edgeList = processSimpleName((SimpleName) node.getInitializer(), edgeList);
+        } else if(node.getInitializer() instanceof ArrayAccess) {
+            edgeList = processArrayAccess((ArrayAccess) node.getInitializer(), edgeList);
+        } else if(node.getInitializer() instanceof ClassInstanceCreation) {
+            edgeList = processClassInstanceCreation((ClassInstanceCreation) node.getInitializer(), edgeList);
         }
+
+        jCCNodeList.get(targetIndex).setIndexListOfEdges(edgeList);
+        updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex);
 
 
         return super.visit(node);
     }
 
     @Override
-    public boolean visit(Assignment node) {
+    public boolean visit(Assignment node) { // left 부분이 SimpleName node가 아닐 수도 있는 거 생각해야 함
         int startPosition = node.getLeftHandSide().getStartPosition();
         String variableName = node.getLeftHandSide().toString();
 
         int targetIndex = findTargetNode(startPosition, variableName); // 왼쪽에 해당하는 변수의 index를 가져온다
+        List<Integer> edgeList = new ArrayList<>();
 
         if(node.getRightHandSide() instanceof InfixExpression) {
-            List<Integer> tempList = new ArrayList<>();
-
-            tempList = processInfixExpression((InfixExpression) node.getRightHandSide(), tempList);
-            jCCNodeList.get(targetIndex).setIndexListOfEdges(tempList);
-            updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex);
-
+            edgeList = processInfixExpression((InfixExpression) node.getRightHandSide(), edgeList);
         } else if(node.getRightHandSide() instanceof SimpleName) {
-            SimpleName simpleName = (SimpleName) node.getRightHandSide();
-            List<Integer> tempList = new ArrayList<>();
-            tempList = processSimpleName(simpleName, tempList);
-            jCCNodeList.get(targetIndex).setIndexListOfEdges(tempList);
-            updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex);
+            edgeList = processSimpleName((SimpleName) node.getRightHandSide(), edgeList);
         } else if(node.getRightHandSide() instanceof MethodInvocation) {
-
+            edgeList = processMethodInvocation((MethodInvocation) node.getRightHandSide(), edgeList);
+        } else if(node.getRightHandSide() instanceof ArrayAccess) {
+            edgeList = processArrayAccess((ArrayAccess) node.getRightHandSide(), edgeList);
         }
+
+        jCCNodeList.get(targetIndex).setIndexListOfEdges(edgeList);
+        updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex);
 
         return super.visit(node);
     }
 
     @Override // operator
-    public boolean visit(InfixExpression node) {
+    public boolean visit(InfixExpression node) { // operator의 바로 양 옆 값들이 필요 / 같은 InfixExpression node에 존재하는 operator의 경우, position 값이 동일 -> structure vector도 같이 사용해서 구분해야 함
         Expression leftOperand = node.getLeftOperand();
         Expression rightOperand = node.getRightOperand();
-        Expression tempLeftOperand = null;
         String operator = node.getOperator().toString();
         int operatorPosition = node.getStartPosition();
-
+        List<Integer> edgeList = new ArrayList<>();
         ASTNode tempNode = node;
         int[] structureVector = new int[25];
+        int leftIndex;
 
         while(tempNode != null) {
             structureVector = NodeType.searchType(tempNode, structureVector);
-
             tempNode = tempNode.getParent();
         }
-        int leftIndex;
 
-        if(leftOperand instanceof InfixExpression) {
-            tempLeftOperand = ((InfixExpression) leftOperand).getRightOperand();
-            leftIndex = findTargetNode(tempLeftOperand.getStartPosition(), tempLeftOperand.toString());
-        } else {
-            leftIndex = findTargetNode(leftOperand.getStartPosition(), leftOperand.toString());
+        if(leftOperand instanceof InfixExpression) { // left operand가 InfixExpression node일 경우에 해당 InfixExpression node의 rightOperand를 가져와서 사용
+            leftOperand = ((InfixExpression) leftOperand).getRightOperand();
         }
 
-        int rightIndex = findTargetNode(rightOperand.getStartPosition(), rightOperand.toString());
-        int operatorIndex = findTargetNodeWithStructureVector(operatorPosition, operator, structureVector);
 
-        List<Integer> edgeList = new ArrayList<>();
+        if(leftOperand instanceof SimpleName) {
+            edgeList = processSimpleName((SimpleName) leftOperand, edgeList);
+        } else if(leftOperand instanceof MethodInvocation) {
+            edgeList = processMethodInvocation((MethodInvocation) leftOperand, edgeList);
+        } else if(leftOperand instanceof ArrayAccess) {
+            edgeList = processArrayAccess((ArrayAccess) leftOperand, edgeList);
+        }
 
-        edgeList.add(leftIndex);
-        edgeList.add(rightIndex);
+        if(rightOperand instanceof SimpleName) {
+            edgeList = processSimpleName((SimpleName) rightOperand, edgeList);
+        } else if(rightOperand instanceof MethodInvocation) {
+            edgeList = processMethodInvocation((MethodInvocation) rightOperand, edgeList);
+        } else if(rightOperand instanceof ArrayAccess) {
+            edgeList = processArrayAccess((ArrayAccess) rightOperand, edgeList);
+        }
 
-        jCCNodeList.get(operatorIndex).setIndexListOfEdges(edgeList);
+        jCCNodeList.get(findTargetNodeWithStructureVector(operatorPosition, operator, structureVector)).setIndexListOfEdges(edgeList);
 
 
 
@@ -121,10 +124,11 @@ public class DataDependencyGenerator extends ASTVisitor {
     }
 
     @Override
-    public boolean visit(MethodInvocation node) {
+    public boolean visit(MethodInvocation node) { // method에 관련된 노드들을 추가해주는 visit method
         Expression methodName = node.getName();
         Expression methodInstance = node.getExpression();
         List<Expression> argumentList = node.arguments(); // argument
+        List<Integer> edgeList = new ArrayList<>();
 
         ASTNode tempNode = node;
         int[] structureVector = new int[25];
@@ -135,26 +139,25 @@ public class DataDependencyGenerator extends ASTVisitor {
             tempNode = tempNode.getParent();
         }
 
-        int methodIndex = findTargetNode(methodName.getStartPosition(), methodName.toString());
-
-        List<Integer> edgeList = new ArrayList<>();
-
-        edgeList.add(findTargetNode(methodInstance.getStartPosition(), methodInstance.toString()));
+        edgeList.add(findTargetNode(methodInstance.getStartPosition(), methodInstance.toString())); // method를 호출한 instance에 대한 부분 추가
         for(int i = 0; i < argumentList.size(); i++) {
-            edgeList.add(findTargetNodeWithStructureVector(argumentList.get(i).getStartPosition(),
-                    argumentList.get(i).toString(), structureVector));
+            if(argumentList.get(i) instanceof InfixExpression) {
+                edgeList = processInfixExpression((InfixExpression) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof MethodInvocation) {
+                edgeList = processMethodInvocation((MethodInvocation) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof ArrayAccess) {
+                edgeList = processArrayAccess((ArrayAccess) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof SimpleName) {
+                edgeList = processSimpleName((SimpleName) argumentList.get(i), edgeList);
+            }
         }
 
-        jCCNodeList.get(methodIndex).setIndexListOfEdges(edgeList);
-
-
-
+        jCCNodeList.get(findTargetNode(methodName.getStartPosition(), methodName.toString())).setIndexListOfEdges(edgeList);
 
         return super.visit(node);
     }
 
     public void updateRelatedNodeList(jCCNode node, int targetIndex) { // 해당 노드 다음에 나오는 같은 이름의 노드들을 다 업데이트 해주는 노드
-
         for(int i = targetIndex; i < jCCNodeList.size(); i++) {
             if(jCCNodeList.get(i).getVariableName().equals(node.getVariableName())) { // 이름이 동일
                 if(jCCNodeList.get(i).getStartPosition() > node.getStartPosition()) { // 해당 노드 이후에 나오는 같은 이름의 노드
@@ -175,7 +178,7 @@ public class DataDependencyGenerator extends ASTVisitor {
                 }
             }
         }
-        
+
         return index;
     }
 
@@ -196,23 +199,34 @@ public class DataDependencyGenerator extends ASTVisitor {
         return index;
     }
 
-    public List<Integer> processInfixExpression(InfixExpression node, List<Integer> edgeList) {
+    public List<Integer> processInfixExpression(InfixExpression node, List<Integer> edgeList) { // 좌변과 우변의 값이 SimpleName node가 아닐 수도 있기 때문에 Case의 분리가 필요
 
         if(node.getRightOperand() instanceof SimpleName) {
-            edgeList.add(findTargetNode(node.getRightOperand().getStartPosition(), ((SimpleName) node.getRightOperand()).getIdentifier().toString()));
+            edgeList = processSimpleName((SimpleName) node.getRightOperand(), edgeList);
+        } else if(node.getRightOperand() instanceof ArrayAccess) {
+            edgeList = processArrayAccess((ArrayAccess) node.getRightOperand(), edgeList);
+        } else if(node.getRightOperand() instanceof MethodInvocation) {
+            edgeList = processMethodInvocation((MethodInvocation) node.getRightOperand(), edgeList);
+        } else if(node.getRightOperand() instanceof ClassInstanceCreation) {
+            edgeList = processClassInstanceCreation((ClassInstanceCreation) node.getLeftOperand(), edgeList);
         }
 
         if(node.getLeftOperand() instanceof InfixExpression) {
-            processInfixExpression((InfixExpression) node.getLeftOperand(), edgeList);
+            edgeList = processInfixExpression((InfixExpression) node.getLeftOperand(), edgeList);
         } else if(node.getLeftOperand() instanceof SimpleName) {
-            edgeList.add(findTargetNode(node.getLeftOperand().getStartPosition(), ((SimpleName) node.getLeftOperand()).getIdentifier().toString()));
+            edgeList = processSimpleName((SimpleName) node.getLeftOperand(), edgeList);
+        } else if(node.getLeftOperand() instanceof ArrayAccess) {
+            edgeList = processArrayAccess((ArrayAccess) node.getLeftOperand(), edgeList);
+        } else if(node.getLeftOperand() instanceof MethodInvocation) {
+            edgeList = processMethodInvocation((MethodInvocation) node.getLeftOperand(), edgeList);
+        } else if(node.getLeftOperand() instanceof ClassInstanceCreation) {
+            edgeList = processClassInstanceCreation((ClassInstanceCreation) node.getLeftOperand(), edgeList);
         }
 
         return edgeList;
     }
 
-    public List<Integer> processSimpleName(SimpleName node, List<Integer> edgeList) { // 기존의 List를 업데이트 해서 제공해주는 method
-
+    public List<Integer> processSimpleName(SimpleName node, List<Integer> edgeList) { // 기존의 List를 업데이트 해서 제공해주는 method / SimpleName node를 edgeList에 추가해서 edgeList return
         int simpleNamePosition = node.getStartPosition();
         int simpleNameIndex = findTargetNode(simpleNamePosition, node.toString());
 
@@ -221,20 +235,80 @@ public class DataDependencyGenerator extends ASTVisitor {
         return edgeList;
     }
 
-    public List<Integer> processMethodInvocation(MethodInvocation node, List<Integer> edgeList) {
+    public List<Integer> processClassInstanceCreation(ClassInstanceCreation node, List<Integer> edgeList) {
+        List<Expression> argumentList = node.arguments();
 
-
-
-
+        for(int i = 0; i < argumentList.size(); i++) {
+            if(argumentList.get(i) instanceof InfixExpression) {
+                edgeList = processInfixExpression((InfixExpression) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof SimpleName) {
+                edgeList = processSimpleName((SimpleName) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof MethodInvocation) {
+                edgeList = processMethodInvocation((MethodInvocation) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof ArrayAccess) {
+                edgeList = processArrayAccess((ArrayAccess) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof ClassInstanceCreation) {
+                edgeList = processClassInstanceCreation((ClassInstanceCreation) argumentList.get(i), edgeList);
+            }
+        }
 
         return edgeList;
     }
 
-    public List<Integer> processArrayAccess(ArrayAccess node, List<Integer> edgeList) {
+    public List<Integer> processMethodInvocation(MethodInvocation node, List<Integer> edgeList) { // assignment node에서 사용 / type 1에서 사용되는 부분이기 때문에 method name에 대해서는 추가할 필요 X
+        Expression methodInstance = node.getExpression();
+        List<Expression> argumentList = node.arguments();
 
+        edgeList.add(findTargetNode(methodInstance.getStartPosition(), methodInstance.toString()));
+
+        for(int i = 0; i < argumentList.size(); i++) {
+            if(argumentList.get(i) instanceof SimpleName) {
+                edgeList = processSimpleName((SimpleName) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof MethodInvocation) {
+                edgeList = processMethodInvocation((MethodInvocation) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof ArrayAccess) {
+                edgeList = processArrayAccess((ArrayAccess) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof InfixExpression) {
+                edgeList = processInfixExpression((InfixExpression) argumentList.get(i), edgeList);
+            } else if(argumentList.get(i) instanceof ClassInstanceCreation) {
+                edgeList = processClassInstanceCreation((ClassInstanceCreation) argumentList.get(i), edgeList);
+            }
+        }
+
+        return edgeList;
+    }
+
+    public List<Integer> processArrayAccess(ArrayAccess node, List<Integer> edgeList) { // array 변수에 대한 부분 + index 변수에 대한 부분
+        Expression arrayVariable = node.getArray();
+        Expression indexVariable = node.getIndex();
+
+        edgeList.add(findTargetNode(arrayVariable.getStartPosition(), arrayVariable.toString()));
+
+        if(indexVariable instanceof SimpleName) {
+            edgeList = processSimpleName((SimpleName) indexVariable, edgeList);
+        } else if(indexVariable instanceof ArrayAccess) {
+            edgeList = processArrayAccess((ArrayAccess) indexVariable, edgeList);
+        } else if(indexVariable instanceof InfixExpression) {
+            edgeList = processInfixExpression((InfixExpression) indexVariable, edgeList);
+        } else if(indexVariable instanceof MethodInvocation) {
+            edgeList = processMethodInvocation((MethodInvocation) indexVariable, edgeList);
+        } else if(indexVariable instanceof ClassInstanceCreation) {
+            edgeList = processClassInstanceCreation((ClassInstanceCreation) indexVariable, edgeList);
+        }
 
         return edgeList;
     }
 
 
+    public DataDependencyGenerator(List<jCCNode> jCCNodeList) {
+        this.jCCNodeList = jCCNodeList;
+    }
+
+    public List<jCCNode> getjCCNodeList() {
+        return jCCNodeList;
+    }
+
+    public void setjCCNodeList(List<jCCNode> jCCNodeList) {
+        this.jCCNodeList = jCCNodeList;
+    }
 }

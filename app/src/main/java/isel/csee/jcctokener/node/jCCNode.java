@@ -3,6 +3,7 @@ package isel.csee.jcctokener.node;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class jCCNode {
@@ -15,7 +16,7 @@ public class jCCNode {
     private int semanticType;
     private int[] structureVector;
     private int[] semanticVector = new int[25];
-    private List<Integer> IndexListOfEdges;
+    private List<Integer> IndexListOfEdges = new ArrayList<>();
 
 
 
