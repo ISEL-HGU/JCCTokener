@@ -1,10 +1,13 @@
 package isel.csee.jcctokener.generators;
 
 import isel.csee.jcctokener.node.jCCNode;
+import isel.csee.jcctokener.types.NodeType;
 import org.checkerframework.checker.units.qual.A;
 import org.eclipse.jdt.core.dom.*;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -14,7 +17,8 @@ import java.util.List;
 이 클래스가 수행해야 되는 업무는 DataDependency 측면에서 관련된 값들을 묶어주는 리스트를 각 노드마다 생성해내는 것 + 각 노드 별로 Assignment, VariableDeclarationFragment node가 아닐 경우에는 이전의 값을 업데이트 해주는 방식
 전체에 걸쳐서 업데이트를 해주고, Assignment node 방문 시에, 다시 처음부터 끝까지 업데이트 해주는 방식으로 사용하면 될 듯
 
-Operator / MethodInvocation 이 2가지 case에 대해서도 edge를 만들어 줘야 함
+Operator / MethodInvocation 이 2가지 case에 대해서도 edge를 만들어 줘야 함 -> Method 이름에 대해서
+Operator는 structureVector도 비교해서 동일한지 여부 파악해야함 -> InfixExpression 내부에서 여러 개의 Operator가 존재할 경우에, 같은 Position을 가지게 되는데,
  */
 
 public class DataDependencyGenerator extends ASTVisitor {
@@ -76,6 +80,79 @@ public class DataDependencyGenerator extends ASTVisitor {
         return super.visit(node);
     }
 
+    @Override // operator
+    public boolean visit(InfixExpression node) {
+        Expression leftOperand = node.getLeftOperand();
+        Expression rightOperand = node.getRightOperand();
+        Expression tempLeftOperand = null;
+        String operator = node.getOperator().toString();
+        int operatorPosition = node.getStartPosition();
+
+        ASTNode tempNode = node;
+        int[] structureVector = new int[25];
+
+        while(tempNode != null) {
+            structureVector = NodeType.searchType(tempNode, structureVector);
+
+            tempNode = tempNode.getParent();
+        }
+        int leftIndex;
+
+        if(leftOperand instanceof InfixExpression) {
+            tempLeftOperand = ((InfixExpression) leftOperand).getRightOperand();
+            leftIndex = findTargetNode(tempLeftOperand.getStartPosition(), tempLeftOperand.toString());
+        } else {
+            leftIndex = findTargetNode(leftOperand.getStartPosition(), leftOperand.toString());
+        }
+
+        int rightIndex = findTargetNode(rightOperand.getStartPosition(), rightOperand.toString());
+        int operatorIndex = findTargetNodeWithStructureVector(operatorPosition, operator, structureVector);
+
+        List<Integer> edgeList = new ArrayList<>();
+
+        edgeList.add(leftIndex);
+        edgeList.add(rightIndex);
+
+        jCCNodeList.get(operatorIndex).setIndexListOfEdges(edgeList);
+
+
+
+        return super.visit(node);
+    }
+
+    @Override
+    public boolean visit(MethodInvocation node) {
+        Expression methodName = node.getName();
+        Expression methodInstance = node.getExpression();
+        List<Expression> argumentList = node.arguments(); // argument
+
+        ASTNode tempNode = node;
+        int[] structureVector = new int[25];
+
+        while(tempNode != null) {
+            structureVector = NodeType.searchType(tempNode, structureVector);
+
+            tempNode = tempNode.getParent();
+        }
+
+        int methodIndex = findTargetNode(methodName.getStartPosition(), methodName.toString());
+
+        List<Integer> edgeList = new ArrayList<>();
+
+        edgeList.add(findTargetNode(methodInstance.getStartPosition(), methodInstance.toString()));
+        for(int i = 0; i < argumentList.size(); i++) {
+            edgeList.add(findTargetNodeWithStructureVector(argumentList.get(i).getStartPosition(),
+                    argumentList.get(i).toString(), structureVector));
+        }
+
+        jCCNodeList.get(methodIndex).setIndexListOfEdges(edgeList);
+
+
+
+
+        return super.visit(node);
+    }
+
     public void updateRelatedNodeList(jCCNode node, int targetIndex) { // 해당 노드 다음에 나오는 같은 이름의 노드들을 다 업데이트 해주는 노드
 
         for(int i = targetIndex; i < jCCNodeList.size(); i++) {
@@ -102,6 +179,23 @@ public class DataDependencyGenerator extends ASTVisitor {
         return index;
     }
 
+    public int findTargetNodeWithStructureVector(int startPosition, String variableName, int[] structureVector) {
+        int index = 0;
+
+        for(int i = 0; i < jCCNodeList.size(); i++) {
+            if(jCCNodeList.get(i).getStartPosition() == startPosition) {
+                if(jCCNodeList.get(i).getVariableName().equals(variableName)) {
+                    if(Arrays.equals(jCCNodeList.get(i).getStructureVector(), structureVector)) {
+                        index = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return index;
+    }
+
     public List<Integer> processInfixExpression(InfixExpression node, List<Integer> edgeList) {
 
         if(node.getRightOperand() instanceof SimpleName) {
@@ -123,6 +217,21 @@ public class DataDependencyGenerator extends ASTVisitor {
         int simpleNameIndex = findTargetNode(simpleNamePosition, node.toString());
 
         edgeList.add(simpleNameIndex);
+
+        return edgeList;
+    }
+
+    public List<Integer> processMethodInvocation(MethodInvocation node, List<Integer> edgeList) {
+
+
+
+
+
+        return edgeList;
+    }
+
+    public List<Integer> processArrayAccess(ArrayAccess node, List<Integer> edgeList) {
+
 
         return edgeList;
     }

@@ -47,6 +47,20 @@ public class StructureVectorGenerator extends ASTVisitor {
     private List<int[]> structureVectorList = new ArrayList<>();
     private List<jCCNode> jCCNodeList = new ArrayList<>();
 
+    @Override
+    public boolean visit(MethodInvocation node) { // getExpression이 method의 instance / getName이 method의 이름
+//        System.out.println("Expression: " + node.getExpression());
+//        System.out.println("Name: " + node.getName());
+//
+//        List<Expression> list = node.arguments();
+//
+//        for(int i = 0; i < list.size(); i++) {
+//            System.out.println("Here~~~~" + list.get(i).toString() + "   Position: " + list.get(i).getStartPosition());
+//        }
+
+        return super.visit(node);
+    }
+
 
     @Override
     public boolean visit(SimpleName node) {
@@ -124,8 +138,6 @@ public class StructureVectorGenerator extends ASTVisitor {
     public boolean visit(InfixExpression node) {
         int[] structureVector = new int[25];
         jCCNode jCCNode = new jCCNode();
-        Expression leftExpression = node.getLeftOperand();
-        Expression expression = node.getRightOperand();
 
         ASTNode tempNode = node;
 
