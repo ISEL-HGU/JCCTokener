@@ -4,7 +4,7 @@ import isel.csee.jcctokener.generators.DataDependencyGenerator;
 import isel.csee.jcctokener.generators.StructureVectorGenerator;
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.generators.TokenGenerator;
-import isel.csee.jcctokener.generators.VariableTokenGenerator;
+import isel.csee.jcctokener.generators.SemanticVectorGenerator;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -18,7 +18,7 @@ public class jCCParser {
     private ASTParser parser;
     private List<jCCNode> jCCNodeList;
     private StructureVectorGenerator structureVectorGenerator= new StructureVectorGenerator();
-    private VariableTokenGenerator variableTokenGenerator;
+    private SemanticVectorGenerator semanticVectorGenerator;
     private DataDependencyGenerator dataDependencyGenerator;
     private TokenGenerator tokenGenerator;
 
@@ -73,31 +73,17 @@ public class jCCParser {
 
         for(int i = 0; i < jCCNodeList.size(); i++) {
             System.out.println(jCCNodeList.get(i).getVariableName());
+            if(jCCNodeList.get(i).getSemanticType() == 1) {
+                System.out.println("node type : " + "type 1");
+            } else if(jCCNodeList.get(i).getSemanticType() == 2) {
+                System.out.println("node type : " + "type 2");
+            } else if(jCCNodeList.get(i).getSemanticType() == 3){
+                System.out.println("node type : " + "type 3");
+            }
             for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
                 System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
             }
         }
-
-
-
-
-
-
-
-//        variableTokenGenerator = new VariableTokenGenerator(structureVectorGenerator.getjCCNodeList());
-
-//        compilationUnit.accept(variableTokenGenerator);
-//        for(jCCNode tempNode : variableTokenGenerator.getjCCNodeList()) {
-//            System.out.println("variable: " + tempNode.getVariableName());
-//            for(int i : tempNode.getSemanticVector()) {
-//                System.out.print(i + " ");
-//            }
-//            System.out.println("");
-//        }
-
-
-
-
 
         return parser;
     }

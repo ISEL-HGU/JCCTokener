@@ -37,27 +37,17 @@ Data Dependency는 VariableDeclarationFragment, Assignment node에서 바뀔 수
 -> 모든 Structure Vector를 만들어주고, 그 다음 semanticVector를 만들어주기 전에 수행해야 할 듯
 
 !!!! 각 노드에 해당하는 변수의 position을 node에 추가해줘서 구분할 수 있겠다 !!!!
+
+Simple Name 노드로 처음 파싱을 진행하기 때문에 흐음 .. SimpleName 노드로는 semantic type 1,2,3가 구분이 어려울 것 같기는 한데
+    -> 파일에 대한 유사도 계산 부분에서 사용해야 되는데 type을 구분하지 않으려면 파싱을 진행하면서 나눠야 하나?
+    -> SimpleName에서 구분하는 건 무리인 거 같고 차라리 dependency 계산 해주면서 나눠야겠다
+    -> 어차피 dependency 부분에서 아무 dependency가 없는 값들은 semantic vector가 싹 0일 것이고... 그렇게 되면 실제 계산에서 사용하지도 않을 것이기 때문에
  */
 
 
 public class StructureVectorGenerator extends ASTVisitor {
-    private final int semanticType1 = 1;
-    private final int semanticType2 = 2;
-    private final int semanticType3 = 3;
     private List<int[]> structureVectorList = new ArrayList<>();
     private List<jCCNode> jCCNodeList = new ArrayList<>();
-
-//    @Override
-//    public boolean visit(ArrayAccess node) { // getArray는 array의 이름, getIndex는 array에서 사용된 index 변수 이름
-//        System.out.println("one: " + node.getArray());
-//        System.out.println("2: " + node.getIndex() + node.getClass());
-//
-//        Expression temp = node.getIndex();
-//
-//        System.out.println(temp.getClass());
-//
-//        return super.visit(node);
-//    }
 
     @Override
     public boolean visit(MethodInvocation node) { // expression이 instance name
@@ -120,11 +110,7 @@ public class StructureVectorGenerator extends ASTVisitor {
         }
         tempNode = node;
 
-        if(tempNode.getParent() instanceof MethodInvocation) {
-            jCCNode.setSemanticType(semanticType3);
-        } else {
-            jCCNode.setSemanticType(semanticType1);
-        }
+
         tempNode = node;
 
         if(tempNode.getParent() instanceof Assignment) {
@@ -137,7 +123,6 @@ public class StructureVectorGenerator extends ASTVisitor {
             jCCNode.setUpdatePossibility(true);
         }
         jCCNode.setStartPosition(node.getStartPosition());
-
         jCCNodeList.add(jCCNode);
         structureVectorList.add(structureVector);
 
@@ -147,7 +132,7 @@ public class StructureVectorGenerator extends ASTVisitor {
     }
 
     @Override
-    public boolean visit(InfixExpression node) {
+    public boolean visit(InfixExpression node) { // operator의 startPosition 추출 안됨
         int[] structureVector = new int[25];
         jCCNode jCCNode = new jCCNode();
 
@@ -167,10 +152,8 @@ public class StructureVectorGenerator extends ASTVisitor {
             tempNode = tempNode.getParent();
         }
         jCCNode.setNodeType(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName());
-
         jCCNode.setStructureVector(structureVector);
         jCCNode.setVariableName(node.getOperator().toString()); // InfixExpression node에서 operator 추출
-        jCCNode.setSemanticType(semanticType2);
         jCCNode.setStartPosition(node.getStartPosition());
 
         jCCNodeList.add(jCCNode);
@@ -208,9 +191,7 @@ public class StructureVectorGenerator extends ASTVisitor {
         jCCNode.setStructureVector(structureVector);
         jCCNode.setVariableName(node.getOperator().toString());
         jCCNode.setNodeType(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName());
-        jCCNode.setSemanticType(semanticType2);
         jCCNode.setStartPosition(node.getStartPosition());
-
         jCCNodeList.add(jCCNode);
         structureVectorList.add(structureVector);
         return super.visit(node);

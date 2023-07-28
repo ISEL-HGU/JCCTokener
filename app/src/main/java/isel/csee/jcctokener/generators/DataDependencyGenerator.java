@@ -2,6 +2,7 @@ package isel.csee.jcctokener.generators;
 
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.types.NodeType;
+import org.checkerframework.checker.units.qual.A;
 import org.eclipse.jdt.core.dom.*;
 
 import java.sql.Array;
@@ -22,11 +23,20 @@ Operator는 structureVector도 비교해서 동일한지 여부 파악해야함 
 getArray는 array의 이름, getIndex는 array에서 사용된 index 변수 이름
 
 Case의 분리는 5가지로 -> 1. Number 2. SimpleName 3. InfixExpression 4. ArrayAccess 5. MethodInvocation 6. ClassInstanceCreation
+
+노드의 semantic type을 어떻게 정해줄 것인가?
+    -> update 부분에도 넣어줘서 type을 다 update 해줘야 함
+
+SimpleName node를 가지고 오기 때문에 Assignment node에서 operator도 싹 다 가지고 와지는데, 이 operator들도 semantic vector를 만들어 줘야 하는지?
+
+그리고 좌변에 들어갈 수 있는 값에는 어떤 것들이 있지? -> 1. SimpleName 2. ArrayAccess 3.
  */
 
 public class DataDependencyGenerator extends ASTVisitor {
     private List<jCCNode> jCCNodeList;
-
+    private final int type1 = 1;
+    private final int type2 = 2;
+    private final int type3 = 3;
 
     @Override
     public boolean visit(VariableDeclarationFragment node) {
@@ -49,8 +59,8 @@ public class DataDependencyGenerator extends ASTVisitor {
         }
 
         jCCNodeList.get(targetIndex).setIndexListOfEdges(edgeList);
-        updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex);
-
+        semanticTypeCreator(variableName, startPosition, type1);
+        updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex, type1);
 
         return super.visit(node);
     }
@@ -61,20 +71,45 @@ public class DataDependencyGenerator extends ASTVisitor {
         String variableName = node.getLeftHandSide().toString();
 
         int targetIndex = findTargetNode(startPosition, variableName); // 왼쪽에 해당하는 변수의 index를 가져온다
-        List<Integer> edgeList = new ArrayList<>();
+        List<Integer> variableEdgeList = new ArrayList<>();
 
         if(node.getRightHandSide() instanceof InfixExpression) {
-            edgeList = processInfixExpression((InfixExpression) node.getRightHandSide(), edgeList);
+            variableEdgeList = processInfixExpression((InfixExpression) node.getRightHandSide(), variableEdgeList);
         } else if(node.getRightHandSide() instanceof SimpleName) {
-            edgeList = processSimpleName((SimpleName) node.getRightHandSide(), edgeList);
+            variableEdgeList = processSimpleName((SimpleName) node.getRightHandSide(), variableEdgeList);
         } else if(node.getRightHandSide() instanceof MethodInvocation) {
-            edgeList = processMethodInvocation((MethodInvocation) node.getRightHandSide(), edgeList);
+            variableEdgeList = processMethodInvocation((MethodInvocation) node.getRightHandSide(), variableEdgeList);
         } else if(node.getRightHandSide() instanceof ArrayAccess) {
-            edgeList = processArrayAccess((ArrayAccess) node.getRightHandSide(), edgeList);
+            variableEdgeList = processArrayAccess((ArrayAccess) node.getRightHandSide(), variableEdgeList);
         }
 
-        jCCNodeList.get(targetIndex).setIndexListOfEdges(edgeList);
-        updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex);
+        jCCNodeList.get(targetIndex).setIndexListOfEdges(variableEdgeList);
+        semanticTypeCreator(variableName, startPosition, type1);
+        updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex, type1);
+
+        String operatorName = node.getOperator().toString();
+        int operatorPosition = node.getStartPosition();
+        List<Integer> operatorEdgeList = new ArrayList<>();
+        targetIndex = findTargetNode(operatorPosition, operatorName);
+
+        if(node.getLeftHandSide() instanceof SimpleName) {
+            operatorEdgeList = processSimpleName((SimpleName) node.getLeftHandSide(), operatorEdgeList);
+        } else if(node.getLeftHandSide() instanceof ArrayAccess) {
+            operatorEdgeList = processArrayAccess((ArrayAccess) node.getLeftHandSide(), operatorEdgeList);
+        }
+
+        if(node.getRightHandSide() instanceof InfixExpression) {
+            operatorEdgeList = processInfixExpression((InfixExpression) node.getRightHandSide(), operatorEdgeList);
+        } else if(node.getRightHandSide() instanceof SimpleName) {
+            operatorEdgeList = processSimpleName((SimpleName) node.getRightHandSide(), operatorEdgeList);
+        } else if(node.getRightHandSide() instanceof MethodInvocation) {
+            operatorEdgeList = processMethodInvocation((MethodInvocation) node.getRightHandSide(), operatorEdgeList);
+        } else if(node.getRightHandSide() instanceof ArrayAccess) {
+            operatorEdgeList = processArrayAccess((ArrayAccess) node.getRightHandSide(), operatorEdgeList);
+        }
+
+        jCCNodeList.get(targetIndex).setIndexListOfEdges(operatorEdgeList);
+        semanticTypeCreator(operatorName, operatorPosition, type2);
 
         return super.visit(node);
     }
@@ -115,7 +150,7 @@ public class DataDependencyGenerator extends ASTVisitor {
         } else if(rightOperand instanceof ArrayAccess) {
             edgeList = processArrayAccess((ArrayAccess) rightOperand, edgeList);
         }
-
+        semanticTypeCreator(operator, operatorPosition, type2);
         jCCNodeList.get(findTargetNodeWithStructureVector(operatorPosition, operator, structureVector)).setIndexListOfEdges(edgeList);
 
 
@@ -140,6 +175,7 @@ public class DataDependencyGenerator extends ASTVisitor {
         }
 
         edgeList.add(findTargetNode(methodInstance.getStartPosition(), methodInstance.toString())); // method를 호출한 instance에 대한 부분 추가
+
         for(int i = 0; i < argumentList.size(); i++) {
             if(argumentList.get(i) instanceof InfixExpression) {
                 edgeList = processInfixExpression((InfixExpression) argumentList.get(i), edgeList);
@@ -152,16 +188,18 @@ public class DataDependencyGenerator extends ASTVisitor {
             }
         }
 
+        semanticTypeCreator(methodName.toString(), methodName.getStartPosition(), type3);
         jCCNodeList.get(findTargetNode(methodName.getStartPosition(), methodName.toString())).setIndexListOfEdges(edgeList);
 
         return super.visit(node);
     }
 
-    public void updateRelatedNodeList(jCCNode node, int targetIndex) { // 해당 노드 다음에 나오는 같은 이름의 노드들을 다 업데이트 해주는 노드
-        for(int i = targetIndex; i < jCCNodeList.size(); i++) {
+    public void updateRelatedNodeList(jCCNode node, int targetIndex, int semanticType) { // 해당 노드 다음에 나오는 같은 이름의 노드들을 다 업데이트 해주는 노드
+        for(int i = targetIndex + 1; i < jCCNodeList.size(); i++) {
             if(jCCNodeList.get(i).getVariableName().equals(node.getVariableName())) { // 이름이 동일
-                if(jCCNodeList.get(i).getStartPosition() > node.getStartPosition()) { // 해당 노드 이후에 나오는 같은 이름의 노드
+                if(jCCNodeList.get(i).getMethodName().equals(node.getMethodName())) {
                     jCCNodeList.get(i).setIndexListOfEdges(node.getIndexListOfEdges());
+                    jCCNodeList.get(i).setSemanticType(semanticType);
                 }
             }
         }
@@ -297,6 +335,16 @@ public class DataDependencyGenerator extends ASTVisitor {
         }
 
         return edgeList;
+    }
+
+    public void semanticTypeCreator(String variableName, int startPosition, int semanticType) {
+        for(int i = 0; i < jCCNodeList.size(); i++) {
+            if(jCCNodeList.get(i).getVariableName().equals(variableName)) {
+                if(jCCNodeList.get(i).getStartPosition() == startPosition) {
+                    jCCNodeList.get(i).setSemanticType(semanticType);
+                }
+            }
+        }
     }
 
 
