@@ -10,7 +10,11 @@
       <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/DataDependencyGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/DataDependencyGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/MethodTokenGenerator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/OperatorTokenGenerator.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/SemanticVectorGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/SemanticVectorGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/StructureVectorGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/StructureVectorGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,7 +136,8 @@
       <workItem from="1689643048466" duration="4621000" />
       <workItem from="1689650424128" duration="23767000" />
       <workItem from="1689732184052" duration="2594000" />
-      <workItem from="1689736563005" duration="130425000" />
+      <workItem from="1689736563005" duration="137144000" />
+      <workItem from="1690704908103" duration="2077000" />
     </task>
     <servers />
   </component>

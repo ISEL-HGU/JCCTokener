@@ -42,6 +42,8 @@ Simple Name 노드로 처음 파싱을 진행하기 때문에 흐음 .. SimpleNa
     -> 파일에 대한 유사도 계산 부분에서 사용해야 되는데 type을 구분하지 않으려면 파싱을 진행하면서 나눠야 하나?
     -> SimpleName에서 구분하는 건 무리인 거 같고 차라리 dependency 계산 해주면서 나눠야겠다
     -> 어차피 dependency 부분에서 아무 dependency가 없는 값들은 semantic vector가 싹 0일 것이고... 그렇게 되면 실제 계산에서 사용하지도 않을 것이기 때문에
+
+InfixExpression node에서 operator가 동일한 경우에 재귀적으로 값을 가져오지 못하네
  */
 
 
@@ -51,15 +53,6 @@ public class StructureVectorGenerator extends ASTVisitor {
 
     @Override
     public boolean visit(MethodInvocation node) { // expression이 instance name
-        System.out.println("name : " + node.getName());
-        System.out.println("expression : " + node.getExpression());
-
-        List<Expression> temp = node.arguments();
-
-        for(int i = 0; i < temp.size(); i++) {
-            System.out.println("position: " + temp.get(i).getStartPosition() + " name : " + temp.get(i).toString());
-        }
-
         return super.visit(node);
     }
 
@@ -132,9 +125,12 @@ public class StructureVectorGenerator extends ASTVisitor {
     }
 
     @Override
-    public boolean visit(InfixExpression node) { // operator의 startPosition 추출 안됨
+    public boolean visit(InfixExpression node) {
         int[] structureVector = new int[25];
         jCCNode jCCNode = new jCCNode();
+
+        System.out.println("left: " + node.getLeftOperand());
+        System.out.println("right: " + node.getRightOperand());
 
         ASTNode tempNode = node;
 
@@ -170,10 +166,6 @@ public class StructureVectorGenerator extends ASTVisitor {
 
         ASTNode tempNode = node;
 
-        System.out.println(node);
-        System.out.println(node.getLeftHandSide());
-        System.out.println(node.getRightHandSide().getStartPosition());
-
         while(tempNode != null) {
             structureVector = NodeType.searchType(tempNode, structureVector);
 
@@ -199,9 +191,6 @@ public class StructureVectorGenerator extends ASTVisitor {
 
     @Override
     public boolean visit(VariableDeclarationFragment node) {
-        if(node.getInitializer() instanceof ClassInstanceCreation) {
-            System.out.println("TEST : " + ((ClassInstanceCreation) node.getInitializer()).getType());
-        }
         return super.visit(node);
     }
 

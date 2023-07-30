@@ -30,6 +30,16 @@ Case의 분리는 5가지로 -> 1. Number 2. SimpleName 3. InfixExpression 4. Ar
 SimpleName node를 가지고 오기 때문에 Assignment node에서 operator도 싹 다 가지고 와지는데, 이 operator들도 semantic vector를 만들어 줘야 하는지?
 
 그리고 좌변에 들어갈 수 있는 값에는 어떤 것들이 있지? -> 1. SimpleName 2. ArrayAccess 3.
+
+Expression의 형태로 전달 해줘야지 깨지지 않고 제대로 전달이 된다
+
+이거 왜 +만 있으면 못 가지고 오고 -가 존재하면 가지고 와지는 거지? / 같은 연산자가 여러개 있는 case는 가지고 오지를 못하네
+처음에 파싱해서 노드를 추가해줄 때 하나만 추가를 하게 해놔서 그렇게 되는 듯
+
+근데 처음에 파싱할 때 operator에서 양 옆 value를 구분할 수가 없을텐데 .. getStartPosition을 operator 기준에서 해줄 수가 있으려나
+
+아 그럼 처음에 operator의 경우에는 양 옆 value를 추가해줄 수 있나?
+
  */
 
 public class DataDependencyGenerator extends ASTVisitor {
@@ -87,25 +97,34 @@ public class DataDependencyGenerator extends ASTVisitor {
         semanticTypeCreator(variableName, startPosition, type1);
         updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex, type1);
 
+        // operator에 대한 부분 가져오는 과정
         String operatorName = node.getOperator().toString();
         int operatorPosition = node.getStartPosition();
         List<Integer> operatorEdgeList = new ArrayList<>();
         targetIndex = findTargetNode(operatorPosition, operatorName);
+        Expression operatorLeftHand = node.getLeftHandSide();
+        Expression operatorRightHand = node.getRightHandSide();
+        System.out.println("left: " + operatorLeftHand);
+        System.out.println("right: " + operatorRightHand);
 
-        if(node.getLeftHandSide() instanceof SimpleName) {
-            operatorEdgeList = processSimpleName((SimpleName) node.getLeftHandSide(), operatorEdgeList);
-        } else if(node.getLeftHandSide() instanceof ArrayAccess) {
-            operatorEdgeList = processArrayAccess((ArrayAccess) node.getLeftHandSide(), operatorEdgeList);
+        if(operatorRightHand instanceof InfixExpression) {
+            System.out.println("Infix!!!!!!");
         }
 
-        if(node.getRightHandSide() instanceof InfixExpression) {
-            operatorEdgeList = processInfixExpression((InfixExpression) node.getRightHandSide(), operatorEdgeList);
-        } else if(node.getRightHandSide() instanceof SimpleName) {
-            operatorEdgeList = processSimpleName((SimpleName) node.getRightHandSide(), operatorEdgeList);
-        } else if(node.getRightHandSide() instanceof MethodInvocation) {
-            operatorEdgeList = processMethodInvocation((MethodInvocation) node.getRightHandSide(), operatorEdgeList);
-        } else if(node.getRightHandSide() instanceof ArrayAccess) {
-            operatorEdgeList = processArrayAccess((ArrayAccess) node.getRightHandSide(), operatorEdgeList);
+        if(operatorLeftHand instanceof SimpleName) {
+            operatorEdgeList = processSimpleName((SimpleName) operatorLeftHand, operatorEdgeList);
+        } else if(operatorLeftHand instanceof ArrayAccess) {
+            operatorEdgeList = processArrayAccess((ArrayAccess) operatorLeftHand, operatorEdgeList);
+        }
+
+        if(operatorRightHand instanceof InfixExpression) {
+            operatorEdgeList = processInfixExpression((InfixExpression) operatorRightHand, operatorEdgeList);
+        } else if(operatorRightHand instanceof SimpleName) {
+            operatorEdgeList = processSimpleName((SimpleName) operatorRightHand, operatorEdgeList);
+        } else if(operatorRightHand instanceof MethodInvocation) {
+            operatorEdgeList = processMethodInvocation((MethodInvocation) operatorRightHand, operatorEdgeList);
+        } else if(operatorRightHand instanceof ArrayAccess) {
+            operatorEdgeList = processArrayAccess((ArrayAccess) operatorRightHand, operatorEdgeList);
         }
 
         jCCNodeList.get(targetIndex).setIndexListOfEdges(operatorEdgeList);
@@ -238,6 +257,11 @@ public class DataDependencyGenerator extends ASTVisitor {
     }
 
     public List<Integer> processInfixExpression(InfixExpression node, List<Integer> edgeList) { // 좌변과 우변의 값이 SimpleName node가 아닐 수도 있기 때문에 Case의 분리가 필요
+        System.out.println("node: " + node);
+        System.out.println("temp : " + node.getLeftOperand());
+        Expression temp = node.getRightOperand();
+        System.out.println(temp);
+
 
         if(node.getRightOperand() instanceof SimpleName) {
             edgeList = processSimpleName((SimpleName) node.getRightOperand(), edgeList);
@@ -247,10 +271,13 @@ public class DataDependencyGenerator extends ASTVisitor {
             edgeList = processMethodInvocation((MethodInvocation) node.getRightOperand(), edgeList);
         } else if(node.getRightOperand() instanceof ClassInstanceCreation) {
             edgeList = processClassInstanceCreation((ClassInstanceCreation) node.getLeftOperand(), edgeList);
+        } if(node.getRightOperand() instanceof InfixExpression) {
+            edgeList = processInfixExpression((InfixExpression) node.getRightOperand(), edgeList);
         }
 
         if(node.getLeftOperand() instanceof InfixExpression) {
             edgeList = processInfixExpression((InfixExpression) node.getLeftOperand(), edgeList);
+            System.out.println(node.getLeftOperand());
         } else if(node.getLeftOperand() instanceof SimpleName) {
             edgeList = processSimpleName((SimpleName) node.getLeftOperand(), edgeList);
         } else if(node.getLeftOperand() instanceof ArrayAccess) {
