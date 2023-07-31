@@ -25,7 +25,7 @@ public class jCCParser {
     public ASTParser parserCodes() {
         char[] contents = sourceCodes.toCharArray();
 
-        parser = ASTParser.newParser(AST.JLS15); // JLS15는 java source code version 의미
+        parser = ASTParser.newParser(AST.JLS_Latest); // JLS15는 java source code version 의미
         parser.setSource(contents); // setSource - 파싱 할 소스코드를 정해주는 method
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         // setKind method - ASTParser 파싱 타입을 정해주는 method
@@ -64,7 +64,7 @@ public class jCCParser {
             }
             System.out.println("");
         }
-        // test
+
 
 
         dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);

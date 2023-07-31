@@ -107,9 +107,6 @@ public class DataDependencyGenerator extends ASTVisitor {
         System.out.println("left: " + operatorLeftHand);
         System.out.println("right: " + operatorRightHand);
 
-        if(operatorRightHand instanceof InfixExpression) {
-            System.out.println("Infix!!!!!!");
-        }
 
         if(operatorLeftHand instanceof SimpleName) {
             operatorEdgeList = processSimpleName((SimpleName) operatorLeftHand, operatorEdgeList);
@@ -143,7 +140,7 @@ public class DataDependencyGenerator extends ASTVisitor {
         ASTNode tempNode = node;
         int[] structureVector = new int[25];
         int leftIndex;
-
+// 여기서 left / right 케이스 분리 조금 더 생각
         while(tempNode != null) {
             structureVector = NodeType.searchType(tempNode, structureVector);
             tempNode = tempNode.getParent();

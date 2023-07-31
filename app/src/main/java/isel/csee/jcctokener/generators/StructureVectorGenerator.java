@@ -43,7 +43,20 @@ Simple Name 노드로 처음 파싱을 진행하기 때문에 흐음 .. SimpleNa
     -> SimpleName에서 구분하는 건 무리인 거 같고 차라리 dependency 계산 해주면서 나눠야겠다
     -> 어차피 dependency 부분에서 아무 dependency가 없는 값들은 semantic vector가 싹 0일 것이고... 그렇게 되면 실제 계산에서 사용하지도 않을 것이기 때문에
 
-InfixExpression node에서 operator가 동일한 경우에 재귀적으로 값을 가져오지 못하네
+InfixExpression node에서 operator가 교차로 등장하는 경우는 InfixExpression node로 분할이 되기 때문에 자동적으로 모든 값들을 재귀적으로 가지고 올 수 있는데
+그렇지 않고 하나의 Operator만 등장하는 경우에는 재귀적으로 모든 값들을 가지고 올 수 없음
+
+따라서 이 때는 반복문을 사용해서 값을 가지고 와야 하는데, operator는 어떻게 가지고 올 지 생각
+일단 left / right가 InfixExpression node인지 먼저 확인
+extendedOperands() method 사용해서 모든 operand를 가지고 오고 left / right 모두가 InfixExpression node가 아닐 경우에는 operator 개수와 operand 개수를 비교
+여기서 차이가 날 경우에는 하나의 InfixExpression node에 여러 개의 같은 operator가 존재한다고 생각
+
+-> 여기서 해줘야 하는 것은 이 InfixExpression node가 하나의 operator를 여러 번 사용하는 노드인지 아닌지 여부를 파악해줘야 함
+1. 2개의 operand, 1개의 operator 2. 여러개의 operand, 1종류의 operator 3. 여러개의 operand, 여러 종류의 operator
+
+길이와 상관 없이 InfixExpression node에 operator가 한 가지 종류만 있으면 문제가 발생
+-> 즉 a + b + c + d + e - f 라는 식이 있다면 left 부분에 a + b + c + d + e / right 부분에 f 이렇게 식이 나뉘고 좌변이 다시 나뉠 때 a, b 이 두 가지 변수만 가지고 오게 된다
+조금 더 생각 정리 필요
  */
 
 
@@ -129,8 +142,14 @@ public class StructureVectorGenerator extends ASTVisitor {
         int[] structureVector = new int[25];
         jCCNode jCCNode = new jCCNode();
 
+
+
         System.out.println("left: " + node.getLeftOperand());
         System.out.println("right: " + node.getRightOperand());
+        List<Expression> nodeList = node.extendedOperands();
+        System.out.println(node.getOperator());
+        System.out.println(nodeList.size());
+
 
         ASTNode tempNode = node;
 
