@@ -57,15 +57,18 @@ public class jCCParser {
 
 
         for(jCCNode tempNode : jCCNodeList) {
-            System.out.println("variable: " + tempNode.getVariableName() + " Position: " + tempNode.getStartPosition() + " Type: " +
-                    tempNode.getNodeType() + " parent: " + tempNode.getNode());
-
-            System.out.println("");
-            for(int i : tempNode.getStructureVector()) {
-                System.out.print(i + " ");
+            if(tempNode.getNodeType().equals("InfixExpression")) {
+                System.out.println("variable: " + tempNode.getVariableName() + " Position: " + tempNode.getStartPosition() + " Type: " +
+                        tempNode.getNodeType() + " parent: " + tempNode.getNode());
             }
-            System.out.println("");
-            System.out.println("");
+
+//            System.out.println("");
+//            for(int i : tempNode.getStructureVector()) {
+//                System.out.print(i + " ");
+//            }
+//            System.out.println("");
+//            System.out.println("");
+//        }
         }
 
 
@@ -74,20 +77,20 @@ public class jCCParser {
 
 //        compilationUnit.accept(dataDependencyGenerator);
 //        jCCNodeList = dataDependencyGenerator.getjCCNodeList();
-
-        for(int i = 0; i < jCCNodeList.size(); i++) {
-            System.out.println(jCCNodeList.get(i).getVariableName());
-            if(jCCNodeList.get(i).getSemanticType() == 1) {
-                System.out.println("node type : " + "type 1");
-            } else if(jCCNodeList.get(i).getSemanticType() == 2) {
-                System.out.println("node type : " + "type 2");
-            } else if(jCCNodeList.get(i).getSemanticType() == 3){
-                System.out.println("node type : " + "type 3");
-            }
-            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
-            }
-        }
+//
+//        for(int i = 0; i < jCCNodeList.size(); i++) {
+//            System.out.println(jCCNodeList.get(i).getVariableName());
+//            if(jCCNodeList.get(i).getSemanticType() == 1) {
+//                System.out.println("node type : " + "type 1");
+//            } else if(jCCNodeList.get(i).getSemanticType() == 2) {
+//                System.out.println("node type : " + "type 2");
+//            } else if(jCCNodeList.get(i).getSemanticType() == 3){
+//                System.out.println("node type : " + "type 3");
+//            }
+//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+//                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
+//            }
+//        }
 
         return parser;
     }
