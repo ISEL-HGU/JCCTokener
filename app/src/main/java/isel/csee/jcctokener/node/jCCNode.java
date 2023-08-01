@@ -1,6 +1,5 @@
 package isel.csee.jcctokener.node;
 
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.util.ArrayList;
@@ -11,6 +10,7 @@ public class jCCNode {
     private String className;
     private String methodName;
     private String variableName;
+    private ASTNode node;
     private boolean updatePossibility;
     private int startPosition;
     private int semanticType;
@@ -109,5 +109,13 @@ public class jCCNode {
 
     public void setIndexListOfEdges(List<Integer> indexListOfEdges) {
         IndexListOfEdges = indexListOfEdges;
+    }
+
+    public ASTNode getNode() {
+        return node;
+    }
+
+    public void setNode(ASTNode node) {
+        this.node = node;
     }
 }

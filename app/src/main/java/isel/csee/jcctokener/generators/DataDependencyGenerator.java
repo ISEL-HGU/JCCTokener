@@ -40,174 +40,45 @@ Expression의 형태로 전달 해줘야지 깨지지 않고 제대로 전달이
 
 아 그럼 처음에 operator의 경우에는 양 옆 value를 추가해줄 수 있나?
 
+Assignment node에서 operator를 따로 가지고 와서 사용해야 하려나?
+
+parent node를 사용하는 것이 맞나? / 그냥 제일 처음 파싱을 진행할 때 SimpleName node로만 파싱하는 게 아니라 SimpleName 말고 모든 visit method에서 가져올 수 있는
+값들을 다 가져와서 파싱을 진행해야 하나?
  */
 
-public class DataDependencyGenerator extends ASTVisitor {
+public class DataDependencyGenerator {
     private List<jCCNode> jCCNodeList;
     private final int type1 = 1;
     private final int type2 = 2;
     private final int type3 = 3;
 
-    @Override
-    public boolean visit(VariableDeclarationFragment node) {
-        int startPosition = node.getName().getStartPosition();
-        String variableName = node.getName().toString();
+    public void generateDataDependency() {
+        for(int i = 0; i < jCCNodeList.size(); i++) {
+            if(jCCNodeList.get(i).getNode() instanceof InfixExpression) { // operator
 
-        int targetIndex = findTargetNode(startPosition, variableName);
-        List<Integer> edgeList = new ArrayList<>();
+            } else if(jCCNodeList.get(i).getNode() instanceof Assignment) { // operator and left variable
+                Assignment node = (Assignment) jCCNodeList.get(i).getNode();
 
-        if(node.getInitializer() instanceof InfixExpression) {
-            edgeList = processInfixExpression((InfixExpression) node.getInitializer(), edgeList);
-        } else if(node.getInitializer() instanceof MethodInvocation) {
-            edgeList = processMethodInvocation((MethodInvocation) node.getInitializer(), edgeList);
-        } else if(node.getInitializer() instanceof SimpleName) {
-            edgeList = processSimpleName((SimpleName) node.getInitializer(), edgeList);
-        } else if(node.getInitializer() instanceof ArrayAccess) {
-            edgeList = processArrayAccess((ArrayAccess) node.getInitializer(), edgeList);
-        } else if(node.getInitializer() instanceof ClassInstanceCreation) {
-            edgeList = processClassInstanceCreation((ClassInstanceCreation) node.getInitializer(), edgeList);
-        }
+                if(node.getLeftHandSide().toString().equals(jCCNodeList.get(i).getVariableName())) { // i번째 노드가 left hand
 
-        jCCNodeList.get(targetIndex).setIndexListOfEdges(edgeList);
-        semanticTypeCreator(variableName, startPosition, type1);
-        updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex, type1);
+                }
 
-        return super.visit(node);
-    }
+            } else if(jCCNodeList.get(i).getNode() instanceof MethodInvocation) { // method
+                MethodInvocation node = (MethodInvocation) jCCNodeList.get(i).getNode();
 
-    @Override
-    public boolean visit(Assignment node) { // left 부분이 SimpleName node가 아닐 수도 있는 거 생각해야 함
-        int startPosition = node.getLeftHandSide().getStartPosition();
-        String variableName = node.getLeftHandSide().toString();
+                if(node.getName().equals(jCCNodeList.get(i).getVariableName())) { // method callee 부분
+                    int index = findTargetNode(jCCNodeList.get(i).getStartPosition(), jCCNodeList.get(i).getVariableName());
+                    List<Integer> edgeList = null;
+                    edgeList = processMethodInvocation(node, edgeList);
 
-        int targetIndex = findTargetNode(startPosition, variableName); // 왼쪽에 해당하는 변수의 index를 가져온다
-        List<Integer> variableEdgeList = new ArrayList<>();
+                    jCCNodeList.get(i).setIndexListOfEdges(edgeList);
+                    updateRelatedNodeList(jCCNodeList.get(i), index, type3);
+                }
 
-        if(node.getRightHandSide() instanceof InfixExpression) {
-            variableEdgeList = processInfixExpression((InfixExpression) node.getRightHandSide(), variableEdgeList);
-        } else if(node.getRightHandSide() instanceof SimpleName) {
-            variableEdgeList = processSimpleName((SimpleName) node.getRightHandSide(), variableEdgeList);
-        } else if(node.getRightHandSide() instanceof MethodInvocation) {
-            variableEdgeList = processMethodInvocation((MethodInvocation) node.getRightHandSide(), variableEdgeList);
-        } else if(node.getRightHandSide() instanceof ArrayAccess) {
-            variableEdgeList = processArrayAccess((ArrayAccess) node.getRightHandSide(), variableEdgeList);
-        }
-
-        jCCNodeList.get(targetIndex).setIndexListOfEdges(variableEdgeList);
-        semanticTypeCreator(variableName, startPosition, type1);
-        updateRelatedNodeList(jCCNodeList.get(targetIndex), targetIndex, type1);
-
-        // operator에 대한 부분 가져오는 과정
-        String operatorName = node.getOperator().toString();
-        int operatorPosition = node.getStartPosition();
-        List<Integer> operatorEdgeList = new ArrayList<>();
-        targetIndex = findTargetNode(operatorPosition, operatorName);
-        Expression operatorLeftHand = node.getLeftHandSide();
-        Expression operatorRightHand = node.getRightHandSide();
-        System.out.println("left: " + operatorLeftHand);
-        System.out.println("right: " + operatorRightHand);
-
-
-        if(operatorLeftHand instanceof SimpleName) {
-            operatorEdgeList = processSimpleName((SimpleName) operatorLeftHand, operatorEdgeList);
-        } else if(operatorLeftHand instanceof ArrayAccess) {
-            operatorEdgeList = processArrayAccess((ArrayAccess) operatorLeftHand, operatorEdgeList);
-        }
-
-        if(operatorRightHand instanceof InfixExpression) {
-            operatorEdgeList = processInfixExpression((InfixExpression) operatorRightHand, operatorEdgeList);
-        } else if(operatorRightHand instanceof SimpleName) {
-            operatorEdgeList = processSimpleName((SimpleName) operatorRightHand, operatorEdgeList);
-        } else if(operatorRightHand instanceof MethodInvocation) {
-            operatorEdgeList = processMethodInvocation((MethodInvocation) operatorRightHand, operatorEdgeList);
-        } else if(operatorRightHand instanceof ArrayAccess) {
-            operatorEdgeList = processArrayAccess((ArrayAccess) operatorRightHand, operatorEdgeList);
-        }
-
-        jCCNodeList.get(targetIndex).setIndexListOfEdges(operatorEdgeList);
-        semanticTypeCreator(operatorName, operatorPosition, type2);
-
-        return super.visit(node);
-    }
-
-    @Override // operator
-    public boolean visit(InfixExpression node) { // operator의 바로 양 옆 값들이 필요 / 같은 InfixExpression node에 존재하는 operator의 경우, position 값이 동일 -> structure vector도 같이 사용해서 구분해야 함
-        Expression leftOperand = node.getLeftOperand();
-        Expression rightOperand = node.getRightOperand();
-        String operator = node.getOperator().toString();
-        int operatorPosition = node.getStartPosition();
-        List<Integer> edgeList = new ArrayList<>();
-        ASTNode tempNode = node;
-        int[] structureVector = new int[25];
-        int leftIndex;
-// 여기서 left / right 케이스 분리 조금 더 생각
-        while(tempNode != null) {
-            structureVector = NodeType.searchType(tempNode, structureVector);
-            tempNode = tempNode.getParent();
-        }
-
-        if(leftOperand instanceof InfixExpression) { // left operand가 InfixExpression node일 경우에 해당 InfixExpression node의 rightOperand를 가져와서 사용
-            leftOperand = ((InfixExpression) leftOperand).getRightOperand();
-        }
-
-
-        if(leftOperand instanceof SimpleName) {
-            edgeList = processSimpleName((SimpleName) leftOperand, edgeList);
-        } else if(leftOperand instanceof MethodInvocation) {
-            edgeList = processMethodInvocation((MethodInvocation) leftOperand, edgeList);
-        } else if(leftOperand instanceof ArrayAccess) {
-            edgeList = processArrayAccess((ArrayAccess) leftOperand, edgeList);
-        }
-
-        if(rightOperand instanceof SimpleName) {
-            edgeList = processSimpleName((SimpleName) rightOperand, edgeList);
-        } else if(rightOperand instanceof MethodInvocation) {
-            edgeList = processMethodInvocation((MethodInvocation) rightOperand, edgeList);
-        } else if(rightOperand instanceof ArrayAccess) {
-            edgeList = processArrayAccess((ArrayAccess) rightOperand, edgeList);
-        }
-        semanticTypeCreator(operator, operatorPosition, type2);
-        jCCNodeList.get(findTargetNodeWithStructureVector(operatorPosition, operator, structureVector)).setIndexListOfEdges(edgeList);
-
-
-
-        return super.visit(node);
-    }
-
-    @Override
-    public boolean visit(MethodInvocation node) { // method에 관련된 노드들을 추가해주는 visit method
-        Expression methodName = node.getName();
-        Expression methodInstance = node.getExpression();
-        List<Expression> argumentList = node.arguments(); // argument
-        List<Integer> edgeList = new ArrayList<>();
-
-        ASTNode tempNode = node;
-        int[] structureVector = new int[25];
-
-        while(tempNode != null) {
-            structureVector = NodeType.searchType(tempNode, structureVector);
-
-            tempNode = tempNode.getParent();
-        }
-
-        edgeList.add(findTargetNode(methodInstance.getStartPosition(), methodInstance.toString())); // method를 호출한 instance에 대한 부분 추가
-
-        for(int i = 0; i < argumentList.size(); i++) {
-            if(argumentList.get(i) instanceof InfixExpression) {
-                edgeList = processInfixExpression((InfixExpression) argumentList.get(i), edgeList);
-            } else if(argumentList.get(i) instanceof MethodInvocation) {
-                edgeList = processMethodInvocation((MethodInvocation) argumentList.get(i), edgeList);
-            } else if(argumentList.get(i) instanceof ArrayAccess) {
-                edgeList = processArrayAccess((ArrayAccess) argumentList.get(i), edgeList);
-            } else if(argumentList.get(i) instanceof SimpleName) {
-                edgeList = processSimpleName((SimpleName) argumentList.get(i), edgeList);
+            } else if(jCCNodeList.get(i).getNode() instanceof VariableDeclarationFragment) { // variable
+                VariableDeclarationFragment node = (VariableDeclarationFragment) jCCNodeList.get(i).getNode();
             }
         }
-
-        semanticTypeCreator(methodName.toString(), methodName.getStartPosition(), type3);
-        jCCNodeList.get(findTargetNode(methodName.getStartPosition(), methodName.toString())).setIndexListOfEdges(edgeList);
-
-        return super.visit(node);
     }
 
     public void updateRelatedNodeList(jCCNode node, int targetIndex, int semanticType) { // 해당 노드 다음에 나오는 같은 이름의 노드들을 다 업데이트 해주는 노드
@@ -232,7 +103,6 @@ public class DataDependencyGenerator extends ASTVisitor {
                 }
             }
         }
-
         return index;
     }
 

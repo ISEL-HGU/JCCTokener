@@ -1,7 +1,7 @@
 package isel.csee.jcctokener.parser;
 
 import isel.csee.jcctokener.generators.DataDependencyGenerator;
-import isel.csee.jcctokener.generators.StructureVectorGenerator;
+import isel.csee.jcctokener.visitor.jCCVisitor;
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.generators.TokenGenerator;
 import isel.csee.jcctokener.generators.SemanticVectorGenerator;
@@ -17,7 +17,7 @@ public class jCCParser {
     private String sourceCodes;
     private ASTParser parser;
     private List<jCCNode> jCCNodeList;
-    private StructureVectorGenerator structureVectorGenerator= new StructureVectorGenerator();
+    private jCCVisitor jCCVisitor = new jCCVisitor();
     private SemanticVectorGenerator semanticVectorGenerator;
     private DataDependencyGenerator dataDependencyGenerator;
     private TokenGenerator tokenGenerator;
@@ -47,21 +47,24 @@ public class jCCParser {
 
         CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 
-        compilationUnit.accept(structureVectorGenerator);
+        compilationUnit.accept(jCCVisitor);
 
-        tokenGenerator = new TokenGenerator(structureVectorGenerator.getStructureVectorList());
+        tokenGenerator = new TokenGenerator(jCCVisitor.getStructureVectorList());
 
         List<int[]> structureVectorList = tokenGenerator.toLexicalOrder();
 
-        jCCNodeList = structureVectorGenerator.getjCCNodeList();
+        jCCNodeList = jCCVisitor.getjCCNodeList();
 
 
         for(jCCNode tempNode : jCCNodeList) {
             System.out.println("variable: " + tempNode.getVariableName() + " Position: " + tempNode.getStartPosition() + " Type: " +
-                    tempNode.getNodeType());
+                    tempNode.getNodeType() + " parent: " + tempNode.getNode());
+
+            System.out.println("");
             for(int i : tempNode.getStructureVector()) {
                 System.out.print(i + " ");
             }
+            System.out.println("");
             System.out.println("");
         }
 
@@ -69,8 +72,8 @@ public class jCCParser {
 
         dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);
 
-        compilationUnit.accept(dataDependencyGenerator);
-        jCCNodeList = dataDependencyGenerator.getjCCNodeList();
+//        compilationUnit.accept(dataDependencyGenerator);
+//        jCCNodeList = dataDependencyGenerator.getjCCNodeList();
 
         for(int i = 0; i < jCCNodeList.size(); i++) {
             System.out.println(jCCNodeList.get(i).getVariableName());

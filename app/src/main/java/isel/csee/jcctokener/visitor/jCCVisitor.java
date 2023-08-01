@@ -1,4 +1,4 @@
-package isel.csee.jcctokener.generators;
+package isel.csee.jcctokener.visitor;
 
 
 import isel.csee.jcctokener.node.jCCNode;
@@ -60,21 +60,27 @@ extendedOperands() method 사용해서 모든 operand를 가지고 오고 left /
  */
 
 
-public class StructureVectorGenerator extends ASTVisitor {
+public class jCCVisitor extends ASTVisitor {
     private List<int[]> structureVectorList = new ArrayList<>();
     private List<jCCNode> jCCNodeList = new ArrayList<>();
 
     @Override
-    public boolean visit(MethodInvocation node) { // expression이 instance name
+    public boolean visit(ExpressionStatement node) {
+        System.out.println("hhh: " + node);
+
         return super.visit(node);
     }
-
-
     @Override
     public boolean visit(SimpleName node) {
         int[] structureVector = new int[25];
         ASTNode tempNode = node;
         jCCNode jCCNode = new jCCNode();
+
+        if(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName().equals("InfixExpression")) {
+            System.out.println(node);
+            System.out.println("parent: " + node.getParent());
+            System.out.println("parent + parent: " + node.getParent().getParent());
+        }
 
         if(tempNode.getParent() instanceof QualifiedName) {
             return super.visit(node);
@@ -114,10 +120,6 @@ public class StructureVectorGenerator extends ASTVisitor {
                 jCCNode.setSemanticVector(structureVector);
             }
         }
-        tempNode = node;
-
-
-        tempNode = node;
 
         if(tempNode.getParent() instanceof Assignment) {
             if(node.equals(((Assignment) tempNode.getParent()).getLeftHandSide())) {
@@ -129,6 +131,9 @@ public class StructureVectorGenerator extends ASTVisitor {
             jCCNode.setUpdatePossibility(true);
         }
         jCCNode.setStartPosition(node.getStartPosition());
+        if(node.getParent() != null) {
+            jCCNode.setNode(node.getParent());
+        }
         jCCNodeList.add(jCCNode);
         structureVectorList.add(structureVector);
 
@@ -140,40 +145,60 @@ public class StructureVectorGenerator extends ASTVisitor {
     @Override
     public boolean visit(InfixExpression node) {
         int[] structureVector = new int[25];
-        jCCNode jCCNode = new jCCNode();
-
-
-
-        System.out.println("left: " + node.getLeftOperand());
-        System.out.println("right: " + node.getRightOperand());
-        List<Expression> nodeList = node.extendedOperands();
-        System.out.println(node.getOperator());
-        System.out.println(nodeList.size());
+        String methodName = null;
+        String className = null;
 
 
         ASTNode tempNode = node;
+
+        System.out.println("InfixExpression node: " + node);
+        System.out.println("InfixExpression parent node: " + tempNode.getParent());
+
+        tempNode = node;
 
         while(tempNode != null) {
             structureVector = NodeType.searchType(tempNode, structureVector);
 
             if(tempNode instanceof MethodDeclaration) {
-                // method declaration case
-                jCCNode.setMethodName(((MethodDeclaration) tempNode).getName().toString());
+                methodName = ((MethodDeclaration) tempNode).getName().toString();
             }
+
             if(tempNode instanceof TypeDeclaration) {
-                // class declaration case
-                jCCNode.setClassName(((TypeDeclaration) tempNode).getName().toString());
+                className = ((TypeDeclaration) tempNode).getName().toString();
             }
+
             tempNode = tempNode.getParent();
         }
-        jCCNode.setNodeType(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName());
-        jCCNode.setStructureVector(structureVector);
-        jCCNode.setVariableName(node.getOperator().toString()); // InfixExpression node에서 operator 추출
-        jCCNode.setStartPosition(node.getStartPosition());
 
-        jCCNodeList.add(jCCNode);
-        structureVectorList.add(structureVector);
+        if(node.hasExtendedOperands()) {
+            for(int i = 0; i < node.extendedOperands().size() + 1; i++) {
+                jCCNode jCCNode = new jCCNode();
 
+                jCCNode.setNodeType(ASTNode.nodeClassForType(node.getNodeType()).getSimpleName());
+                jCCNode.setStructureVector(structureVector);
+                jCCNode.setMethodName(methodName);
+                jCCNode.setClassName(className);
+                jCCNode.setVariableName(node.getOperator().toString());
+                jCCNode.setStartPosition(node.getStartPosition());
+                jCCNode.setNode(node);
+
+                jCCNodeList.add(jCCNode);
+                structureVectorList.add(structureVector);
+            }
+        } else {
+            jCCNode jCCNode = new jCCNode();
+
+            jCCNode.setNodeType(ASTNode.nodeClassForType(node.getNodeType()).getSimpleName());
+            jCCNode.setStructureVector(structureVector);
+            jCCNode.setMethodName(methodName);
+            jCCNode.setClassName(className);
+            jCCNode.setVariableName(node.getOperator().toString());
+            jCCNode.setStartPosition(node.getStartPosition());
+            jCCNode.setNode(node);
+
+            jCCNodeList.add(jCCNode);
+            structureVectorList.add(structureVector);
+        }
 
         return super.visit(node);
     }
@@ -184,6 +209,11 @@ public class StructureVectorGenerator extends ASTVisitor {
         jCCNode jCCNode = new jCCNode();
 
         ASTNode tempNode = node;
+
+        System.out.println("Assignment node: " + node);
+        System.out.println("Assignment parent node: " + tempNode.getParent());
+
+        tempNode = node;
 
         while(tempNode != null) {
             structureVector = NodeType.searchType(tempNode, structureVector);
@@ -201,15 +231,13 @@ public class StructureVectorGenerator extends ASTVisitor {
 
         jCCNode.setStructureVector(structureVector);
         jCCNode.setVariableName(node.getOperator().toString());
-        jCCNode.setNodeType(ASTNode.nodeClassForType(node.getParent().getNodeType()).getSimpleName());
+        jCCNode.setNodeType(ASTNode.nodeClassForType(node.getNodeType()).getSimpleName());
         jCCNode.setStartPosition(node.getStartPosition());
+        jCCNode.setNode(node);
+
         jCCNodeList.add(jCCNode);
         structureVectorList.add(structureVector);
-        return super.visit(node);
-    }
 
-    @Override
-    public boolean visit(VariableDeclarationFragment node) {
         return super.visit(node);
     }
 
