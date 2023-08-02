@@ -10,6 +10,7 @@
       <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/DataDependencyGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/DataDependencyGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/infix/InfixExpressionComputer.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/infix/InfixExpressionComputer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/jCCVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/jCCVisitor.java" afterDir="false" />
@@ -53,6 +54,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/ASTVisitor.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/Assignment.java" root0="SKIP_INSPECTION" />
     <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/InfixExpression.java" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -135,7 +137,8 @@
       <workItem from="1689650424128" duration="23767000" />
       <workItem from="1689732184052" duration="2594000" />
       <workItem from="1689736563005" duration="137144000" />
-      <workItem from="1690704908103" duration="40256000" />
+      <workItem from="1690704908103" duration="53422000" />
+      <workItem from="1690961324078" duration="3524000" />
     </task>
     <servers />
   </component>

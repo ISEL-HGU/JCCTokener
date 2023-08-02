@@ -146,6 +146,8 @@ public class jCCVisitor extends ASTVisitor {
         int[] structureVector = new int[25];
         String methodName = null;
         String className = null;
+        System.out.println(node);
+        System.out.println(node.getOperator());
 
 
         ASTNode tempNode = node;
@@ -165,39 +167,19 @@ public class jCCVisitor extends ASTVisitor {
 
             tempNode = tempNode.getParent();
         }
+        // operator 생성
+        jCCNode jCCNode = new jCCNode();
 
-        if(node.hasExtendedOperands()) {
-            for(int i = 0; i < node.extendedOperands().size(); i++) {
-                System.out.println(node.extendedOperands().get(i));
-            }
-            for(int i = 0; i < node.extendedOperands().size() + 1; i++) {
-                jCCNode jCCNode = new jCCNode();
+        jCCNode.setNodeType(ASTNode.nodeClassForType(node.getNodeType()).getSimpleName());
+        jCCNode.setStructureVector(structureVector);
+        jCCNode.setMethodName(methodName);
+        jCCNode.setClassName(className);
+        jCCNode.setVariableName(node.getOperator().toString());
+        jCCNode.setStartPosition(node.getStartPosition());
+        jCCNode.setNode(node);
 
-                jCCNode.setNodeType(ASTNode.nodeClassForType(node.getNodeType()).getSimpleName());
-                jCCNode.setStructureVector(structureVector);
-                jCCNode.setMethodName(methodName);
-                jCCNode.setClassName(className);
-                jCCNode.setVariableName(node.getOperator().toString());
-                jCCNode.setStartPosition(node.getStartPosition());
-                jCCNode.setNode(node);
-
-//                jCCNodeList.add(jCCNode);
-//                structureVectorList.add(structureVector);
-            }
-        } else {
-            jCCNode jCCNode = new jCCNode();
-
-            jCCNode.setNodeType(ASTNode.nodeClassForType(node.getNodeType()).getSimpleName());
-            jCCNode.setStructureVector(structureVector);
-            jCCNode.setMethodName(methodName);
-            jCCNode.setClassName(className);
-            jCCNode.setVariableName(node.getOperator().toString());
-            jCCNode.setStartPosition(node.getStartPosition());
-            jCCNode.setNode(node);
-
-            jCCNodeList.add(jCCNode);
-            structureVectorList.add(structureVector);
-        }
+        jCCNodeList.add(jCCNode);
+        structureVectorList.add(structureVector);
 
         return super.visit(node);
     }
