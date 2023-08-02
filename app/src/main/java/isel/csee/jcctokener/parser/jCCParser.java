@@ -55,10 +55,13 @@ public class jCCParser {
 
         jCCNodeList = jCCVisitor.getjCCNodeList();
 
+        for(int i = 0; i < jCCNodeList.size(); i++) {
+            System.out.println("variable: " + jCCNodeList.get(i).getVariableName() + " Position: " + jCCNodeList.get(i).getStartPosition() + " Type: " +
+                    jCCNodeList.get(i).getNodeType() + " parent: " + jCCNodeList.get(i).getNode());
 
-        for(jCCNode tempNode : jCCNodeList) {
-            System.out.println("variable: " + tempNode.getVariableName() + " Position: " + tempNode.getStartPosition() + " Type: " +
-                    tempNode.getNodeType() + " parent: " + tempNode.getNode());
+            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
+            }
 
 //            System.out.println("");
 //            for(int i : tempNode.getStructureVector()) {
@@ -75,9 +78,10 @@ public class jCCParser {
         dataDependencyGenerator.generateDataDependency();
 
         jCCNodeList = dataDependencyGenerator.getjCCNodeList();
+        System.out.println(jCCNodeList.get(15).getIndexListOfEdges());
 
         for(int i = 0; i < jCCNodeList.size(); i++) {
-            System.out.println(jCCNodeList.get(i).getVariableName());
+            System.out.println(jCCNodeList.get(i).getVariableName() + "  " + i);
             if(jCCNodeList.get(i).getSemanticType() == 1) {
                 System.out.println("node type : " + "type 1");
             } else if(jCCNodeList.get(i).getSemanticType() == 2) {

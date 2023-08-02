@@ -28,6 +28,7 @@ public class DataDependencyGenerator {
             "*=","-=","+=","<<","--","++","||","&&","!=",
             ">=","<=","==","%","^","|","&","/","*","-",
             "+",":","?","~","!","<",">","=","...","->","::");
+    private final List<String> assignmentOperator = Arrays.asList("%=", "^=", "/=", "*=", "-=", "+=");
 
     public void generateDataDependency() {
         for(int i = 0; i < jCCNodeList.size(); i++) {
@@ -69,6 +70,13 @@ public class DataDependencyGenerator {
                 Assignment node = (Assignment) jCCNodeList.get(i).getNode();
                 List<Integer> edgeList = new ArrayList<>();
 
+                if(assignmentOperator.contains(node.getOperator().toString())) {
+                    for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+                        edgeList.add(jCCNodeList.get(i).getIndexListOfEdges().get(k));
+                    }
+                }
+
+
                 if(node.getLeftHandSide().toString().equals(jCCNodeList.get(i).getVariableName())) { // i번째 노드가 left hand
                     if(node.getRightHandSide() instanceof InfixExpression) {
                         edgeList = processInfixExpression((InfixExpression) node.getRightHandSide(), edgeList);
@@ -92,7 +100,7 @@ public class DataDependencyGenerator {
 
                 if(node.getName().equals(jCCNodeList.get(i).getVariableName())) { // method callee 부분
                     int index = findTargetNode(jCCNodeList.get(i).getStartPosition(), jCCNodeList.get(i).getVariableName());
-                    List<Integer> edgeList = null;
+                    List<Integer> edgeList = new ArrayList<>();
                     edgeList = processMethodInvocation(node, edgeList);
 
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
@@ -105,7 +113,7 @@ public class DataDependencyGenerator {
 
                 if(node.getName().equals(jCCNodeList.get(i).getVariableName())) {
                     if(node.getInitializer() instanceof InfixExpression) {
-
+                        edgeList = processInfixExpression((InfixExpression) node.getInitializer(), edgeList);
                     } else if(node.getInitializer() instanceof ArrayAccess) {
                         edgeList = processArrayAccess((ArrayAccess) node.getInitializer(), edgeList);
                     } else if(node.getInitializer() instanceof MethodInvocation) {
@@ -125,14 +133,21 @@ public class DataDependencyGenerator {
     }
 
     public void updateRelatedNodeList(jCCNode node, int targetIndex, int semanticType) { // 해당 노드 다음에 나오는 같은 이름의 노드들을 다 업데이트 해주는 노드
-        for(int i = targetIndex + 1; i < jCCNodeList.size(); i++) {
+        for(int i = targetIndex; i < jCCNodeList.size(); i++) {
             if(jCCNodeList.get(i).getVariableName().equals(node.getVariableName())) { // 이름이 동일
                 if(jCCNodeList.get(i).getMethodName().equals(node.getMethodName())) { // method 이름까지 동일해야 같은 block 내부에 존재한다고 생각하고 update
                     jCCNodeList.get(i).setIndexListOfEdges(node.getIndexListOfEdges());
                     jCCNodeList.get(i).setSemanticType(semanticType);
+                    System.out.println("node -> " + node.getNode());
+                    System.out.println("This is update " + jCCNodeList.get(i).getVariableName() + "  " + i);
+                    for(int k = 0; k < jCCNodeList.size(); k++) {
+                        System.out.println(k + " " + jCCNodeList.get(k).getIndexListOfEdges());
+                    }
                 }
             }
+//            System.out.println(i + " " + node.getIndexListOfEdges());
         }
+
     }
 
     public int findTargetNode(int startPosition, String variableName) { // 해당 노드가 list 안에서 어디에 위치해 있는지 index 반환
