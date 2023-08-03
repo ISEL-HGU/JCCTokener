@@ -17,6 +17,10 @@ index는 i지 않나?
 InfixExpression node에서 oeprator 뽑아오는 부분 구현 / Assignment node에서 operator 뽑아오는 부분 구현
 
 Assignment operator의 종류에 따라서 data dependency 노드를 삭제할 수도 있고, 추가해줄 수도 있게끔 구현 수정 해줘야 함
+
+Assignment node에서 우변에 존재하는 값들의 data dependency를 update 해주게 되면 조금 애매한 문제가 생길 수도 있음...? 이거 어떻게 구분 해야 되징
+Assignment node + VariableDeclarationFragment node인 경우에는 다른 노드에게 값을 update 해주게 되는데, 이 때 자신과 관련 있는 우변에 존재하는 변수들의 값도 update 해주면 안됨
+-> startPosition과 endPosition을 생각
  */
 
 public class DataDependencyGenerator {
@@ -35,6 +39,22 @@ public class DataDependencyGenerator {
             if(jCCNodeList.get(i).getNode() instanceof InfixExpression) { // operator
                 InfixExpression node = (InfixExpression) jCCNodeList.get(i).getNode();
                 List<Integer> edgeList = new ArrayList<>(); // operator인 case를 찾아야 함
+
+                if(node.hasExtendedOperands()) {
+                    for(int k = 0; k < node.extendedOperands().size(); k++) {
+                        if(node.extendedOperands().get(k) instanceof InfixExpression) {
+                            edgeList = processInfixExpression((InfixExpression) node.extendedOperands().get(k), edgeList);
+                        } else if(node.extendedOperands().get(k) instanceof SimpleName) {
+                            edgeList = processSimpleName((SimpleName) node.extendedOperands().get(k), edgeList);
+                        } else if(node.extendedOperands().get(k) instanceof ArrayAccess) {
+                            edgeList = processArrayAccess((ArrayAccess) node.extendedOperands().get(k), edgeList);
+                        } else if(node.extendedOperands().get(k) instanceof ClassInstanceCreation) {
+                            edgeList = processClassInstanceCreation((ClassInstanceCreation) node.extendedOperands().get(k), edgeList);
+                        } else if(node.extendedOperands().get(k) instanceof MethodInvocation) {
+                            edgeList = processMethodInvocation((MethodInvocation) node.extendedOperands().get(k), edgeList);
+                        }
+                    }
+                }
 
                 if(operatorType.contains(jCCNodeList.get(i).getVariableName())) { // operator인 경우에 실행되는 if문
                     if(node.getLeftOperand() instanceof ArrayAccess) {
@@ -64,8 +84,6 @@ public class DataDependencyGenerator {
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
                     jCCNodeList.get(i).setSemanticType(type2);
                 }
-
-
             } else if(jCCNodeList.get(i).getNode() instanceof Assignment) { // operator and left variable
                 Assignment node = (Assignment) jCCNodeList.get(i).getNode();
                 List<Integer> edgeList = new ArrayList<>();
@@ -75,7 +93,6 @@ public class DataDependencyGenerator {
                         edgeList.add(jCCNodeList.get(i).getIndexListOfEdges().get(k));
                     }
                 }
-
 
                 if(node.getLeftHandSide().toString().equals(jCCNodeList.get(i).getVariableName())) { // i번째 노드가 left hand
                     if(node.getRightHandSide() instanceof InfixExpression) {
@@ -90,58 +107,58 @@ public class DataDependencyGenerator {
                         edgeList = processClassInstanceCreation((ClassInstanceCreation) node.getRightHandSide(), edgeList);
                     }
 
+                    int endPosition = node.getRightHandSide().getStartPosition() + node.getRightHandSide().getLength() - 1;
+
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
                     jCCNodeList.get(i).setSemanticType(type1);
-                    updateRelatedNodeList(jCCNodeList.get(i), i, type1);
+                    updateRelatedNodeList(jCCNodeList.get(i), i, type1, endPosition);
                 }
 
             } else if(jCCNodeList.get(i).getNode() instanceof MethodInvocation) { // method
                 MethodInvocation node = (MethodInvocation) jCCNodeList.get(i).getNode();
 
-                if(node.getName().equals(jCCNodeList.get(i).getVariableName())) { // method callee 부분
+                if(node.getName().toString().equals(jCCNodeList.get(i).getVariableName())) { // method callee 부분
                     int index = findTargetNode(jCCNodeList.get(i).getStartPosition(), jCCNodeList.get(i).getVariableName());
+
                     List<Integer> edgeList = new ArrayList<>();
                     edgeList = processMethodInvocation(node, edgeList);
 
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
-                    updateRelatedNodeList(jCCNodeList.get(i), index, type3);
+
                 }
 
             } else if(jCCNodeList.get(i).getNode() instanceof VariableDeclarationFragment) { // variable
                 VariableDeclarationFragment node = (VariableDeclarationFragment) jCCNodeList.get(i).getNode();
                 List<Integer> edgeList = new ArrayList<>();
 
-                if(node.getName().equals(jCCNodeList.get(i).getVariableName())) {
-                    if(node.getInitializer() instanceof InfixExpression) {
-                        edgeList = processInfixExpression((InfixExpression) node.getInitializer(), edgeList);
-                    } else if(node.getInitializer() instanceof ArrayAccess) {
-                        edgeList = processArrayAccess((ArrayAccess) node.getInitializer(), edgeList);
-                    } else if(node.getInitializer() instanceof MethodInvocation) {
-                        edgeList = processMethodInvocation((MethodInvocation) node.getInitializer(), edgeList);
-                    } else if(node.getInitializer() instanceof ClassInstanceCreation) {
-                        edgeList = processClassInstanceCreation((ClassInstanceCreation) node.getInitializer(), edgeList);
-                    } else if(node.getInitializer() instanceof SimpleName) {
-                        edgeList = processSimpleName((SimpleName) node.getInitializer(), edgeList);
-                    }
-
-                    jCCNodeList.get(i).setIndexListOfEdges(edgeList);
-                    jCCNodeList.get(i).setSemanticType(type1);
-                    updateRelatedNodeList(jCCNodeList.get(i), i, type1);
+                if(node.getInitializer() instanceof InfixExpression) {
+                    edgeList = processInfixExpression((InfixExpression) node.getInitializer(), edgeList);
+                } else if(node.getInitializer() instanceof ArrayAccess) {
+                    edgeList = processArrayAccess((ArrayAccess) node.getInitializer(), edgeList);
+                } else if(node.getInitializer() instanceof MethodInvocation) {
+                    edgeList = processMethodInvocation((MethodInvocation) node.getInitializer(), edgeList);
+                } else if(node.getInitializer() instanceof ClassInstanceCreation) {
+                    edgeList = processClassInstanceCreation((ClassInstanceCreation) node.getInitializer(), edgeList);
+                } else if(node.getInitializer() instanceof SimpleName) {
+                    edgeList = processSimpleName((SimpleName) node.getInitializer(), edgeList);
                 }
+
+                int endPosition = node.getInitializer().getStartPosition() + node.getLength() - 1;
+
+                jCCNodeList.get(i).setIndexListOfEdges(edgeList);
+                jCCNodeList.get(i).setSemanticType(type1);
+                updateRelatedNodeList(jCCNodeList.get(i), i, type1, endPosition);
             }
         }
     }
 
-    public void updateRelatedNodeList(jCCNode node, int targetIndex, int semanticType) { // 해당 노드 다음에 나오는 같은 이름의 노드들을 다 업데이트 해주는 노드
+    public void updateRelatedNodeList(jCCNode node, int targetIndex, int semanticType, int endPosition) { // 해당 노드 다음에 나오는 같은 이름의 노드들을 다 업데이트 해주는 노드
         for(int i = targetIndex; i < jCCNodeList.size(); i++) {
             if(jCCNodeList.get(i).getVariableName().equals(node.getVariableName())) { // 이름이 동일
                 if(jCCNodeList.get(i).getMethodName().equals(node.getMethodName())) { // method 이름까지 동일해야 같은 block 내부에 존재한다고 생각하고 update
-                    jCCNodeList.get(i).setIndexListOfEdges(node.getIndexListOfEdges());
-                    jCCNodeList.get(i).setSemanticType(semanticType);
-                    System.out.println("node -> " + node.getNode());
-                    System.out.println("This is update " + jCCNodeList.get(i).getVariableName() + "  " + i);
-                    for(int k = 0; k < jCCNodeList.size(); k++) {
-                        System.out.println(k + " " + jCCNodeList.get(k).getIndexListOfEdges());
+                    if(jCCNodeList.get(i).getStartPosition() > endPosition) {
+                        jCCNodeList.get(i).setIndexListOfEdges(node.getIndexListOfEdges());
+                        jCCNodeList.get(i).setSemanticType(semanticType);
                     }
                 }
             }
@@ -181,13 +198,8 @@ public class DataDependencyGenerator {
         return index;
     }
 
-    public List<Integer> processInfixExpression(InfixExpression node, List<Integer> edgeList) { // 좌변과 우변의 값이 SimpleName node가 아닐 수도 있기 때문에 Case의 분리가 필요
-        Expression temp = node.getRightOperand();
-        // extendedOperands() method 생각해서 다시 작성해야됨
-        // InfixExpression node에서 extendedOperand를 가지고 있으면 더 이상 파싱이 안 되나? / left, right가
-        // extendedOperands의 return value -> List<Expression>
-
-        if(node.hasExtendedOperands()) { // other node를 가지고 있는 상태 -> 그냥 가지고 있으면 가지고 있는 값들을 다 가지고 와서 더해주는 개념으로 사용하면 될 듯
+    public List<Integer> processInfixExpression(InfixExpression node, List<Integer> edgeList) {
+        if(node.hasExtendedOperands()) {
             for(int i = 0; i < node.extendedOperands().size(); i++) {
                 if(node.extendedOperands().get(i) instanceof InfixExpression) {
                     edgeList = processInfixExpression((InfixExpression) node.extendedOperands().get(i), edgeList);
@@ -202,6 +214,7 @@ public class DataDependencyGenerator {
                 }
             }
         }
+
         if(node.getRightOperand() instanceof SimpleName) {
             edgeList = processSimpleName((SimpleName) node.getRightOperand(), edgeList);
         } else if(node.getRightOperand() instanceof ArrayAccess) {

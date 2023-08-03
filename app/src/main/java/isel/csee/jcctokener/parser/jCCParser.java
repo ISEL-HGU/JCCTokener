@@ -90,7 +90,8 @@ public class jCCParser {
                 System.out.println("node type : " + "type 3");
             }
             for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
+                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + " index: "
+                + jCCNodeList.get(i).getIndexListOfEdges().get(k));
             }
         }
 
