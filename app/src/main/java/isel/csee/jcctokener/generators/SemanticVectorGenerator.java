@@ -32,15 +32,17 @@ public class SemanticVectorGenerator {
     private final int type1 = 1;
     private final int type2 = 2;
     private final int type3 = 3;
-    private int countStep;
+    private int countStep; // 몇 개로 나눠서 계산 할 것인지
 
     public void createVariableSemanticVector() { // type 1에 대한 semantic vector 생성
         for(int i = 0; i < jCCNodeList.size(); i++) {
             if(jCCNodeList.get(i).getSemanticType() == type1) {
-                int temp = 0;
+                int tempStep = 0;
                 int[] semanticVector = new int[25];
 
-                semanticVector = getRelatedValues(jCCNodeList.get(i), temp, countStep, semanticVector);
+                semanticVector = getRelatedValues(jCCNodeList.get(i), tempStep, countStep, semanticVector);
+
+                jCCNodeList.get(i).setSemanticVector(semanticVector);
             }
         }
     }
@@ -50,38 +52,56 @@ public class SemanticVectorGenerator {
             if(jCCNodeList.get(i).getSemanticType() == type2) {
                 int[] semanticVector = new int[25];
 
+                for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) { // 관련 있는 값들의 semantic vector 모두 더해주기
+                    for(int t = 0; t < 25; t++) {
+                        semanticVector[t] += jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getSemanticVector()[t];
+                    }
+                }
+
+                jCCNodeList.get(i).setSemanticVector(semanticVector);
 
             }
         }
     }
 
     public void createMethodSemanticVector() { // type 3에 대한 semantic vector 생성
+        for(int i = 0; i < jCCNodeList.size(); i++) {
+            if(jCCNodeList.get(i).getSemanticType() == type3) {
+                int[] semanticVector = new int[25];
 
-    }
+                for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) { // 관련 있는 값들의 semantic vector 모두 더해주기
+                    for(int t = 0; t < 25; t++) {
+                        semanticVector[t] += jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getSemanticVector()[t];
+                    }
+                }
 
-    public int[] getRelatedValues(jCCNode node, int tempCount, int totalCount, int[] semanticVector) { // 재귀적으로 코드를 사용하기 위한 method
-        if(tempCount == totalCount) {
-            for(int i = 0; i < 25; i++) {
-                semanticVector[i] += node.getStructureVector()[i];
+                for(int k = 0; k < 25; k++) {
+                    semanticVector[k] += jCCNodeList.get(i).getStructureVector()[k];
+                }
+
+                jCCNodeList.get(i).setSemanticVector(semanticVector);
             }
-            return semanticVector;
         }
 
-        for(int i = 0; i < node.getIndexListOfEdges().size(); i++) {
-            semanticVector = getRelatedValues(jCCNodeList.get(node.getIndexListOfEdges().get(i)),
-                    tempCount + 1, totalCount, semanticVector);
-        }
-
-        return semanticVector;
     }
+    // 해당 step까지 올라가서 존재하는 모든 variable structure vector 다 가져와서 더해주기
+    public int[] getRelatedValues(jCCNode node, int tempCount, int totalCount, int[] semanticVector) {
+        for(int i = 0; i < 25; i++) { // 현재 노드의 structure vector 더해주기
+            semanticVector[i] += node.getStructureVector()[i];
+        }
 
-    public int[] calculateSemanticVector(jCCNode node, int[] semanticVector) {
-        if(node.getIndexListOfEdges().size() == 0) {
+        if(node.getIndexListOfEdges().isEmpty()) {
             return semanticVector;
-        } else if(node.getIndexListOfEdges().size() == 1) {
+        }
 
-        } else if(node.getIndexListOfEdges().size() == 2) {
+        if(tempCount == totalCount) {
 
+            return semanticVector;
+        } else {
+            for(int i = 0; i < node.getIndexListOfEdges().size(); i++) {
+                semanticVector = getRelatedValues(jCCNodeList.get(node.getIndexListOfEdges().get(i)),
+                        tempCount + 1, totalCount, semanticVector);
+            }
         }
 
         return semanticVector;

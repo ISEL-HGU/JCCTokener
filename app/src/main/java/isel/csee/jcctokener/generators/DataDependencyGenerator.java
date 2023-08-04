@@ -10,19 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
-/*
-index는 i지 않나?
-
-InfixExpression node에서 oeprator 뽑아오는 부분 구현 / Assignment node에서 operator 뽑아오는 부분 구현
-
-Assignment operator의 종류에 따라서 data dependency 노드를 삭제할 수도 있고, 추가해줄 수도 있게끔 구현 수정 해줘야 함
-
-Assignment node에서 우변에 존재하는 값들의 data dependency를 update 해주게 되면 조금 애매한 문제가 생길 수도 있음...? 이거 어떻게 구분 해야 되징
-Assignment node + VariableDeclarationFragment node인 경우에는 다른 노드에게 값을 update 해주게 되는데, 이 때 자신과 관련 있는 우변에 존재하는 변수들의 값도 update 해주면 안됨
--> startPosition과 endPosition을 생각
- */
-
 public class DataDependencyGenerator {
     private List<jCCNode> jCCNodeList;
     private final int type1 = 1;
@@ -36,9 +23,9 @@ public class DataDependencyGenerator {
 
     public void generateDataDependency() {
         for(int i = 0; i < jCCNodeList.size(); i++) {
-            if(jCCNodeList.get(i).getNode() instanceof InfixExpression) { // operator
+            if(jCCNodeList.get(i).getNode() instanceof InfixExpression) {
                 InfixExpression node = (InfixExpression) jCCNodeList.get(i).getNode();
-                List<Integer> edgeList = new ArrayList<>(); // operator인 case를 찾아야 함
+                List<Integer> edgeList = new ArrayList<>();
 
                 if(node.hasExtendedOperands()) {
                     for(int k = 0; k < node.extendedOperands().size(); k++) {
@@ -56,7 +43,7 @@ public class DataDependencyGenerator {
                     }
                 }
 
-                if(operatorType.contains(jCCNodeList.get(i).getVariableName())) { // operator인 경우에 실행되는 if문
+                if(operatorType.contains(jCCNodeList.get(i).getVariableName())) {
                     if(node.getLeftOperand() instanceof ArrayAccess) {
                         edgeList = processArrayAccess((ArrayAccess) node.getLeftOperand(), edgeList);
                     } else if(node.getLeftOperand() instanceof SimpleName) {
@@ -84,7 +71,7 @@ public class DataDependencyGenerator {
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
                     jCCNodeList.get(i).setSemanticType(type2);
                 }
-            } else if(jCCNodeList.get(i).getNode() instanceof Assignment) { // operator and left variable
+            } else if(jCCNodeList.get(i).getNode() instanceof Assignment) {
                 Assignment node = (Assignment) jCCNodeList.get(i).getNode();
                 List<Integer> edgeList = new ArrayList<>();
 
@@ -94,7 +81,7 @@ public class DataDependencyGenerator {
                     }
                 }
 
-                if(node.getLeftHandSide().toString().equals(jCCNodeList.get(i).getVariableName())) { // i번째 노드가 left hand
+                if(node.getLeftHandSide().toString().equals(jCCNodeList.get(i).getVariableName())) {
                     if(node.getRightHandSide() instanceof InfixExpression) {
                         edgeList = processInfixExpression((InfixExpression) node.getRightHandSide(), edgeList);
                     } else if(node.getRightHandSide() instanceof ArrayAccess) {
@@ -114,20 +101,20 @@ public class DataDependencyGenerator {
                     updateRelatedNodeList(jCCNodeList.get(i), i, type1, endPosition);
                 }
 
-            } else if(jCCNodeList.get(i).getNode() instanceof MethodInvocation) { // method
+            } else if(jCCNodeList.get(i).getNode() instanceof MethodInvocation) {
                 MethodInvocation node = (MethodInvocation) jCCNodeList.get(i).getNode();
 
-                if(node.getName().toString().equals(jCCNodeList.get(i).getVariableName())) { // method callee 부분
+                if(node.getName().toString().equals(jCCNodeList.get(i).getVariableName())) {
                     int index = findTargetNode(jCCNodeList.get(i).getStartPosition(), jCCNodeList.get(i).getVariableName());
 
                     List<Integer> edgeList = new ArrayList<>();
                     edgeList = processMethodInvocation(node, edgeList);
 
+                    jCCNodeList.get(i).setSemanticType(type3);
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
-
                 }
 
-            } else if(jCCNodeList.get(i).getNode() instanceof VariableDeclarationFragment) { // variable
+            } else if(jCCNodeList.get(i).getNode() instanceof VariableDeclarationFragment) {
                 VariableDeclarationFragment node = (VariableDeclarationFragment) jCCNodeList.get(i).getNode();
                 List<Integer> edgeList = new ArrayList<>();
 
