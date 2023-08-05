@@ -24,10 +24,25 @@ public class jCCTokener {
         File file = new File(filePath);
         String source = new String(Files.readAllBytes(Paths.get(filePath)));
 
+//        jCCTokener.fileListGetter("/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/app/src/main/java");
 
 
         jCCParser jCCParser = new jCCParser(source);
 
         ASTParser parser = jCCParser.parserCodes();
+    }
+
+    public static void fileListGetter(String directoryPath) {
+        File path = new File(directoryPath);
+        File[] fileList = path.listFiles();
+
+        for(int i = 0; i < fileList.length; i++) {
+            if(fileList[i].isDirectory()) {
+                fileListGetter(fileList[i].getPath());
+            } else {
+                System.out.println(fileList[i]);
+            }
+        }
+
     }
 }
