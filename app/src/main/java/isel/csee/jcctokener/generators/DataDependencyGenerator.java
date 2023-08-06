@@ -116,6 +116,7 @@ public class DataDependencyGenerator {
 
             } else if(jCCNodeList.get(i).getNode() instanceof VariableDeclarationFragment) {
                 VariableDeclarationFragment node = (VariableDeclarationFragment) jCCNodeList.get(i).getNode();
+                System.out.println("target -> " + node);
                 List<Integer> edgeList = new ArrayList<>();
 
                 if(node.getInitializer() instanceof InfixExpression) {
@@ -130,11 +131,12 @@ public class DataDependencyGenerator {
                     edgeList = processSimpleName((SimpleName) node.getInitializer(), edgeList);
                 }
 
-                int endPosition = node.getInitializer().getStartPosition() + node.getLength() - 1;
-
-                jCCNodeList.get(i).setIndexListOfEdges(edgeList);
-                jCCNodeList.get(i).setSemanticType(type1);
-                updateRelatedNodeList(jCCNodeList.get(i), i, type1, endPosition);
+                if(node.getInitializer() != null) {
+                    int endPosition = node.getInitializer().getStartPosition() + node.getLength() - 1;
+                    jCCNodeList.get(i).setIndexListOfEdges(edgeList);
+                    jCCNodeList.get(i).setSemanticType(type1);
+                    updateRelatedNodeList(jCCNodeList.get(i), i, type1, endPosition);
+                }
             }
         }
     }

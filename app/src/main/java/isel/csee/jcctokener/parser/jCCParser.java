@@ -56,20 +56,23 @@ public class jCCParser {
 
         for(int i = 0; i < jCCNodeList.size(); i++) {
             System.out.println("variable: " + jCCNodeList.get(i).getVariableName() + " Position: " + jCCNodeList.get(i).getStartPosition() + " Type: " +
-                    jCCNodeList.get(i).getNodeType() + " parent: " + jCCNodeList.get(i).getNode());
+                    jCCNodeList.get(i).getNodeType());
 
-            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
-            }
+//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+//                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
+//            }
             System.out.println(" ");
         }
 
 
 
         dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);
+
         dataDependencyGenerator.generateDataDependency();
 
+
         jCCNodeList = dataDependencyGenerator.getjCCNodeList();
+
 
 
         for(int i = 0; i < jCCNodeList.size(); i++) {

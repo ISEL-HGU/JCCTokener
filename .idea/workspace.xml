@@ -6,12 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="d8bb7d85-7976-405d-a6eb-a4005bfb93fb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/fileutil/FileManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01/app/src/main/java/edu/handong/csee/java/hw5/thread/CSVFileCalculator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/calculate/CandidateTokensFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/calculate/CandidateTokensFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HW5/.idea/HW5.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HW5/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HW5/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HW5/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HW5/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HW5/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HW5/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HW5/2023-1-hw5-ehdrb01" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/files/RelatedClassSelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/files/RelatedClassSelector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/DataDependencyGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/DataDependencyGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/jCCTokener.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/jCCTokener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +142,7 @@
       <workItem from="1689732184052" duration="2594000" />
       <workItem from="1689736563005" duration="137144000" />
       <workItem from="1690704908103" duration="53422000" />
-      <workItem from="1690961324078" duration="35011000" />
+      <workItem from="1690961324078" duration="42399000" />
     </task>
     <servers />
   </component>
