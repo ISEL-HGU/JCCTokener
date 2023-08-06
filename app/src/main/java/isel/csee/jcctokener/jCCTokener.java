@@ -30,16 +30,13 @@ public class jCCTokener {
     public void run(String[] args) throws IOException {
         String temp;
         String filePath = args[0];
-
-        File file = new File(filePath);
         String source = new String(Files.readAllBytes(Paths.get(filePath)));
 
 //        jCCTokener.fileListGetter("/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/app/src/main/java");
 
 
         jCCParser jCCParser = new jCCParser(source);
-
-        ASTParser parser = jCCParser.parserCodes();
+        jCCParser.parserCodes();
     }
 
     public static void fileListGetter(String directoryPath) {

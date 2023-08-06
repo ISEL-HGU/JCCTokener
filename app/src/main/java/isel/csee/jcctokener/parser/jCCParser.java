@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 /*
 lexical order로 정렬은 이미 되어있는 상황 - startPosition
+
+이 parser는 하나의 파일에 대해 파싱을 해주는 역할을 수행
  */
 public class jCCParser {
     private String sourceCodes;
@@ -24,7 +26,7 @@ public class jCCParser {
     private DataDependencyGenerator dataDependencyGenerator;
     private TokenGenerator tokenGenerator;
 
-    public ASTParser parserCodes() {
+    public void parserCodes() {
         char[] contents = sourceCodes.toCharArray();
 
         parser = ASTParser.newParser(AST.JLS_Latest); // JLS15는 java source code version 의미
@@ -67,7 +69,6 @@ public class jCCParser {
 
 
         dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);
-
         dataDependencyGenerator.generateDataDependency();
 
 
@@ -114,8 +115,6 @@ public class jCCParser {
 //            System.out.println(" ");
 //            System.out.println(" ");
 //        }
-
-        return parser;
     }
 
 
