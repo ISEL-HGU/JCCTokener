@@ -12,12 +12,8 @@ import java.util.List;
 public class jCCVisitor extends ASTVisitor {
     private List<int[]> structureVectorList = new ArrayList<>();
     private List<jCCNode> jCCNodeList = new ArrayList<>();
+    private List<String> actionTokenList = new ArrayList<>();
 
-    @Override
-    public boolean visit(ExpressionStatement node) {
-
-        return super.visit(node);
-    }
     @Override
     public boolean visit(SimpleName node) {
         int[] structureVector = new int[25];
@@ -113,6 +109,24 @@ public class jCCVisitor extends ASTVisitor {
 
         jCCNodeList.add(jCCNode);
         structureVectorList.add(structureVector);
+
+        return super.visit(node);
+    }
+
+    @Override
+    public boolean visit(VariableDeclarationFragment node) {
+        VariableDeclarationStatement parentNode = (VariableDeclarationStatement) node.getParent();
+        Type type = parentNode.getType();
+
+        actionTokenList.add(type.toString());
+
+
+        return super.visit(node);
+    }
+
+    @Override
+    public boolean visit(MethodInvocation node) {
+        actionTokenList.add(node.getName().toString());
 
         return super.visit(node);
     }

@@ -116,7 +116,7 @@ public class DataDependencyGenerator {
 
             } else if(jCCNodeList.get(i).getNode() instanceof VariableDeclarationFragment) {
                 VariableDeclarationFragment node = (VariableDeclarationFragment) jCCNodeList.get(i).getNode();
-                System.out.println("target -> " + node);
+//                System.out.println("target -> " + node);
                 List<Integer> edgeList = new ArrayList<>();
 
                 if(node.getInitializer() instanceof InfixExpression) {
@@ -264,7 +264,9 @@ public class DataDependencyGenerator {
         Expression methodInstance = node.getExpression();
         List<Expression> argumentList = node.arguments();
 
-        edgeList.add(findTargetNode(methodInstance.getStartPosition(), methodInstance.toString()));
+        if(methodInstance != null) {
+            edgeList.add(findTargetNode(methodInstance.getStartPosition(), methodInstance.toString()));
+        }
 
         for(int i = 0; i < argumentList.size(); i++) {
             if(argumentList.get(i) instanceof SimpleName) {

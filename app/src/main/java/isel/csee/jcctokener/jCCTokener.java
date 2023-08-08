@@ -1,6 +1,7 @@
 package isel.csee.jcctokener;
 
 import isel.csee.jcctokener.files.RelatedClassSelector;
+import isel.csee.jcctokener.parser.StudentFileParser;
 import isel.csee.jcctokener.parser.jCCParser;
 import org.eclipse.jdt.core.dom.ASTParser;
 
@@ -13,17 +14,26 @@ public class jCCTokener {
     public static void main(String[] args) throws IOException {
         jCCTokener jCCTokener = new jCCTokener();
 
-        jCCTokener.run(args);
+//        jCCTokener.run(args);
 
         File file = new File("/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/2023-1-java/SourceCodes");
         File[] files = file.listFiles();
+//
+//        for(int i = 0; i < files.length; i++) {
+//            RelatedClassSelector relatedClassSelector = new RelatedClassSelector(files[i].getPath(),
+//                    "/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/2023-1-java/SelectedCodes");
+//
+//            relatedClassSelector.selectRelatedClass(files[i].getPath());
+//        }
 
         for(int i = 0; i < files.length; i++) {
-            RelatedClassSelector relatedClassSelector = new RelatedClassSelector(files[i].getPath(),
-                    "/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/2023-1-java/SelectedCodes");
-
-            relatedClassSelector.selectRelatedClass(files[i].getPath());
+            StudentFileParser studentFileParser = new StudentFileParser(files[i].getPath());
+            studentFileParser.parseStudentFile();
         }
+
+        System.out.println(files.length);
+
+
 
     }
 

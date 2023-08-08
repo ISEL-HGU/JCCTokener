@@ -16,11 +16,14 @@ import java.util.Map;
 lexical order로 정렬은 이미 되어있는 상황 - startPosition
 
 이 parser는 하나의 파일에 대해 파싱을 해주는 역할을 수행
+한 사람에 대해서 여러 개의 파서가 나올 수 있음
+method를 코드 블럭 단위로 파싱해서 사용해야 하는데, 그러려면 어떻게 해야될까 ~~
  */
 public class jCCParser {
     private String sourceCodes;
     private ASTParser parser;
     private List<jCCNode> jCCNodeList;
+    private List<String> actionTokenList;
     private jCCVisitor jCCVisitor = new jCCVisitor();
     private SemanticVectorGenerator semanticVectorGenerator;
     private DataDependencyGenerator dataDependencyGenerator;
@@ -56,15 +59,15 @@ public class jCCParser {
 
         jCCNodeList = jCCVisitor.getjCCNodeList();
 
-        for(int i = 0; i < jCCNodeList.size(); i++) {
-            System.out.println("variable: " + jCCNodeList.get(i).getVariableName() + " Position: " + jCCNodeList.get(i).getStartPosition() + " Type: " +
-                    jCCNodeList.get(i).getNodeType());
-
-//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-//                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
-//            }
-            System.out.println(" ");
-        }
+//        for(int i = 0; i < jCCNodeList.size(); i++) {
+//            System.out.println("variable: " + jCCNodeList.get(i).getVariableName() + " Position: " + jCCNodeList.get(i).getStartPosition() + " Type: " +
+//                    jCCNodeList.get(i).getNodeType());
+//
+////            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+////                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
+////            }
+//            System.out.println(" ");
+//        }
 
 
 
@@ -76,24 +79,24 @@ public class jCCParser {
 
 
 
-        for(int i = 0; i < jCCNodeList.size(); i++) {
-            System.out.println(jCCNodeList.get(i).getVariableName() + "  " + i);
-            if(jCCNodeList.get(i).getSemanticType() == 1) {
-                System.out.println("node type : " + "type 1");
-            } else if(jCCNodeList.get(i).getSemanticType() == 2) {
-                System.out.println("node type : " + "type 2");
-            } else if(jCCNodeList.get(i).getSemanticType() == 3){
-                System.out.println("node type : " + "type 3");
-            }
-            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + " index: "
-                + jCCNodeList.get(i).getIndexListOfEdges().get(k));
-            }
-        }
+//        for(int i = 0; i < jCCNodeList.size(); i++) {
+//            System.out.println(jCCNodeList.get(i).getVariableName() + "  " + i);
+//            if(jCCNodeList.get(i).getSemanticType() == 1) {
+//                System.out.println("node type : " + "type 1");
+//            } else if(jCCNodeList.get(i).getSemanticType() == 2) {
+//                System.out.println("node type : " + "type 2");
+//            } else if(jCCNodeList.get(i).getSemanticType() == 3){
+//                System.out.println("node type : " + "type 3");
+//            }
+//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+//                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + " index: "
+//                + jCCNodeList.get(i).getIndexListOfEdges().get(k));
+//            }
+//        }
 
-        for(int i = 0; i < jCCNodeList.size(); i++) {
-            System.out.println(jCCNodeList.get(i).getVariableName() + " " + jCCNodeList.get(i).getStartPosition());
-        }
+//        for(int i = 0; i < jCCNodeList.size(); i++) {
+//            System.out.println(jCCNodeList.get(i).getVariableName() + " " + jCCNodeList.get(i).getStartPosition());
+//        }
 
         semanticVectorGenerator = new SemanticVectorGenerator(jCCNodeList, 3);
 
@@ -117,6 +120,21 @@ public class jCCParser {
 //        }
     }
 
+    public List<jCCNode> getjCCNodeList() {
+        return jCCNodeList;
+    }
+
+    public void setjCCNodeList(List<jCCNode> jCCNodeList) {
+        this.jCCNodeList = jCCNodeList;
+    }
+
+    public List<String> getActionTokenList() {
+        return actionTokenList;
+    }
+
+    public void setActionTokenList(List<String> actionTokenList) {
+        this.actionTokenList = actionTokenList;
+    }
 
     public jCCParser(String sourceCodes) {
         this.sourceCodes = sourceCodes;
