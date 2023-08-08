@@ -4,11 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SimilarityCalculator {
-    private long decreaseStep;
-    private List<int[]> firstVectorCollection;
-    private List<int[]> secondVectorCollection;
+    private double decreaseStep;
 
-    public double calculateTotalSimilarity() {
+    public double calculateTotalSimilarity(List<int[]> firstVectorCollection, List<int[]> secondVectorCollection) {
         double totalSimilarity = 0;
         int[] markFirstVector = new int[firstVectorCollection.size()];
         int[] markSecondVector = new int[secondVectorCollection.size()];

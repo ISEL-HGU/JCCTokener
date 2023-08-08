@@ -6,12 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="d8bb7d85-7976-405d-a6eb-a4005bfb93fb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/DataDependencyGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/DataDependencyGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/calculate/CandidateTokensFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/calculate/LocateTokens.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/calculate/SimilarityCalculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/calculate/SimilarityCalculator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/TokenGenerator.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/jCCTokener.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/jCCTokener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/StudentFileAnalyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/StudentFileAnalyzer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/StudentFileParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/StudentFileParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/jCCVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/jCCVisitor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -137,7 +139,7 @@
       <workItem from="1689736563005" duration="137144000" />
       <workItem from="1690704908103" duration="53422000" />
       <workItem from="1690961324078" duration="42399000" />
-      <workItem from="1691299852118" duration="23871000" />
+      <workItem from="1691299852118" duration="41774000" />
     </task>
     <servers />
   </component>

@@ -1,8 +1,8 @@
 package isel.csee.jcctokener.parser;
 
-import isel.csee.jcctokener.node.jCCNode;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -13,39 +13,25 @@ import java.util.List;
 ActionToken 만들어줘야 함 / parsing 하는 과정에서 따로 뽑아 와야 할 듯
  */
 public class StudentFileParser {
-    private String fileInputPath; // 이 inputPath는 전체 디렉토리의 주소가 아닌 학번이 들어있는 directory의 주소를 의미
-    private String studentId;
-    private List<List<jCCNode>> jCCNodeList;
+    private List<StudentFileAnalyzer> studentFileAnalyzerList = new ArrayList<>();
 
-    public void parseStudentFile() {
+    public void parseStudentFile(String fileInputPath) {
         File file = new File(fileInputPath);
+        File[] fileList = file.listFiles();
 
-        studentId = fileInputPath.substring(fileInputPath.lastIndexOf("_") + 1);
-        StudentFileAnalyzer studentFileAnalyzer = new StudentFileAnalyzer(studentId);
+        for(int i = 0; i < fileList.length; i++) {
+            if(fileList[i].isDirectory()) {
+                parseStudentFile(fileList[i].getPath());
+            } else {
+                if(fileList[i].getName().substring(fileList[i].getName().lastIndexOf(".") + 1).equals("java")) {
+                    StudentFileAnalyzer studentFileAnalyzer = new StudentFileAnalyzer(fileList[i].getPath());
+                    studentFileAnalyzer.analyzeStudentFile();
 
-        studentFileAnalyzer.analyzeStudentFile(fileInputPath);
-
-        jCCNodeList = studentFileAnalyzer.getjCCNodeList(); // 해당 학번 학생에 대한 모든 자바 파일 정보가 들어있게 됨
+                    studentFileAnalyzerList.add(studentFileAnalyzer);
+                }
+            }
+        }
 
     }
 
-    public StudentFileParser(String fileInputPath) {
-        this.fileInputPath = fileInputPath;
-    }
-
-    public String getFileInputPath() {
-        return fileInputPath;
-    }
-
-    public void setFileInputPath(String fileInputPath) {
-        this.fileInputPath = fileInputPath;
-    }
-
-    public List<List<jCCNode>> getjCCNodeList() {
-        return jCCNodeList;
-    }
-
-    public void setjCCNodeList(List<List<jCCNode>> jCCNodeList) {
-        this.jCCNodeList = jCCNodeList;
-    }
 }

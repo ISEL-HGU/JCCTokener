@@ -1,9 +1,6 @@
 package isel.csee.jcctokener;
 
-import isel.csee.jcctokener.files.RelatedClassSelector;
-import isel.csee.jcctokener.parser.StudentFileParser;
 import isel.csee.jcctokener.parser.jCCParser;
-import org.eclipse.jdt.core.dom.ASTParser;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -27,8 +24,8 @@ public class jCCTokener {
 //        }
 
         for(int i = 0; i < files.length; i++) {
-            StudentFileParser studentFileParser = new StudentFileParser(files[i].getPath());
-            studentFileParser.parseStudentFile();
+//            StudentFileParser studentFileParser = new StudentFileParser(files[i].getPath());
+//            studentFileParser.parseStudentFile();
         }
 
         System.out.println(files.length);
@@ -46,7 +43,7 @@ public class jCCTokener {
 
 
         jCCParser jCCParser = new jCCParser(source);
-        jCCParser.parserCodes();
+        jCCParser.parseCodes();
     }
 
     public static void fileListGetter(String directoryPath) {

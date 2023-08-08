@@ -1,62 +1,69 @@
 package isel.csee.jcctokener.parser;
 
+import isel.csee.jcctokener.calculate.HashValueRepository;
 import isel.csee.jcctokener.node.jCCNode;
-import org.eclipse.jdt.core.dom.ASTParser;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentFileAnalyzer {
-    private String studentId;
-    private List<List<jCCNode>> jCCNodeList = new ArrayList<>();
+public class StudentFileAnalyzer { // 실제로 사용하는 것들은 이 Class 객체
+    private String filePath;
+    private List<jCCNode> jCCNodeList;
+    private List<String> actionTokenList;
+    private List<HashValueRepository> hashValueRepositoryList;
 
-    public void analyzeStudentFile(String directoryPath) {
+    public void analyzeStudentFile() {
         try {
-            File targetDirectory = new File(directoryPath);
-            File[] relatedFolderList = targetDirectory.listFiles(); // 해당 path 안에 존재하는 파일의 리스트
+            String source = new String(Files.readAllBytes(Paths.get(filePath)));
+            jCCParser jCCParser = new jCCParser(source);
 
-            if (relatedFolderList != null) {
-                for (int i = 0; i < relatedFolderList.length; i++) {
-                    if (relatedFolderList[i].isDirectory()) { // 폴더인 경우
-                        analyzeStudentFile(relatedFolderList[i].getPath()); // recursion / 재귀적으로 다시 폴더 탐색
-                    } else { // 폴더가 아니라 파일인 경우
-                        if(relatedFolderList[i].getName().substring(relatedFolderList[i].getName().lastIndexOf(".") + 1).equals("java")) {
-                            System.out.println("StudentId: " + studentId + " ClassName: " + relatedFolderList[i].getName());
-                            String source = new String(Files.readAllBytes(Paths.get(relatedFolderList[i].getPath())));
-                            jCCParser jCCParser = new jCCParser(source);
-                            jCCParser.parserCodes();
-                            jCCNodeList.add(jCCParser.getjCCNodeList());
-                        }
-                    }
-                }
-            }
+            jCCParser.parseCodes();
+            actionTokenList = jCCParser.getActionTokenList();
+            jCCNodeList = jCCParser.getjCCNodeList();
+
         } catch (IOException e) {
-
+            throw new RuntimeException(e);
         }
 
+
     }
 
-    public StudentFileAnalyzer(String studentId) {
-        this.studentId = studentId;
+    public StudentFileAnalyzer(String filePath) {
+        this.filePath = filePath;
     }
 
-    public String getStudentId() {
-        return studentId;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
-    public List<List<jCCNode>> getjCCNodeList() {
+    public List<jCCNode> getjCCNodeList() {
         return jCCNodeList;
     }
 
-    public void setjCCNodeList(List<List<jCCNode>> jCCNodeList) {
+    public void setjCCNodeList(List<jCCNode> jCCNodeList) {
         this.jCCNodeList = jCCNodeList;
+    }
+
+    public List<String> getActionTokenList() {
+        return actionTokenList;
+    }
+
+    public void setActionTokenList(List<String> actionTokenList) {
+        this.actionTokenList = actionTokenList;
+    }
+
+    public List<HashValueRepository> getHashValueRepositoryList() {
+        return hashValueRepositoryList;
+    }
+
+    public void setHashValueRepositoryList(List<HashValueRepository> hashValueRepositoryList) {
+        this.hashValueRepositoryList = hashValueRepositoryList;
     }
 }

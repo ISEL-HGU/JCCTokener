@@ -3,7 +3,6 @@ package isel.csee.jcctokener.parser;
 import isel.csee.jcctokener.generators.DataDependencyGenerator;
 import isel.csee.jcctokener.visitor.jCCVisitor;
 import isel.csee.jcctokener.node.jCCNode;
-import isel.csee.jcctokener.generators.TokenGenerator;
 import isel.csee.jcctokener.generators.SemanticVectorGenerator;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -27,9 +26,8 @@ public class jCCParser {
     private jCCVisitor jCCVisitor = new jCCVisitor();
     private SemanticVectorGenerator semanticVectorGenerator;
     private DataDependencyGenerator dataDependencyGenerator;
-    private TokenGenerator tokenGenerator;
 
-    public void parserCodes() {
+    public void parseCodes() {
         char[] contents = sourceCodes.toCharArray();
 
         parser = ASTParser.newParser(AST.JLS_Latest); // JLS15는 java source code version 의미
