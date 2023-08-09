@@ -3,6 +3,7 @@ package isel.csee.jcctokener.parser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -19,19 +20,27 @@ public class StudentFileParser {
         File file = new File(fileInputPath);
         File[] fileList = file.listFiles();
 
-        for(int i = 0; i < fileList.length; i++) {
-            if(fileList[i].isDirectory()) {
-                parseStudentFile(fileList[i].getPath());
-            } else {
-                if(fileList[i].getName().substring(fileList[i].getName().lastIndexOf(".") + 1).equals("java")) {
-                    StudentFileAnalyzer studentFileAnalyzer = new StudentFileAnalyzer(fileList[i].getPath());
-                    studentFileAnalyzer.analyzeStudentFile();
+        if(fileList != null) {
+            for(int i = 0; i < fileList.length; i++) {
+                if(fileList[i].isDirectory()) {
+                    parseStudentFile(fileList[i].getPath());
+                } else {
+                    if(fileList[i].getName().substring(fileList[i].getName().lastIndexOf(".") + 1).equals("java")) {
+                        StudentFileAnalyzer studentFileAnalyzer = new StudentFileAnalyzer(fileList[i].getPath());
+                        studentFileAnalyzer.analyzeStudentFile();
 
-                    studentFileAnalyzerList.add(studentFileAnalyzer);
+                        studentFileAnalyzerList.add(studentFileAnalyzer);
+                    }
                 }
             }
         }
-
     }
 
+    public List<StudentFileAnalyzer> getStudentFileAnalyzerList() {
+        return studentFileAnalyzerList;
+    }
+
+    public void setStudentFileAnalyzerList(List<StudentFileAnalyzer> studentFileAnalyzerList) {
+        this.studentFileAnalyzerList = studentFileAnalyzerList;
+    }
 }

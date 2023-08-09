@@ -115,10 +115,12 @@ public class jCCVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(VariableDeclarationFragment node) {
-        VariableDeclarationStatement parentNode = (VariableDeclarationStatement) node.getParent();
-        Type type = parentNode.getType();
+        if(node.getParent() instanceof VariableDeclarationStatement) {
+            VariableDeclarationStatement parentNode = (VariableDeclarationStatement) node.getParent();
+            Type type = parentNode.getType();
 
-        actionTokenList.add(type.toString());
+            actionTokenList.add(type.toString());
+        }
 
 
         return super.visit(node);
@@ -170,6 +172,14 @@ public class jCCVisitor extends ASTVisitor {
 
     public void setStructureVectorList(List<int[]> structureVectorList) {
         this.structureVectorList = structureVectorList;
+    }
+
+    public List<String> getActionTokenList() {
+        return actionTokenList;
+    }
+
+    public void setActionTokenList(List<String> actionTokenList) {
+        this.actionTokenList = actionTokenList;
     }
 
     public List<jCCNode> getjCCNodeList() {

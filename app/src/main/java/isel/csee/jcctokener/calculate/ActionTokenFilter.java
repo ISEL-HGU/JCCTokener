@@ -3,10 +3,11 @@ package isel.csee.jcctokener.calculate;
 import isel.csee.jcctokener.parser.StudentFileAnalyzer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ActionTokenFilter {
-    private List<StudentFileAnalyzer> studentFileAnalyzerList; // 같은 hash value를 가지는 값들의 List
+    private List<StudentFileAnalyzer> studentFileAnalyzerList; // 같은 hash value를 가지는 값들의 HashMap
     private StudentFileAnalyzer targetFile; // 비교하고자 하는 값
     private double actionTokenRatioReferencePoint;
     private double tokenRationReferencePoint;
@@ -21,8 +22,13 @@ public class ActionTokenFilter {
             double actionTokenRation = count / min;
             double tokenRation = min / max;
 
-            if(actionTokenRation > actionTokenRatioReferencePoint || tokenRation > tokenRationReferencePoint) {
-                filterationList.add(studentFileAnalyzerList.get(i));
+            if(actionTokenRation > actionTokenRatioReferencePoint && tokenRation > tokenRationReferencePoint) {
+                if(filterationList.contains(studentFileAnalyzerList.get(i))) {
+
+                } else {
+                    filterationList.add(studentFileAnalyzerList.get(i));
+                }
+
             }
         }
 
@@ -43,18 +49,18 @@ public class ActionTokenFilter {
         return count;
     }
 
+    public ActionTokenFilter(List<StudentFileAnalyzer> studentFileAnalyzerList, StudentFileAnalyzer targetFile, double actionTokenRatioReferencePoint, double tokenRationReferencePoint) {
+        this.studentFileAnalyzerList = studentFileAnalyzerList;
+        this.targetFile = targetFile;
+        this.actionTokenRatioReferencePoint = actionTokenRatioReferencePoint;
+        this.tokenRationReferencePoint = tokenRationReferencePoint;
+    }
+
     public List<StudentFileAnalyzer> getStudentFileAnalyzerList() {
         return studentFileAnalyzerList;
     }
 
     public void setStudentFileAnalyzerList(List<StudentFileAnalyzer> studentFileAnalyzerList) {
         this.studentFileAnalyzerList = studentFileAnalyzerList;
-    }
-
-    public ActionTokenFilter(List<StudentFileAnalyzer> studentFileAnalyzerList, StudentFileAnalyzer targetFile, double actionTokenRatioReferencePoint, double tokenRationReferencePoint) {
-        this.studentFileAnalyzerList = studentFileAnalyzerList;
-        this.targetFile = targetFile;
-        this.actionTokenRatioReferencePoint = actionTokenRatioReferencePoint;
-        this.tokenRationReferencePoint = tokenRationReferencePoint;
     }
 }

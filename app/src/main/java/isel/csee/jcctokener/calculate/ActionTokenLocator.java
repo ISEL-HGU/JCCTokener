@@ -14,10 +14,11 @@ import java.util.List;
 차라리 이 HashMap 내부에서 같은 Hash를 공유하는 값끼리 계산 해버리는 건 어떨까 / 아 근데 그러면 계산의 중복이 많이 생길 듯
 
 생각 해보니까 이거 method 단위로 잘라서 해야되는데 ..
+String을 key value로 하는 HashMap을 사용하는 게 더 낫지 싶기도 하고
  */
 public class ActionTokenLocator {
     private List<StudentFileAnalyzer> studentFileAnalyzerList;
-    private HashMap<String, List<HashValueRepository>> hashValueMap; // 모든 파일에 대한 hash / k-token이 다 들어가있는 list / filePath를 가져와서 사용해야 할 듯
+    private HashMap<String, List<HashValueRepository>> hashValueMap = new HashMap<>(); // 모든 파일에 대한 hash / k-token이 다 들어가있는 list / filePath를 가져와서 사용해야 할 듯
 
     private int kValue = 3;
 
@@ -26,6 +27,8 @@ public class ActionTokenLocator {
             studentFileAnalyzerList.get(i).setActionTokenList(sortActionTokens(studentFileAnalyzerList.get(i).getActionTokenList()));
             studentFileAnalyzerList.get(i).setHashValueRepositoryList(createAllKTokens(kValue, studentFileAnalyzerList.get(i).getActionTokenList(), studentFileAnalyzerList.get(i).getFilePath()));
         }
+
+        System.out.println(studentFileAnalyzerList.size());
         // 이 method는 한 번 실행이 되기만 하면 되는 구조
     }
 
@@ -44,29 +47,33 @@ public class ActionTokenLocator {
 
     public List<HashValueRepository> createAllKTokens(int k, List<String> actionTokenList, String filePath) { // 하나의 파일에 대해서만 진행되는 과정
         List<HashValueRepository> returnList = new ArrayList<>();
+        if(actionTokenList != null) {
+            for(int i = 0; i < actionTokenList.size() - k + 1; i++) {
+                StringBuilder stringBuilder = new StringBuilder();
 
-        for(int i = 0; i < actionTokenList.size() - k + 1; i++) {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for(int j = 0; j < k; j++) {
-                if(j == k - 1) {
-                    stringBuilder.append(actionTokenList.get(i + j - 1));
-                    stringBuilder.append(",");
-                } else {
-                    stringBuilder.append(actionTokenList.get(i + j - 1));
+                for(int j = 0; j < k; j++) {
+                    if(j == k - 1) {
+                        stringBuilder.append(actionTokenList.get(i + j)); // 이러면 -1이 잡히게 되네
+                        stringBuilder.append(",");
+                    } else {
+                        stringBuilder.append(actionTokenList.get(i + j));
+                    }
                 }
+
+                String tempString = stringBuilder.toString();
+                String hashValue = convertStringToHashValue(tempString);
+                HashValueRepository hashValueRepository = new HashValueRepository(tempString, hashValue, filePath);
+
+                List<HashValueRepository> hashValueRepositoryList = hashValueMap.get(hashValue);
+                if(hashValueRepositoryList == null) {
+                    hashValueRepositoryList = new ArrayList<>();
+                }
+                hashValueRepositoryList.add(hashValueRepository);
+
+                hashValueMap.put(hashValue, hashValueRepositoryList);
+
+                returnList.add(hashValueRepository);
             }
-
-            String tempString = stringBuilder.toString();
-            String hashValue = convertStringToHashValue(tempString);
-            HashValueRepository hashValueRepository = new HashValueRepository(tempString, hashValue, filePath);
-
-            List<HashValueRepository> hashValueRepositoryList = hashValueMap.get(hashValue);
-            hashValueRepositoryList.add(hashValueRepository);
-
-            hashValueMap.put(hashValue, hashValueRepositoryList);
-
-            returnList.add(hashValueRepository);
         }
 
         return returnList;
@@ -74,31 +81,34 @@ public class ActionTokenLocator {
 
     public List<HashValueRepository> createTargetKTokens(int k, List<String> actionTokenList, String filePath) { // 하나의 파일에 대해서만 진행되는 과정
         List<HashValueRepository> returnList = new ArrayList<>();
+        if(actionTokenList != null) {
+            for(int i = 0; i < actionTokenList.size() - k + 1; i++) {
+                StringBuilder stringBuilder = new StringBuilder();
 
-        for(int i = 0; i < actionTokenList.size() - k + 1; i++) {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for(int j = 0; j < k; j++) {
-                if(j == k - 1) {
-                    stringBuilder.append(actionTokenList.get(i + j - 1));
-                    stringBuilder.append(",");
-                } else {
-                    stringBuilder.append(actionTokenList.get(i + j - 1));
+                for(int j = 0; j < k; j++) {
+                    if(j == k - 1) {
+                        stringBuilder.append(actionTokenList.get(i + j));
+                        stringBuilder.append(",");
+                    } else {
+                        stringBuilder.append(actionTokenList.get(i + j));
+                    }
                 }
+
+                String tempString = stringBuilder.toString();
+                String hashValue = convertStringToHashValue(tempString);
+                HashValueRepository hashValueRepository = new HashValueRepository(tempString, hashValue, filePath);
+
+                returnList.add(hashValueRepository);
             }
-
-            String tempString = stringBuilder.toString();
-            String hashValue = convertStringToHashValue(tempString);
-            HashValueRepository hashValueRepository = new HashValueRepository(tempString, hashValue, filePath);
-
-            returnList.add(hashValueRepository);
         }
 
         return returnList;
     }
 
     public List<String> sortActionTokens(List<String> targetList) {
-        Collections.sort(targetList);
+        if(targetList != null) {
+            Collections.sort(targetList);
+        }
 
         return targetList;
     }
@@ -124,15 +134,15 @@ public class ActionTokenLocator {
         return returnValue;
     }
 
+    public ActionTokenLocator(List<StudentFileAnalyzer> studentFileAnalyzerList) {
+        this.studentFileAnalyzerList = studentFileAnalyzerList;
+    }
+
     public List<StudentFileAnalyzer> getStudentFileAnalyzerList() {
         return studentFileAnalyzerList;
     }
 
     public void setStudentFileAnalyzerList(List<StudentFileAnalyzer> studentFileAnalyzerList) {
-        this.studentFileAnalyzerList = studentFileAnalyzerList;
-    }
-
-    public ActionTokenLocator(List<StudentFileAnalyzer> studentFileAnalyzerList) {
         this.studentFileAnalyzerList = studentFileAnalyzerList;
     }
 

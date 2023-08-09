@@ -56,17 +56,7 @@ public class jCCParser {
 
 
         jCCNodeList = jCCVisitor.getjCCNodeList();
-
-//        for(int i = 0; i < jCCNodeList.size(); i++) {
-//            System.out.println("variable: " + jCCNodeList.get(i).getVariableName() + " Position: " + jCCNodeList.get(i).getStartPosition() + " Type: " +
-//                    jCCNodeList.get(i).getNodeType());
-//
-////            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-////                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName());
-////            }
-//            System.out.println(" ");
-//        }
-
+        actionTokenList = jCCVisitor.getActionTokenList();
 
 
         dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);
@@ -76,26 +66,6 @@ public class jCCParser {
         jCCNodeList = dataDependencyGenerator.getjCCNodeList();
 
 
-
-//        for(int i = 0; i < jCCNodeList.size(); i++) {
-//            System.out.println(jCCNodeList.get(i).getVariableName() + "  " + i);
-//            if(jCCNodeList.get(i).getSemanticType() == 1) {
-//                System.out.println("node type : " + "type 1");
-//            } else if(jCCNodeList.get(i).getSemanticType() == 2) {
-//                System.out.println("node type : " + "type 2");
-//            } else if(jCCNodeList.get(i).getSemanticType() == 3){
-//                System.out.println("node type : " + "type 3");
-//            }
-//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-//                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + " index: "
-//                + jCCNodeList.get(i).getIndexListOfEdges().get(k));
-//            }
-//        }
-
-//        for(int i = 0; i < jCCNodeList.size(); i++) {
-//            System.out.println(jCCNodeList.get(i).getVariableName() + " " + jCCNodeList.get(i).getStartPosition());
-//        }
-
         semanticVectorGenerator = new SemanticVectorGenerator(jCCNodeList, 3);
 
         semanticVectorGenerator.createVariableSemanticVector();
@@ -104,18 +74,6 @@ public class jCCParser {
 
         jCCNodeList = semanticVectorGenerator.getjCCNodeList();
 
-//        for(int i = 0; i < jCCNodeList.size(); i++) {
-//            System.out.println(jCCNodeList.get(i).getVariableName());
-//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-//                System.out.println("Dependency Node: " + jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + " index: "
-//                        + jCCNodeList.get(i).getIndexListOfEdges().get(k));
-//            }
-//            for(int k = 0; k < 25; k++) {
-//                System.out.print(jCCNodeList.get(i).getSemanticVector()[k] + " ");
-//            }
-//            System.out.println(" ");
-//            System.out.println(" ");
-//        }
     }
 
     public List<jCCNode> getjCCNodeList() {

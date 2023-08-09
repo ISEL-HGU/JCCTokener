@@ -1,10 +1,15 @@
 package isel.csee.jcctokener;
 
+import isel.csee.jcctokener.calculate.SimilarityCalculator;
+import isel.csee.jcctokener.parser.StudentFileAnalyzer;
+import isel.csee.jcctokener.parser.StudentFileParser;
 import isel.csee.jcctokener.parser.jCCParser;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class jCCTokener {
 
@@ -13,22 +18,20 @@ public class jCCTokener {
 
 //        jCCTokener.run(args);
 
+//        File file = new File("/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/2023-1-java/SourceCodes");
         File file = new File("/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/2023-1-java/SourceCodes");
         File[] files = file.listFiles();
-//
-//        for(int i = 0; i < files.length; i++) {
-//            RelatedClassSelector relatedClassSelector = new RelatedClassSelector(files[i].getPath(),
-//                    "/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/2023-1-java/SelectedCodes");
-//
-//            relatedClassSelector.selectRelatedClass(files[i].getPath());
-//        }
+        List<StudentFileAnalyzer> studentFileAnalyzerList = new ArrayList<>();
 
         for(int i = 0; i < files.length; i++) {
-//            StudentFileParser studentFileParser = new StudentFileParser(files[i].getPath());
-//            studentFileParser.parseStudentFile();
+            StudentFileParser studentFileParser = new StudentFileParser();
+            studentFileParser.parseStudentFile(files[i].getPath());
+
+            studentFileAnalyzerList.addAll(studentFileParser.getStudentFileAnalyzerList());
         }
 
-        System.out.println(files.length);
+        SimilarityCalculator similarityCalculator = new SimilarityCalculator(studentFileAnalyzerList);
+        similarityCalculator.calculateSimilarity();
 
 
 
@@ -54,7 +57,7 @@ public class jCCTokener {
             if(fileList[i].isDirectory()) {
                 fileListGetter(fileList[i].getPath());
             } else {
-                System.out.println(fileList[i]);
+
             }
         }
 
