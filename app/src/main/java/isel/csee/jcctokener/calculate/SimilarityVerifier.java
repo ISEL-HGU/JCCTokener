@@ -12,7 +12,7 @@ public class SimilarityVerifier {
         double totalSimilarity = 0;
         List<int[]> firstVectorCollection;
         List<int[]> secondVectorCollection;
-        if(type == 2) {
+        if(type == 2) { // type에 따라서 vector를 다르게 받아옴
             firstVectorCollection = firstStudentFile.getType2SemanticVector();
             secondVectorCollection = secondStudentFile.getType2SemanticVector();
         } else if(type == 3) {
@@ -33,7 +33,7 @@ public class SimilarityVerifier {
             maxVectorSize = secondVectorCollection.size();
         }
 
-        if(maxVectorSize == 0) {
+        if(maxVectorSize == 0) { // type2에 자주 발생하는 case
             return 0;
         }
 
@@ -42,7 +42,7 @@ public class SimilarityVerifier {
 
         for(double i = 1; i > 0; i -= decreaseStep) {
             for(int k = 0; k < firstVectorCollection.size(); k++) {
-                if(markFirstVector[k] == 1) continue;
+                if(markFirstVector[k] == 1) continue; // 이미 마킹 되어있으면 stop
 
                 for(int j = 0; j < secondVectorCollection.size(); j++) {
                     if(markSecondVector[j] == 1) continue;
@@ -74,7 +74,7 @@ public class SimilarityVerifier {
             totalInnerProduct += firstVector[i] * secondVector[i];
         }
 
-        totalSize = Math.sqrt(firstSize) * Math.sqrt(secondSize);
+        totalSize = (Math.sqrt(firstSize)) * (Math.sqrt(secondSize));
 
         returnValue = totalInnerProduct / totalSize;
 

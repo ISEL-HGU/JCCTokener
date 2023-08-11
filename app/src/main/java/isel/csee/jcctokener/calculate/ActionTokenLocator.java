@@ -33,7 +33,7 @@ public class ActionTokenLocator {
     }
 
     public List<HashValueRepository> locateActionToken(StudentFileAnalyzer studentFileAnalyzer) { // 하나의 파일에 대해 다른 모든 파일들을 비교해주는 과정
-        studentFileAnalyzer.setActionTokenList(sortActionTokens(studentFileAnalyzer.getActionTokenList()));
+        studentFileAnalyzer.setActionTokenList(sortActionTokens(studentFileAnalyzer.getActionTokenList())); // actionToken을 sort해서 다시 저장
         List<HashValueRepository> targetList = createTargetKTokens(kValue, studentFileAnalyzer.getActionTokenList(), studentFileAnalyzer.getFilePath()); // target node에 대해서 분석한 파일
         List<HashValueRepository> relateFileList = new ArrayList<>();
 
@@ -41,6 +41,7 @@ public class ActionTokenLocator {
             relateFileList.addAll(hashValueMap.get(targetList.get(i).getHashValue()));
         }
         // 동일한 hash값을 가지는 후보군 추려내는 과정
+        // 이 함수가 실행되기 전에는 hashValueMap에 모든 hash 값이 들어가 있어야 함
 
         return relateFileList;
     }
@@ -70,7 +71,7 @@ public class ActionTokenLocator {
                 }
                 hashValueRepositoryList.add(hashValueRepository);
 
-                hashValueMap.put(hashValue, hashValueRepositoryList);
+                hashValueMap.put(hashValue, hashValueRepositoryList); // HashValueMap에 값을 넣는 것이 이 부분에서 수행해야 되는 부분인지?
 
                 returnList.add(hashValueRepository);
             }

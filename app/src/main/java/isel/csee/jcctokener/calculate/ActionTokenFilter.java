@@ -22,7 +22,7 @@ public class ActionTokenFilter {
             double actionTokenRation = count / min;
             double tokenRation = min / max;
 
-            if(actionTokenRation > actionTokenRatioReferencePoint && tokenRation > tokenRationReferencePoint) {
+            if(actionTokenRation >= actionTokenRatioReferencePoint && tokenRation >= tokenRationReferencePoint) {
                 if(filterationList.contains(studentFileAnalyzerList.get(i))) {
 
                 } else {
@@ -31,6 +31,11 @@ public class ActionTokenFilter {
 
             }
         }
+        if(filterationList.size() == 0) { // 0으로 잡히는 파일들은 다 HashValue가 없다고 나오게 됨 + action token도 없다고 나오거나 or action token의 개수 만으로는 k-token을 만들 수가 없음
+            System.out.println(targetFile.getFilePath() + "  " + targetFile.getHashValueRepositoryList().size() + "   " + targetFile.getActionTokenList().size());
+            System.out.println(targetFile.getjCCNodeList().size());
+        }
+
 
         return filterationList;
     }
