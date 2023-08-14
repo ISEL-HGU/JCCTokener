@@ -1,17 +1,21 @@
 package isel.csee.jcctokener.calculate;
 
 import isel.csee.jcctokener.parser.StudentFileAnalyzer;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.text.similarity.CosineSimilarity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class SimilarityVerifier {
     private double decreaseStep;
 
     public double verifySimilarity(StudentFileAnalyzer firstStudentFile, StudentFileAnalyzer secondStudentFile, int type) {
         double totalSimilarity = 0;
-        List<int[]> firstVectorCollection;
-        List<int[]> secondVectorCollection;
+        List<double[]> firstVectorCollection;
+        List<double[]> secondVectorCollection;
         if(type == 2) { // type에 따라서 vector를 다르게 받아옴
             firstVectorCollection = firstStudentFile.getType2SemanticVector();
             secondVectorCollection = secondStudentFile.getType2SemanticVector();
@@ -28,9 +32,9 @@ public class SimilarityVerifier {
         int maxVectorSize;
 
         if(firstVectorCollection.size() < secondVectorCollection.size()) {
-            maxVectorSize = firstVectorCollection.size();
-        } else {
             maxVectorSize = secondVectorCollection.size();
+        } else {
+            maxVectorSize = firstVectorCollection.size();
         }
 
         if(maxVectorSize == 0) { // type2에 자주 발생하는 case
@@ -58,27 +62,27 @@ public class SimilarityVerifier {
             }
         }
 
+        if(totalSimilarity / maxVectorSize > 1) {
+            System.out.println("size : " + firstVectorCollection.size());
+            System.out.println("size : " + secondVectorCollection.size());
+            System.out.println("total: " + totalSimilarity);
+            System.out.println("maxSize: " + maxVectorSize);
+            System.out.println(firstStudentFile.getFilePath() + type + " " + secondStudentFile.getFilePath());
+        }
+
         return totalSimilarity / maxVectorSize;
     }
 
-    public double calculateCosineSimilarity(int[] firstVector, int[] secondVector) {
-        int firstSize = 0;
-        int secondSize = 0;
-        double totalSize = 0;
-        int totalInnerProduct = 0;
-        double returnValue;
+    public double calculateCosineSimilarity(double[] firstVector, double[] secondVector) {
+        RealVector vector1 = new ArrayRealVector(firstVector);
+        RealVector vector2 = new ArrayRealVector(secondVector);
 
-        for(int i = 0; i < 25; i++) {
-            firstSize += firstVector[i] * firstVector[i];
-            secondSize += secondVector[i] * secondVector[i];
-            totalInnerProduct += firstVector[i] * secondVector[i];
-        }
+        double dotProduct = vector1.dotProduct(vector2);
+        double normVector1 = vector1.getNorm();
+        double normVector2 = vector2.getNorm();
 
-        totalSize = (Math.sqrt(firstSize)) * (Math.sqrt(secondSize));
 
-        returnValue = totalInnerProduct / totalSize;
-
-        return returnValue;
+        return dotProduct/(normVector1 * normVector2);
     }
 
     public SimilarityVerifier(double decreaseStep) {

@@ -57,6 +57,10 @@ public class SimilarityCalculator {
                         bufferedWriter.write("\n");
                         bufferedWriter.flush();
                     }
+
+                    if(type3Similarity > 1) {
+                        System.out.println("HERE: " + type1Similarity + " " + type2Similarity + " " + type3Similarity);
+                    }
                 }
             }
         } catch (IOException e) {

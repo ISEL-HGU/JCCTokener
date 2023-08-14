@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class jCCVisitor extends ASTVisitor {
-    private List<int[]> structureVectorList = new ArrayList<>();
+    private List<double[]> structureVectorList = new ArrayList<>();
     private List<jCCNode> jCCNodeList = new ArrayList<>();
     private List<String> actionTokenList = new ArrayList<>();
 
     @Override
     public boolean visit(SimpleName node) {
-        int[] structureVector = new int[25];
+        double[] structureVector = new double[25];
         ASTNode tempNode = node;
         jCCNode jCCNode = new jCCNode();
 
@@ -67,17 +67,24 @@ public class jCCVisitor extends ASTVisitor {
         if(node.getParent() != null) {
             jCCNode.setNode(node.getParent());
         }
-        jCCNodeList.add(jCCNode);
-        structureVectorList.add(structureVector);
 
-        tempNode = node;
+        int count = 0;
+
+        for(int i = 0; i < 25; i++) {
+            count += jCCNode.getStructureVector()[i];
+        }
+
+        if(count > 0) {
+            jCCNodeList.add(jCCNode);
+            structureVectorList.add(structureVector);
+        }
 
         return super.visit(node);
     }
 
     @Override
     public boolean visit(InfixExpression node) {
-        int[] structureVector = new int[25];
+        double[] structureVector = new double[25];
         String methodName = null;
         String className = null;
         ASTNode tempNode;
@@ -166,11 +173,11 @@ public class jCCVisitor extends ASTVisitor {
 //        return super.visit(node);
 //    }
 
-    public List<int[]> getStructureVectorList() {
+    public List<double[]> getStructureVectorList() {
         return structureVectorList;
     }
 
-    public void setStructureVectorList(List<int[]> structureVectorList) {
+    public void setStructureVectorList(List<double[]> structureVectorList) {
         this.structureVectorList = structureVectorList;
     }
 

@@ -14,13 +14,13 @@ public class jCCNode {
     private boolean updatePossibility;
     private int startPosition;
     private int semanticType;
-    private int[] structureVector;
-    private int[] semanticVector = new int[25];
+    private double[] structureVector;
+    private double[] semanticVector = new double[25];
     private List<Integer> IndexListOfEdges = new ArrayList<>();
 
 
 
-    public jCCNode(String className, String methodName, String variableName, int[] structureVector) {
+    public jCCNode(String className, String methodName, String variableName, double[] structureVector) {
         this.className = className;
         this.methodName = methodName;
         this.variableName = variableName;
@@ -47,11 +47,11 @@ public class jCCNode {
         this.variableName = variableName;
     }
 
-    public int[] getStructureVector() {
+    public double[] getStructureVector() {
         return structureVector;
     }
 
-    public void setStructureVector(int[] structureVector) {
+    public void setStructureVector(double[] structureVector) {
         this.structureVector = structureVector;
     }
 
@@ -63,11 +63,11 @@ public class jCCNode {
         this.className = className;
     }
 
-    public int[] getSemanticVector() {
+    public double[] getSemanticVector() {
         return semanticVector;
     }
 
-    public void setSemanticVector(int[] semanticVector) {
+    public void setSemanticVector(double[] semanticVector) {
         this.semanticVector = semanticVector;
     }
 

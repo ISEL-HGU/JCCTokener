@@ -12,9 +12,9 @@ import java.util.List;
 public class StudentFileAnalyzer { // 실제로 사용하는 것들은 이 Class 객체
     private String filePath;
     private List<jCCNode> jCCNodeList;
-    private List<int[]> type1SemanticVector = new ArrayList<>();
-    private List<int[]> type2SemanticVector = new ArrayList<>();
-    private List<int[]> type3SemanticVector = new ArrayList<>();
+    private List<double[]> type1SemanticVector = new ArrayList<>();
+    private List<double[]> type2SemanticVector = new ArrayList<>();
+    private List<double[]> type3SemanticVector = new ArrayList<>();
     private List<String> actionTokenList;
     private List<HashValueRepository> hashValueRepositoryList;
 
@@ -84,27 +84,27 @@ public class StudentFileAnalyzer { // 실제로 사용하는 것들은 이 Class
         this.hashValueRepositoryList = hashValueRepositoryList;
     }
 
-    public List<int[]> getType1SemanticVector() {
+    public List<double[]> getType1SemanticVector() {
         return type1SemanticVector;
     }
 
-    public void setType1SemanticVector(List<int[]> type1SemanticVector) {
+    public void setType1SemanticVector(List<double[]> type1SemanticVector) {
         this.type1SemanticVector = type1SemanticVector;
     }
 
-    public List<int[]> getType2SemanticVector() {
+    public List<double[]> getType2SemanticVector() {
         return type2SemanticVector;
     }
 
-    public void setType2SemanticVector(List<int[]> type2SemanticVector) {
+    public void setType2SemanticVector(List<double[]> type2SemanticVector) {
         this.type2SemanticVector = type2SemanticVector;
     }
 
-    public List<int[]> getType3SemanticVector() {
+    public List<double[]> getType3SemanticVector() {
         return type3SemanticVector;
     }
 
-    public void setType3SemanticVector(List<int[]> type3SemanticVector) {
+    public void setType3SemanticVector(List<double[]> type3SemanticVector) {
         this.type3SemanticVector = type3SemanticVector;
     }
 }

@@ -29,7 +29,7 @@ public class NodeType {
     private static final int type24 = 23;
     private static final int type25 = 24;
 
-    public static int[] searchType(ASTNode astNode, int[] arr) {
+    public static double[] searchType(ASTNode astNode, double[] arr) {
         if(astNode.getParent() instanceof IfStatement && ((IfStatement) astNode.getParent()).getExpression() == astNode) { // Type 1 (If Condition)
             arr[type1] += 1;
         }

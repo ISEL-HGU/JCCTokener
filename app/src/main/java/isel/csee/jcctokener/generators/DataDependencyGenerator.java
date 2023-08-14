@@ -170,7 +170,7 @@ public class DataDependencyGenerator {
         return index;
     }
 
-    public int findTargetNodeWithStructureVector(int startPosition, String variableName, int[] structureVector) {
+    public int findTargetNodeWithStructureVector(int startPosition, String variableName, double[] structureVector) {
         int index = 0;
 
         for(int i = 0; i < jCCNodeList.size(); i++) {
