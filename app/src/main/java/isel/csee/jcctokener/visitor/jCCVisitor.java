@@ -71,13 +71,13 @@ public class jCCVisitor extends ASTVisitor {
         int count = 0;
 
         for(int i = 0; i < 25; i++) {
-            count += jCCNode.getStructureVector()[i];
+            count += (int)jCCNode.getStructureVector()[i];
         }
 
         if(count > 0) {
             jCCNodeList.add(jCCNode);
             structureVectorList.add(structureVector);
-        }
+        } // vector의 count가 0일 경우에는 List에 넣어주지 않음
 
         return super.visit(node);
     }

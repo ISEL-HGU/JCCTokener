@@ -3,11 +3,9 @@ package isel.csee.jcctokener.calculate;
 import isel.csee.jcctokener.parser.StudentFileAnalyzer;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.text.similarity.CosineSimilarity;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class SimilarityVerifier {
     private double decreaseStep;
@@ -29,7 +27,7 @@ public class SimilarityVerifier {
 
         int[] markFirstVector = new int[firstVectorCollection.size()];
         int[] markSecondVector = new int[secondVectorCollection.size()];
-        int maxVectorSize;
+        double maxVectorSize;
 
         if(firstVectorCollection.size() < secondVectorCollection.size()) {
             maxVectorSize = secondVectorCollection.size();
@@ -60,14 +58,6 @@ public class SimilarityVerifier {
                     }
                 }
             }
-        }
-
-        if(totalSimilarity / maxVectorSize > 1) {
-            System.out.println("size : " + firstVectorCollection.size());
-            System.out.println("size : " + secondVectorCollection.size());
-            System.out.println("total: " + totalSimilarity);
-            System.out.println("maxSize: " + maxVectorSize);
-            System.out.println(firstStudentFile.getFilePath() + type + " " + secondStudentFile.getFilePath());
         }
 
         return totalSimilarity / maxVectorSize;

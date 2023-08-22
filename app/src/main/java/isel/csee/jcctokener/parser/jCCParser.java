@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 /*
@@ -27,7 +28,7 @@ public class jCCParser {
     private SemanticVectorGenerator semanticVectorGenerator;
     private DataDependencyGenerator dataDependencyGenerator;
 
-    public void parseCodes() {
+    public void parseCodes() throws IOException {
         char[] contents = sourceCodes.toCharArray();
 
         parser = ASTParser.newParser(AST.JLS_Latest); // JLS15는 java source code version 의미
@@ -61,18 +62,38 @@ public class jCCParser {
 
         dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);
         dataDependencyGenerator.generateDataDependency();
-
-
         jCCNodeList = dataDependencyGenerator.getjCCNodeList();
 
+        int count1 = 0;
+        int count2 = 0;
+        int count3 = 0;
+        int count4 = 0;
 
-        semanticVectorGenerator = new SemanticVectorGenerator(jCCNodeList, 3);
+        for(int i = 0; i < jCCNodeList.size(); i++) {
+            if(jCCNodeList.get(i).getSemanticType() == 1) {
+                count1++;
+            } else if(jCCNodeList.get(i).getSemanticType() == 2) {
+                count2++;
+            } else if(jCCNodeList.get(i).getSemanticType() == 3){
+                count3++;
+            } else {
+                count4++;
+            }
+        }
 
-        semanticVectorGenerator.createVariableSemanticVector();
-        semanticVectorGenerator.createOperatorSemanticVector();
-        semanticVectorGenerator.createMethodSemanticVector();
+        System.out.println(jCCNodeList.size() + " " + count1 + " " + count2 + " " + count3 + " " + count4);
 
-        jCCNodeList = semanticVectorGenerator.getjCCNodeList();
+
+//        semanticVectorGenerator = new SemanticVectorGenerator(jCCNodeList, 3);
+//
+//        semanticVectorGenerator.createVariableSemanticVector();
+//        semanticVectorGenerator.createOperatorSemanticVector();
+//        semanticVectorGenerator.createMethodSemanticVector();
+//
+//        jCCNodeList = semanticVectorGenerator.getjCCNodeList();
+
+
+
 
     }
 

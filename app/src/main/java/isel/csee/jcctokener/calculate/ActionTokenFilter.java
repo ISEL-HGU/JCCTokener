@@ -16,9 +16,9 @@ public class ActionTokenFilter {
         List<StudentFileAnalyzer> filterationList = new ArrayList<>();
 
         for(int i = 0; i < studentFileAnalyzerList.size(); i++) {
-            int count = countSameActionTokens(targetFile, studentFileAnalyzerList.get(i));
-            int max = Math.max(targetFile.getHashValueRepositoryList().size(), studentFileAnalyzerList.get(i).getHashValueRepositoryList().size());
-            int min = Math.min(targetFile.getHashValueRepositoryList().size(), studentFileAnalyzerList.get(i).getHashValueRepositoryList().size());
+            double count = countSameActionTokens(targetFile, studentFileAnalyzerList.get(i));
+            double max = Math.max((double) targetFile.getHashValueRepositoryList().size(), (double) studentFileAnalyzerList.get(i).getHashValueRepositoryList().size());
+            double min = Math.min((double) targetFile.getHashValueRepositoryList().size(), (double) studentFileAnalyzerList.get(i).getHashValueRepositoryList().size());
             double actionTokenRation = count / min;
             double tokenRation = min / max;
 
@@ -31,13 +31,6 @@ public class ActionTokenFilter {
 
             }
         }
-        if(filterationList.size() == 0) { // 0으로 잡히는 파일들은 다 HashValue가 없다고 나오게 됨 + action token도 없다고 나오거나 or action token의 개수 만으로는 k-token을 만들 수가 없음
-            System.out.println(targetFile.getFilePath() + "  " + targetFile.getHashValueRepositoryList().size() + "   " + targetFile.getActionTokenList().size());
-            System.out.println(targetFile.getjCCNodeList().size());
-        }
-
-
-
 
         return filterationList;
     }

@@ -18,8 +18,8 @@ public class jCCTokener {
 
 //        jCCTokener.run(args);
 
-        File file = new File("/Users/kimdong-gyu/Desktop/JChecker/JCCTokener/2023-1-java/SourceCodes");
-//        File file = new File("/Users/kimdong-gyu/Desktop/test");
+        File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/2023-1-java/SourceCodes");
+//        File file = new File("/Users/kimdong-gyu/Desktop/javaTempFile");
         File[] files = file.listFiles();
         List<StudentFileAnalyzer> studentFileAnalyzerList = new ArrayList<>();
 

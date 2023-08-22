@@ -22,7 +22,7 @@ public class DataDependencyGenerator {
     private final List<String> assignmentOperator = Arrays.asList("%=", "^=", "/=", "*=", "-=", "+=");
 
     public void generateDataDependency() {
-        for(int i = 0; i < jCCNodeList.size(); i++) {
+        for(int i = 0; i < jCCNodeList.size(); i++) { // 전체 노드의 수만큼 탐색을 진행
             if(jCCNodeList.get(i).getNode() instanceof InfixExpression) {
                 InfixExpression node = (InfixExpression) jCCNodeList.get(i).getNode();
                 List<Integer> edgeList = new ArrayList<>();

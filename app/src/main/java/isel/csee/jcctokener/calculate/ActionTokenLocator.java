@@ -22,13 +22,11 @@ public class ActionTokenLocator {
 
     private int kValue = 3;
 
-    public void setAllActionTokens() { // 이 method는 모든 studentFileAnalyzer에 대해서 실행 / locate 부분의 일부만 진행?
+    public void sortAllActionTokens() { // 이 method는 모든 studentFileAnalyzer에 대해서 실행 / locate 부분의 일부만 진행?
         for(int i = 0; i < studentFileAnalyzerList.size(); i++) { // lexical order 정렬
             studentFileAnalyzerList.get(i).setActionTokenList(sortActionTokens(studentFileAnalyzerList.get(i).getActionTokenList()));
             studentFileAnalyzerList.get(i).setHashValueRepositoryList(createAllKTokens(kValue, studentFileAnalyzerList.get(i).getActionTokenList(), studentFileAnalyzerList.get(i).getFilePath()));
         }
-
-        System.out.println(studentFileAnalyzerList.size());
         // 이 method는 한 번 실행이 되기만 하면 되는 구조
     }
 

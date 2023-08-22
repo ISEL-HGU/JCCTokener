@@ -33,6 +33,13 @@ public class StudentFileParser {
                     }
                 }
             }
+        } else {
+            if(file.isFile()) {
+                StudentFileAnalyzer studentFileAnalyzer = new StudentFileAnalyzer(fileInputPath);
+                studentFileAnalyzer.analyzeStudentFile();
+
+                studentFileAnalyzerList.add(studentFileAnalyzer);
+            }
         }
     }
 
