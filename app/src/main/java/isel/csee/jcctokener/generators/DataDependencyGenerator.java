@@ -2,13 +2,16 @@ package isel.csee.jcctokener.generators;
 
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.types.NodeType;
-import org.checkerframework.checker.units.qual.A;
 import org.eclipse.jdt.core.dom.*;
 
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+/*
+이거 type은 처음에 파싱할 때 아예 나눠줘야 하는 건가
+ */
 
 public class DataDependencyGenerator {
     private List<jCCNode> jCCNodeList;
@@ -21,9 +24,9 @@ public class DataDependencyGenerator {
             "+",":","?","~","!","<",">","=","...","->","::");
     private final List<String> assignmentOperator = Arrays.asList("%=", "^=", "/=", "*=", "-=", "+=");
 
-    public void generateDataDependency() {
+    public void generateDataDependency() { // 이거 SimpleName node는 어떻게 가지고 오는 거지?
         for(int i = 0; i < jCCNodeList.size(); i++) { // 전체 노드의 수만큼 탐색을 진행
-            if(jCCNodeList.get(i).getNode() instanceof InfixExpression) {
+            if(jCCNodeList.get(i).getNode() instanceof InfixExpression) { // InfixExpression에 해당하는 부분
                 InfixExpression node = (InfixExpression) jCCNodeList.get(i).getNode();
                 List<Integer> edgeList = new ArrayList<>();
 
@@ -42,8 +45,10 @@ public class DataDependencyGenerator {
                         }
                     }
                 }
+                // node는 InfixExpression node이고 그 안에 variable name은 여러가지가 존재할 수 있음
+                // 즉 하나의 InfixExpression node를 공유하는 여러가지 jCCNode가 생성될 수 있음
 
-                if(operatorType.contains(jCCNodeList.get(i).getVariableName())) {
+                if(operatorType.contains(jCCNodeList.get(i).getVariableName())) { // operator의 경우에 해당
                     if(node.getLeftOperand() instanceof ArrayAccess) {
                         edgeList = processArrayAccess((ArrayAccess) node.getLeftOperand(), edgeList);
                     } else if(node.getLeftOperand() instanceof SimpleName) {
@@ -70,18 +75,21 @@ public class DataDependencyGenerator {
 
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
                     jCCNodeList.get(i).setSemanticType(type2);
+                } else {
+                    jCCNodeList.get(i).setIndexListOfEdges(edgeList); // InfixExpression node에서 operator에 해당하지 않게 되면
+                    jCCNodeList.get(i).setSemanticType(type1);
                 }
-            } else if(jCCNodeList.get(i).getNode() instanceof Assignment) {
+            } else if(jCCNodeList.get(i).getNode() instanceof Assignment) { // Assignment node에 해당하는 부분
                 Assignment node = (Assignment) jCCNodeList.get(i).getNode();
                 List<Integer> edgeList = new ArrayList<>();
 
-                if(assignmentOperator.contains(node.getOperator().toString())) {
+                if(assignmentOperator.contains(node.getOperator().toString())) { // 이 부분은 뭐지
                     for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
                         edgeList.add(jCCNodeList.get(i).getIndexListOfEdges().get(k));
                     }
                 }
 
-                if(node.getLeftHandSide().toString().equals(jCCNodeList.get(i).getVariableName())) {
+                if(node.getLeftHandSide().toString().equals(jCCNodeList.get(i).getVariableName())) { // 현재 방문한 variable이 left 부분에 위치하는 경우
                     if(node.getRightHandSide() instanceof InfixExpression) {
                         edgeList = processInfixExpression((InfixExpression) node.getRightHandSide(), edgeList);
                     } else if(node.getRightHandSide() instanceof ArrayAccess) {
@@ -99,12 +107,14 @@ public class DataDependencyGenerator {
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
                     jCCNodeList.get(i).setSemanticType(type1);
                     updateRelatedNodeList(jCCNodeList.get(i), i, type1, endPosition);
+                } else {
+                    jCCNodeList.get(i).setSemanticType(type1);
                 }
 
-            } else if(jCCNodeList.get(i).getNode() instanceof MethodInvocation) {
+            } else if(jCCNodeList.get(i).getNode() instanceof MethodInvocation) { // type3에 해당하는 부분
                 MethodInvocation node = (MethodInvocation) jCCNodeList.get(i).getNode();
 
-                if(node.getName().toString().equals(jCCNodeList.get(i).getVariableName())) {
+                if(node.getName().toString().equals(jCCNodeList.get(i).getVariableName())) { // node의 method의 이름과 변수의 이름이 동일할 경우
                     int index = findTargetNode(jCCNodeList.get(i).getStartPosition(), jCCNodeList.get(i).getVariableName());
 
                     List<Integer> edgeList = new ArrayList<>();
@@ -112,11 +122,12 @@ public class DataDependencyGenerator {
 
                     jCCNodeList.get(i).setSemanticType(type3);
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
+                } else {
+                    jCCNodeList.get(i).setSemanticType(type1); // method의 이름 부분이 아닐 경우에는 type1에 해당한다고 간주해야 함
                 }
 
-            } else if(jCCNodeList.get(i).getNode() instanceof VariableDeclarationFragment) {
+            } else if(jCCNodeList.get(i).getNode() instanceof VariableDeclarationFragment) { // 변수의 할당에 해당하는 부분
                 VariableDeclarationFragment node = (VariableDeclarationFragment) jCCNodeList.get(i).getNode();
-//                System.out.println("target -> " + node);
                 List<Integer> edgeList = new ArrayList<>();
 
                 if(node.getInitializer() instanceof InfixExpression) {
@@ -129,14 +140,20 @@ public class DataDependencyGenerator {
                     edgeList = processClassInstanceCreation((ClassInstanceCreation) node.getInitializer(), edgeList);
                 } else if(node.getInitializer() instanceof SimpleName) {
                     edgeList = processSimpleName((SimpleName) node.getInitializer(), edgeList);
-                }
+                } // node의 초기화 식이 null인 경우에는 어떻게 처리를 해줘야 하는지에 대해 더 생각 해봐야 할 듯
 
                 if(node.getInitializer() != null) {
                     int endPosition = node.getInitializer().getStartPosition() + node.getLength() - 1;
                     jCCNodeList.get(i).setIndexListOfEdges(edgeList);
                     jCCNodeList.get(i).setSemanticType(type1);
                     updateRelatedNodeList(jCCNodeList.get(i), i, type1, endPosition);
+                } else {
+                    jCCNodeList.get(i).setSemanticType(type1);
+                    updateRelatedNodeList(jCCNodeList.get(i), i, type1, jCCNodeList.get(i).getStartPosition());
                 }
+            } else { // 이 모두에도 속하지 않는 변수의 경우에 나오는 부분 InfixExpression / Assignment / MethodInvocation / VariableDeclarationFragment
+                // type2, type3는 모두 검출이 될 것이기 때문에 여기서 검출되는 값들은 전부 type1으로 넣어줘도 상관 없을 듯
+                jCCNodeList.get(i).setSemanticType(type1);
             }
         }
     }
@@ -145,9 +162,11 @@ public class DataDependencyGenerator {
         for(int i = targetIndex; i < jCCNodeList.size(); i++) {
             if(jCCNodeList.get(i).getVariableName().equals(node.getVariableName())) { // 이름이 동일
                 if(jCCNodeList.get(i).getMethodName().equals(node.getMethodName())) { // method 이름까지 동일해야 같은 block 내부에 존재한다고 생각하고 update
-                    if(jCCNodeList.get(i).getStartPosition() > endPosition) {
-                        jCCNodeList.get(i).setIndexListOfEdges(node.getIndexListOfEdges());
-                        jCCNodeList.get(i).setSemanticType(semanticType);
+                    if(!(jCCNodeList.get(i).getNode().equals(node.getNode()))) { // 노드가 동일하지 않아야 update를 진행
+                        if(jCCNodeList.get(i).getStartPosition() > endPosition) {
+                            jCCNodeList.get(i).setIndexListOfEdges(node.getIndexListOfEdges());
+                            jCCNodeList.get(i).setSemanticType(semanticType);
+                        }
                     }
                 }
             }

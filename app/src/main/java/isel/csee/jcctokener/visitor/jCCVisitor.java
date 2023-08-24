@@ -65,7 +65,7 @@ public class jCCVisitor extends ASTVisitor {
         }
         jCCNode.setStartPosition(node.getStartPosition());
         if(node.getParent() != null) {
-            jCCNode.setNode(node.getParent());
+            jCCNode.setNode(node.getParent()); // parent를 node로 집어넣어 주게 되면 SimpleName node의 하나 윗단계에 존재하게 되는 노드의 값을 가져오게 됨
         }
 
         int count = 0;

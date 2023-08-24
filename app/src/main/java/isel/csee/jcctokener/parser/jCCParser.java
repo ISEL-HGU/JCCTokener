@@ -78,6 +78,7 @@ public class jCCParser {
                 count3++;
             } else {
                 count4++;
+                System.out.println(jCCNodeList.get(i).getVariableName());
             }
         }
 
