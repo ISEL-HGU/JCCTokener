@@ -29,15 +29,14 @@ public class NodeType {
     private static final int type24 = 23;
     private static final int type25 = 24;
 
-    public static double[] searchType(ASTNode astNode, double[] arr) {
+    public static double[] searchType(ASTNode astNode, double[] arr) { // parent로 해주는 이유는 방문하는 노드가 SimpleName node이기 때문
         if(astNode.getParent() instanceof IfStatement && ((IfStatement) astNode.getParent()).getExpression() == astNode) { // Type 1 (If Condition)
             arr[type1] += 1;
-        }
+        } // 여기서는 parent가 IfStatement이고 parent의 조건이 해당 astNode인 경우를 의미함
 
         if(astNode.getParent() instanceof IfStatement && ((IfStatement) astNode.getParent()).getThenStatement() == astNode) { // type 2 (If Body)
             arr[type2] += 1;
-
-        }
+        } // 여기서는 본문을 의미함
 
         if(astNode.getParent() instanceof IfStatement && ((IfStatement) astNode.getParent()).getElseStatement() == astNode) { // type 2 (Else Body)
             arr[type2] += 1;

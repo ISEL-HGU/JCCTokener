@@ -20,7 +20,7 @@ public class jCCVisitor extends ASTVisitor {
         ASTNode tempNode = node;
         jCCNode jCCNode = new jCCNode();
 
-        if(tempNode.getParent() instanceof QualifiedName) {
+        if(tempNode.getParent() instanceof QualifiedName) { // 이 부분은 package의 값을 제거하기 위해서 만들어준 부분
             return super.visit(node);
         }
 
@@ -74,10 +74,24 @@ public class jCCVisitor extends ASTVisitor {
             count += (int)jCCNode.getStructureVector()[i];
         }
 
+        if(node.getParent() instanceof VariableDeclarationFragment) {
+            VariableDeclarationFragment fragment = (VariableDeclarationFragment) node.getParent();
+            if(fragment.getParent() instanceof VariableDeclarationStatement) {
+                VariableDeclarationStatement statement = (VariableDeclarationStatement) fragment.getParent();
+
+                Type type = statement.getType();
+
+                if(type.toString().equals(node.getIdentifier())) {
+                    return super.visit(node); // 해당 SimpleName node가 type인 경우에는 jCCNodeList에 추가하지 않고 return
+                }
+            }
+        }
+
         if(count > 0) {
             jCCNodeList.add(jCCNode);
             structureVectorList.add(structureVector);
         } // vector의 count가 0일 경우에는 List에 넣어주지 않음
+        // 이 부분에서 field로 선언된 부분은 가져와지지 않는 것 같음 -> structure vector가 0
 
         return super.visit(node);
     }

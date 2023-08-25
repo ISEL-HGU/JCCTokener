@@ -16,8 +16,9 @@ public class SimilarityCalculator {
     public void calculateSimilarity() {
         try {
             ActionTokenLocator actionTokenLocator = new ActionTokenLocator(studentFileAnalyzerList);
-            SimilarityVerifier similarityVerifier = new SimilarityVerifier(0.01);
-            File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/2023-1-java/clone-b.csv"); // 해당 파일에 output 생성
+            SimilarityVerifier similarityVerifier = new SimilarityVerifier(0.1);
+            File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/2023-1-java/clone-a.csv"); // 해당 파일에 output 생성
+//            File file = new File("/Users/kimdong-gyu/Desktop/2023-1-java/SelectedCodes/output.csv");
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true));
 
             actionTokenLocator.sortAllActionTokens(); // 각 StudentFileAnalyzer 안에 존재하는 Action Token들을 정렬
@@ -37,18 +38,24 @@ public class SimilarityCalculator {
                 List<StudentFileAnalyzer> filterdList = actionTokenFilter.filterActionTokens(); // 이 부분도 문제가 있는 듯 싶긴 함
 
 
+
                 for(int j = 0; j < filterdList.size(); j++) {
                     double type1Similarity = similarityVerifier.verifySimilarity(studentFileAnalyzerList.get(i), filterdList.get(j), 1);
                     double type2Similarity = similarityVerifier.verifySimilarity(studentFileAnalyzerList.get(i), filterdList.get(j), 2);
                     double type3Similarity = similarityVerifier.verifySimilarity(studentFileAnalyzerList.get(i), filterdList.get(j), 3);
                     double average = (type1Similarity + type2Similarity + type3Similarity) / 3.0;
                     if(average >= 0.65) {
-                        System.out.println(type1Similarity + " " + type2Similarity + " " + type3Similarity);
+                        System.out.println(type1Similarity + " " + type2Similarity + " " + type3Similarity + " " + average);
+                        System.out.println(studentFileAnalyzerList.get(i).getFilePath());
+                        System.out.println(filterdList.get(j).getFilePath());
+                        System.out.println("");
                         String tempString = studentFileAnalyzerList.get(i).getFilePath() + "," + filterdList.get(j).getFilePath() + "," + average;
 
-                        bufferedWriter.write(studentFileAnalyzerList.get(i).getFilePath() + "," + filterdList.get(j).getFilePath() + "," + average);
-                        bufferedWriter.write("\n");
-                        bufferedWriter.flush();
+                        if(!(studentFileAnalyzerList.get(i).getFilePath().equals(filterdList.get(j).getFilePath()))) {
+                            bufferedWriter.write(studentFileAnalyzerList.get(i).getFilePath() + "," + filterdList.get(j).getFilePath() + "," + average);
+                            bufferedWriter.write("\n");
+                            bufferedWriter.flush();
+                        }
                     }
 //                    System.out.println(studentFileAnalyzerList.get(i).getFilePath());
 //                    System.out.println(filterdList.get(j).getFilePath());

@@ -86,7 +86,7 @@ public class SemanticVectorGenerator {
     }
     // 해당 step까지 올라가서 존재하는 모든 variable structure vector 다 가져와서 더해주기
     public double[] getRelatedValues(jCCNode node, int tempCount, int totalCount, double[] semanticVector) {
-        for(int i = 0; i < 25; i++) { // 현재 노드의 structure vector 더해주기
+        for(int i = 0; i < 25; i++) { // 현재 노드의 structure vector 더해주기 / 기존에 존재하는 semantic vector에 현재 sesmantic vector를 더해줘서 사용
             semanticVector[i] += node.getStructureVector()[i];
         }
 

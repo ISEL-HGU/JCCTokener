@@ -35,7 +35,7 @@ public class SimilarityVerifier {
             maxVectorSize = firstVectorCollection.size();
         }
 
-        if(maxVectorSize == 0) { // type2에 자주 발생하는 case
+        if(firstVectorCollection.size() == 0 || secondVectorCollection.size() == 0) { // type2에 자주 발생하는 case
             return 0;
         }
 
@@ -59,6 +59,7 @@ public class SimilarityVerifier {
                 }
             }
         }
+        System.out.println(totalSimilarity + " " + maxVectorSize);
 
         return totalSimilarity / maxVectorSize;
     }

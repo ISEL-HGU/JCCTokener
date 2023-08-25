@@ -28,7 +28,7 @@ public class DataDependencyGenerator {
         for(int i = 0; i < jCCNodeList.size(); i++) { // 전체 노드의 수만큼 탐색을 진행
             if(jCCNodeList.get(i).getNode() instanceof InfixExpression) { // InfixExpression에 해당하는 부분
                 InfixExpression node = (InfixExpression) jCCNodeList.get(i).getNode();
-                List<Integer> edgeList = new ArrayList<>();
+                List<Integer> edgeList = new ArrayList<>(); // edgeList 새로 생성
 
                 if(node.hasExtendedOperands()) {
                     for(int k = 0; k < node.extendedOperands().size(); k++) {
