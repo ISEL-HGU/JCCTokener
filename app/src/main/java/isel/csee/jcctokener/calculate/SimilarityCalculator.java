@@ -45,14 +45,9 @@ public class SimilarityCalculator {
                     double type3Similarity = similarityVerifier.verifySimilarity(studentFileAnalyzerList.get(i), filterdList.get(j), 3);
                     double average = (type1Similarity + type2Similarity + type3Similarity) / 3.0;
                     if(average >= 0.65) {
-                        System.out.println(type1Similarity + " " + type2Similarity + " " + type3Similarity + " " + average);
-                        System.out.println(studentFileAnalyzerList.get(i).getFilePath());
-                        System.out.println(filterdList.get(j).getFilePath());
-                        System.out.println("");
-                        String tempString = studentFileAnalyzerList.get(i).getFilePath() + "," + filterdList.get(j).getFilePath() + "," + average;
-
                         if(!(studentFileAnalyzerList.get(i).getFilePath().equals(filterdList.get(j).getFilePath()))) {
-                            bufferedWriter.write(studentFileAnalyzerList.get(i).getFilePath() + "," + filterdList.get(j).getFilePath() + "," + average);
+                            bufferedWriter.write(studentFileAnalyzerList.get(i).getFilePath() + "/" + studentFileAnalyzerList.get(i).getMethodName()
+                                    + "," + filterdList.get(j).getFilePath() + "/" + filterdList.get(j).getMethodName() + "," + average);
                             bufferedWriter.write("\n");
                             bufferedWriter.flush();
                         }

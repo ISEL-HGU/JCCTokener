@@ -14,6 +14,7 @@ import java.util.List;
 
 public class StudentFileAnalyzer { // 실제로 사용하는 것들은 이 Class 객체
     private String filePath;
+    private String methodName;
     private List<jCCNode> jCCNodeList;
     private List<double[]> type1SemanticVector = new ArrayList<>();
     private List<double[]> type2SemanticVector = new ArrayList<>();
@@ -29,6 +30,7 @@ public class StudentFileAnalyzer { // 실제로 사용하는 것들은 이 Class
             jCCParser.parseCodes();
             actionTokenList = jCCParser.getActionTokenList();
             jCCNodeList = jCCParser.getjCCNodeList();
+            methodName = jCCParser.getMethodName();
 
 //            File file = new File("/Users/kimdong-gyu/Desktop/javaTempFile/semantic " + filePath.substring(filePath.lastIndexOf(".") - 13, filePath.lastIndexOf(".")) + ".txt");
 //            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true));
@@ -154,5 +156,13 @@ public class StudentFileAnalyzer { // 실제로 사용하는 것들은 이 Class
 
     public void setType3SemanticVector(List<double[]> type3SemanticVector) {
         this.type3SemanticVector = type3SemanticVector;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 }

@@ -12,14 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class jCCTokener {
+    // method 단위로 파싱을 진행할 수는 없지만, method마다 각각 jCCNode를 생성해주면 method끼리 따로 계산하는 것이 가능해질 수도
+    // 여기서 getter / setter를 어떻게 구분할 것인지가 조금 의문
 
     public static void main(String[] args) throws IOException {
         jCCTokener jCCTokener = new jCCTokener();
 
 //        jCCTokener.run(args);
 
-//        File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/2023-1-java/SourceCodes");
-        File file = new File("/Users/kimdong-gyu/Desktop/2023-1-java/SelectedCodes");
+        File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/2023-1-java/SourceCodes");
+//        File file = new File("/Users/kimdong-gyu/Desktop/2023-1-java/SelectedCodes");
         File[] files = file.listFiles();
         List<StudentFileAnalyzer> studentFileAnalyzerList = new ArrayList<>();
 
@@ -29,9 +31,9 @@ public class jCCTokener {
 
             studentFileAnalyzerList.addAll(studentFileParser.getStudentFileAnalyzerList());
         }
-
-//        SimilarityCalculator similarityCalculator = new SimilarityCalculator(studentFileAnalyzerList);
-//        similarityCalculator.calculateSimilarity();
+//
+        SimilarityCalculator similarityCalculator = new SimilarityCalculator(studentFileAnalyzerList);
+        similarityCalculator.calculateSimilarity();
 
 
 

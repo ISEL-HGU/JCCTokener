@@ -5,9 +5,7 @@ import isel.csee.jcctokener.visitor.jCCVisitor;
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.generators.SemanticVectorGenerator;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,12 +14,13 @@ import java.util.Map;
 lexical order로 정렬은 이미 되어있는 상황 - startPosition
 
 이 parser는 하나의 파일에 대해 파싱을 해주는 역할을 수행
-한 사람에 대해서 여러 개의 파서가 나올 수 있음
+한 사람에 대해서 여러 개의 파서가 나올 수 있음 / 이 parser는 여러 개가 생기는 용도
 method를 코드 블럭 단위로 파싱해서 사용해야 하는데, 그러려면 어떻게 해야될까 ~~
  */
 public class jCCParser {
     private String sourceCodes;
     private ASTParser parser;
+    private String methodName;
     private List<jCCNode> jCCNodeList;
     private List<String> actionTokenList;
     private jCCVisitor jCCVisitor = new jCCVisitor();
@@ -53,7 +52,14 @@ public class jCCParser {
 
         CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 
-        compilationUnit.accept(jCCVisitor);
+        compilationUnit.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(MethodDeclaration node) { // method 단위로 끊어서 따로따로 값을 가져오게 됨
+                node.accept(jCCVisitor);
+                methodName = node.getName().toString();
+                return super.visit(node);
+            }
+        });
 
 
         jCCNodeList = jCCVisitor.getjCCNodeList();
@@ -73,26 +79,26 @@ public class jCCParser {
 
         jCCNodeList = semanticVectorGenerator.getjCCNodeList();
 
-        for(int i = 0; i < jCCNodeList.size(); i++) {
-            System.out.println(jCCNodeList.get(i).getVariableName());
-            System.out.print("Structure vector: ");
-            for(int k = 0; k < 25; k++) {
-                System.out.print(jCCNodeList.get(i).getStructureVector()[k] + " ");
-            }
-            System.out.println("");
-            System.out.println("Semantic Type: " + jCCNodeList.get(i).getSemanticType());
-            System.out.print("Related nodes: ");
-            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-                System.out.print(jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + "  ");
-            }
-            System.out.println("");
-            System.out.print("Semantic vector: ");
-            for(int k = 0; k < 25; k++) {
-                System.out.print(jCCNodeList.get(i).getSemanticVector()[k] + " ");
-            }
-            System.out.println("");
-            System.out.println("");
-        }
+//        for(int i = 0; i < jCCNodeList.size(); i++) {
+//            System.out.println(jCCNodeList.get(i).getVariableName());
+//            System.out.print("Structure vector: ");
+//            for(int k = 0; k < 25; k++) {
+//                System.out.print(jCCNodeList.get(i).getStructureVector()[k] + " ");
+//            }
+//            System.out.println("");
+//            System.out.println("Semantic Type: " + jCCNodeList.get(i).getSemanticType());
+//            System.out.print("Related nodes: ");
+//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+//                System.out.print(jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + "  ");
+//            }
+//            System.out.println("");
+//            System.out.print("Semantic vector: ");
+//            for(int k = 0; k < 25; k++) {
+//                System.out.print(jCCNodeList.get(i).getSemanticVector()[k] + " ");
+//            }
+//            System.out.println("");
+//            System.out.println("");
+//        }
 
 
 
@@ -117,5 +123,13 @@ public class jCCParser {
 
     public jCCParser(String sourceCodes) {
         this.sourceCodes = sourceCodes;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 }
