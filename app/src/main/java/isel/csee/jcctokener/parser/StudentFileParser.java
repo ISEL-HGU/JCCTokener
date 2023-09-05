@@ -16,6 +16,10 @@ ActionToken 만들어줘야 함 / parsing 하는 과정에서 따로 뽑아 와�
 public class StudentFileParser {
     private List<StudentFileAnalyzer> studentFileAnalyzerList = new ArrayList<>();
 
+    public static int sum(int a, int b){
+        return a + b;
+    }
+
     public void parseStudentFile(String fileInputPath) {
         File file = new File(fileInputPath);
         File[] fileList = file.listFiles();

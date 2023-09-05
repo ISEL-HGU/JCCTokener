@@ -56,7 +56,7 @@ public class jCCParser {
             @Override
             public boolean visit(MethodDeclaration node) { // method 단위로 끊어서 따로따로 값을 가져오게 됨
                 node.accept(jCCVisitor);
-                methodName = node.getName().toString();
+                methodName = node.getName().getFullyQualifiedName();
                 return super.visit(node);
             }
         });
