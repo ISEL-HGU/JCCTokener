@@ -17,7 +17,7 @@ public class SimilarityCalculator {
         try {
             ActionTokenLocator actionTokenLocator = new ActionTokenLocator(studentFileAnalyzerList);
             SimilarityVerifier similarityVerifier = new SimilarityVerifier(0.1);
-            File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/2023-1-java/clone-a.csv"); // 해당 파일에 output 생성
+            File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/app/src/main/resources/2023-1-java/testByMethod.csv"); // 해당 파일에 output 생성
 //            File file = new File("/Users/kimdong-gyu/Desktop/2023-1-java/SelectedCodes/output.csv");
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true));
 
@@ -46,7 +46,8 @@ public class SimilarityCalculator {
                     double average = (type1Similarity + type2Similarity + type3Similarity) / 3.0;
                     if(average >= 0.65) {
                         if(!(studentFileAnalyzerList.get(i).getFilePath().equals(filterdList.get(j).getFilePath()))) {
-                            bufferedWriter.write(studentFileAnalyzerList.get(i).getFilePath() + "/" + studentFileAnalyzerList.get(i).getMethodName()
+                            System.out.println(studentFileAnalyzerList.get(i).getFilePath());
+                            bufferedWriter.write(studentFileAnalyzerList.get(i).getFilePath() + "/" + studentFileAnalyzerList.get(i).getMethodName() + ","
                                     + "," + filterdList.get(j).getFilePath() + "/" + filterdList.get(j).getMethodName() + "," + average);
                             bufferedWriter.write("\n");
                             bufferedWriter.flush();
@@ -89,5 +90,9 @@ public class SimilarityCalculator {
 
     public void setStudentFileAnalyzerList(List<StudentFileAnalyzer> studentFileAnalyzerList) {
         this.studentFileAnalyzerList = studentFileAnalyzerList;
+    }
+
+    public void testNode() {
+
     }
 }

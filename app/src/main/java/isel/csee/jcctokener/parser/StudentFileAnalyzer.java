@@ -24,6 +24,7 @@ public class StudentFileAnalyzer { // 실제로 사용하는 것들은 이 Class
 
     public void analyzeStudentFile() {
         try {
+            System.out.println(filePath);
             String source = new String(Files.readAllBytes(Paths.get(filePath)));
             jCCParser jCCParser = new jCCParser(source);
 

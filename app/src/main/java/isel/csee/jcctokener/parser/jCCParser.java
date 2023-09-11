@@ -61,6 +61,8 @@ public class jCCParser {
             }
         });
 
+//        compilationUnit.accept(jCCVisitor);
+
 
         jCCNodeList = jCCVisitor.getjCCNodeList();
         actionTokenList = jCCVisitor.getActionTokenList();
@@ -79,26 +81,26 @@ public class jCCParser {
 
         jCCNodeList = semanticVectorGenerator.getjCCNodeList();
 
-//        for(int i = 0; i < jCCNodeList.size(); i++) {
-//            System.out.println(jCCNodeList.get(i).getVariableName());
-//            System.out.print("Structure vector: ");
-//            for(int k = 0; k < 25; k++) {
-//                System.out.print(jCCNodeList.get(i).getStructureVector()[k] + " ");
-//            }
-//            System.out.println("");
-//            System.out.println("Semantic Type: " + jCCNodeList.get(i).getSemanticType());
-//            System.out.print("Related nodes: ");
-//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-//                System.out.print(jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + "  ");
-//            }
-//            System.out.println("");
-//            System.out.print("Semantic vector: ");
-//            for(int k = 0; k < 25; k++) {
-//                System.out.print(jCCNodeList.get(i).getSemanticVector()[k] + " ");
-//            }
-//            System.out.println("");
-//            System.out.println("");
-//        }
+        for(int i = 0; i < jCCNodeList.size(); i++) {
+            System.out.println(jCCNodeList.get(i).getVariableName());
+            System.out.print("Structure vector: ");
+            for(int k = 0; k < 25; k++) {
+                System.out.print(jCCNodeList.get(i).getStructureVector()[k] + " ");
+            }
+            System.out.println("");
+            System.out.println("Semantic Type: " + jCCNodeList.get(i).getSemanticType());
+            System.out.print("Related nodes: ");
+            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+                System.out.print(jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + "  ");
+            }
+            System.out.println("");
+            System.out.print("Semantic vector: ");
+            for(int k = 0; k < 25; k++) {
+                System.out.print(jCCNodeList.get(i).getSemanticVector()[k] + " ");
+            }
+            System.out.println("");
+            System.out.println("");
+        }
 
 
 
