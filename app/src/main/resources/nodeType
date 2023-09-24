@@ -1,0 +1,601 @@
+모든 Type에 대해서 structure vector를 구성하는 것은 사실상 어려움
+	-> 모든 type에 대해 구성하게 될 경우, 결과의 정확성이 떨어질 수 있음
+
+ASTNode는 Expression, Name(Expression의 sub), Statement, Type, BodyDeclaration 으로 구성되어 있음.
+
+
+1. AnonymousClassDeclaration: -> Java에서 실제로 사용하는 class를 선언할 때 사용하는 중괄호에 해당하는 부분
+            { ClassBodyDeclaration }
+
+2. ArrayAccess: -> number[5] 처럼 보통의 식에서 우변에 해당하는 접근
+        Expression [ Expression ]
+
+3. ArrayCreation: -> Array를 새로 만들어 주는 경우에 해당함
+        new PrimitiveType [ Expression ] { [ Expression ] } { [ ] }
+        new TypeName [ < Type { , Type } > ]
+            [ Expression ] { [ Expression ] } { [ ] }
+        new PrimitiveType [ ] { [ ] } ArrayInitializer
+        new TypeName [ < Type { , Type } > ]
+            [ ] { [ ] } ArrayInitializer
+
+4. ArrayInitializer: -> {} 중괄호는 배열을 의미함. [] 대괄호는 안의 내용이 있을 수도 있고 없을 수도 있음을 의미함.
+     		{ [ Expression { , Expression} [ , ]] }
+->  초기화를 해주는 부분의 값에 해당함.
+    예를 들어, int[] num = {1, 2, 3}; 이라는 식이 존재한다면, ArrayInitializer는 {1, 2, 3} 부분에 해당하게 됨.
+    따라서 ArrayCreation node 내부적으로 ArrayInitializer node가 존재하는 것이 가능함. ex) int[] num = new int[]{1,2,3};
+    여기서 int[] num 이 부분은 다른 노드 타입에 속하게 됨. /
+
+5. ArrayType:
+     Type Dimension { Dimension }
+-> Type 부분에서는 primitive / reference type 모두가 사용이 가능함.
+   Type 부분에 데이터의 형태가 존재하고, Dimension을 통해서 몇 차원 배열인 지 확인이 가능함.
+   Dimension은 여러 개로 쪼개질 수 있음. / ex) getElementType() method를 사용해서 int type일 경우에 int type에 해당하는 PrimitiveType을 반환해주게 됨
+   String type의 경우에는 SimpleType node가 반환됨
+
+6. AssertStatement:
+     assert Expression [ : Expression ] ;
+-> Assert type을 나타내는 노드
+
+7. Assignment:
+     Expression AssignmentOperator Expression
+-> Assignment는 자주 사용될 것이라고 판단됨.
+   좌변, operator, 우변으로 나누어짐 / 각 Expression 부분은 여러 개의 세부적인 type으로 나누어지는 것이 가능함
+
+8. Block:
+     { { Statement } }
+-> Block은 {}로 구분되어, 각각을 구성하는 block 전체를 의미함. + Block 노드를 통해서 Block 내부의 모든 문장들에 쉽게 접근하고 사용하는 것이 가능함.
+   Block 단위를 사용해서 parsing 진행하는 것이 깔끔해보임.
+
+9. BooleanLiteral:
+  		true
+  		false
+-> 자바 코드 내부에서 boolean 값을 직접적으로 사용하는 경우에 사용됨
+
+10. BreakStatement:
+     break [ Identifier ] ;
+ 
+     Break statement allows expression as part of Java 12 preview feature (JEP 325)
+ 		break { Identifier | Expression }
+-> Break를 사용하는 부분 / 여러가지 형태로 사용이 될 수 있음. 값을 반환하는 것도 가능하고, 라벨을 사용하는 것도 가능함. 하지만 이 부분은 주로 사용되지는 않고, 그저 break 부분에서만 사용을 할 것이라고 판단함.
+
+11. CastExpression:
+     ( Type ) Expression
+-> Type casting 해주는 부분에서 사용됨. Type casting을 직접적으로 사용하는 지 여부에 대해서는 생각을 조금 더 해봐야 할 것 같음.
+
+12. CatchClause:
+     catch ( FormalParameter ) Block
+-> catch block인 경우에 해당하는 노드. try-catch 부분에서 사용됨.
+
+13. CharacterLiteral -> 단일 문자 "s" 처럼 하나로만 이루어져 있는 노드를 의미함.
+
+14. ClassInstanceCreation:
+         [ Expression . ]
+             new [ < Type { , Type } > ]
+             Type ( [ Expression { , Expression } ] )
+             [ AnonymousClassDeclaration ]
+-> Class의 Instance를 새로 만들어줄 때 해당되는 부분 / [Expression .] 부분은 사용하지 않는 경우가 많이 존재함. new 연산을 하는 부분을 기본적으로 나타내는 노드.
+   객체를 만들어주는 문장에서 우변 즉, new 연산이 시작되는 부분부터 이 노드로 분류됨.
+
+15. CompilationUnit:
+      OrdinaryCompilationUnit
+      ModularCompilationUnit
+ 
+  OrdinaryCompilationUnit:
+      [ PackageDeclaration ]
+          { ImportDeclaration }
+          { TypeDeclaration | EnumDeclaration | AnnotationTypeDeclaration | ; }
+ 
+  ModularCompilationUnit:
+      {ImportDeclaration}
+          ModuleDeclaration
+-> 이 부분은 2가지로 나누어서 생각해야 함. CompilationUnit 노드는 자바 파일의 최상위 단위를 나타내는 AST 노드. import, package 등을 표현할 수 있음.
+
+16. ConditionalExpression:
+     Expression ? Expression : Expression
+-> 삼항 연산자를 사용하는 노드 / 처음 Expression이 조건에 해당하고, true면 두번째 Expression, false이면 세 번째 Expression이 실행됨
+
+17. ConstructorInvocation:
+     [ < Type { , Type } > ]
+             this ( [ Expression { , Expression } ] ) ;
+-> 해당 클래스의 consturctor가 아닌, 다른 클래스의 constructor를 호출하여 사용하는 경우를 표현하는 노드
+   주로 consturctor 내부에 존재하여, 다른 매개변수를 가지는 constructor를 호출함
+
+18. ContinueStatement:
+     continue [ Identifier ] ;
+-> 자바에서 continue를 사용한 부분을 표현하는 노드. 레이블을 사용할 수도 있고, 사용하지 않고 contiunue; 만 사용할 수도 있음.
+
+19. DoStatement:
+     do Statement while ( Expression ) ;
+-> 이 노드는 do-while 구조를 나타냄. Do 부분에 해당하는 Statement와 while 부분에 해당하는 expression을 가지고 있음
+
+20. EmptyStatement:
+     ;
+-> 세미콜론만 가지고 있어, 아무런 액션을 취하지 않는 부분을 나타내는 노드
+
+21. ExpressionStatement:
+     StatementExpression ;
+-> 부작용에 대한 내용(sub expression) 즉, 콘솔에 출력을 하던지, 값을 변경하던지 등의 작업을 진행할 때 ;으로 끝나는 문장을 만들게 되는데, 이는 ExpressionStatement가 됨.
+   우리가 사용하고자 하는 부분은 이 노드를 사용하지 않고도 충분히 다 대체하는 것이 가능하다고 판단이 됨.
+
+22. FieldAccess:
+  		Expression . Identifier
+-> 어떤 객체의 필드에 접근할 때 사용하게 되는 노드. Expression 부분에는 객체 또는 표현식이 해당되고 Identifier를 통해서 필드의 이름을 나타냄.
+
+23. FieldDeclaration:
+     [Javadoc] { ExtendedModifier } Type VariableDeclarationFragment
+          { , VariableDeclarationFragment } ;
+-> 클래스 내부에서 필드를 선언할 때 사용하는 노드. ExtendedModifier를 통해서 식별자를 구분할 수 있음.
+
+24. ForStatement:
+     for (
+  			[ ForInit ];
+  			[ Expression ] ;
+  			[ ForUpdate ] )
+  			Statement
+  ForInit:
+  		Expression { , Expression }
+  ForUpdate:
+  		Expression { , Expression }
+-> For loop에 해당하는 노드. 여러 개의 초기화 식 및 업데이트 식이 존재하는 경우도 포괄적으로 모두 담아서 사용할 수 있음.
+
+25. IfStatement:
+     if ( Expression ) Statement [ else Statement]
+-> If 구문에 사용됨
+
+26. ImportDeclaration:
+     import [ static ] Name [ . * ] ;
+-> Import 하는 부분에서 사용되지만, 우리 프로그램에서는 사용 하지 않을 듯
+
+27. InfixExpression:
+     Expression InfixOperator Expression { InfixOperator Expression }
+-> 덧셈, 뺄셈 등의 계산을 하는 데 사용됨. 추가적인 InfixExpression이 꼬리를 물고 나타날 수는 있지만, InfixOperator가 다를 경우에는 모든 값을 가져오지 못함.
+   extendedOperands로 분류가 되기 때문.
+
+28. Initializer:
+      [ static ] Block
+-> static keyword의 유무에 따라서 정적 초기화 블록, 인스턴스 초기화 블록으로 나눌 수 있음. 각각은 모두 클래스가 로드될 때나 인스턴스가 생성될 때 이 노드를 통해서 block 내부에 존재하는 동작을 실행하게 됨.
+
+29. Javadoc:
+    /**  { TagElement } */
+-> 자바독에 대한 부분
+
+30. LabeledStatement:
+     Identifier : Statement
+-> 라벨 이름을 지정해줘서 break, continue 문장과 함께 주로 사용됨.
+
+31. MethodDeclaration:
+     [ Javadoc ] { ExtendedModifier } [ < TypeParameter { , TypeParameter } > ] ( Type | void )
+         Identifier (
+             [ ReceiverParameter , ] [ FormalParameter { , FormalParameter } ]
+         ) { Dimension }
+         [ throws Type { , Type } ]
+         ( Block | ; )
+  ConstructorDeclaration:
+     [ Javadoc ] { ExtendedModifier } [ < TypeParameter { , TypeParameter } > ]
+         Identifier (
+             [ ReceiverParameter , ] [ FormalParameter { , FormalParameter } ]
+         ) { Dimension }
+         [ throws Type { , Type } ]
+         ( Block | ; )
+  CompactConstructorDeclaration:
+     [ Javadoc ] ExtendedModifier { ExtendedModifier}
+         Identifier
+         ( Block | ; )
+-> Constructor인지 아닌지 여부는 어떻게 확인할 것인지 조금 더 생각해야 함
+   이 node는 Method의 선언 부분에 사용됨
+
+32. MethodInvocation:
+      [ Expression . ]
+          [ < Type { , Type } > ]
+          Identifier ( [ Expression { , Expression } ] )
+-> Method의 호출 부분에 해당함 / Expression을 통해서 method를 호출하는 객체를 가지고 오고, generic type은 선택적으로 사용됨. Identifier는 method의 이름을 나타내고 method의 parameter가 있을 수도 있고, 없을 수도 있음
+
+33. NullLiteral -> null을 나타냄 그냥 null 그 자체이기 때문에 사용하지 않음.
+
+34. NumberLiteral -> 숫자 그 자체를 나타냄. 따라서 사용 X
+
+35. PackageDeclaration:
+     [ Javadoc ] { Annotation } package Name ;
+-> Package에 관련된 부분을 나타내는 부분. 사용 X
+
+36. ParenthesizedExpression:
+      ( Expression )
+-> 괄호의 사용 부분에 해당함. 
+
+37. PostfixExpression:
+     Expression PostfixOperator
+-> i++; i--; 등과 같이 계산이 진행되고 난 이후에 값을 증가하거나 감소시켜주는 노드.
+
+38. PrefixExpression:
+     PrefixOperator Expression
+-> Operator가 먼저 위치하기 때문에 값을 먼저 바꿔준 다음에 사용함.
+
+39. PrimitiveType:
+     { Annotation } byte
+     { Annotation } short
+     { Annotation } char
+     { Annotation } int
+     { Annotation } long
+     { Annotation } float
+     { Annotation } double
+     { Annotation } boolean
+     { Annotation } void
+-> Java에서 선언해놓은 데이터 타입에 해당하는 부분
+
+40. QualifiedName:
+     Name . SimpleName
+-> 이름이 중첩된 구조를 나타냄. "."으로 연결되어서 사용된 경우에 해당하는 노드.
+
+41. ReturnStatement:
+     return [ Expression ] ;
+-> Expression이란 값을 return 해주는 부분에 해당하는 node.
+
+42. SimpleName:
+      Identifier
+-> 단순히 그저 Identifier에 해당하는 부분.
+
+43. SimpleType:
+     { Annotation } TypeName
+-> 예를 들어 String과 같은 Type이 해당됨
+
+44. SingleVariableDeclaration:
+     { ExtendedModifier } Type {Annotation} [ ... ] Identifier { Dimension } [ = Expression ]
+-> modifier에는 final과 같은 keyword가 해당됨. Type은 변수의 type을 나타내주는 부분이고 Identifier는 변수의 이름, 그리고 = Expression은 초기값이 변수의 선언과 동시에 제공되는 경우에 한하여 사용됨.
+   method의 parameter, foreach의 condition이 될 수 있음.
+
+45. StringLiteral -> String 그 자체를 의미하는 노드.
+
+46. SuperConstructorInvocation:
+      [ Expression . ]
+          [ < Type { , Type } > ]
+          super ( [ Expression { , Expression } ] ) ;
+-> SuperClass에 존재하는 상위 Constructor를 가져와서 사용하는 부분에 해당함
+
+47. SuperFieldAccess:
+      [ ClassName . ] super . Identifier
+-> SuperClass의 filed를 가져와서 사용하는 부분에 해당함.
+
+48. SuperMethodInvocation:
+      [ ClassName . ] super .
+          [ < Type { , Type } > ]
+          Identifier ( [ Expression { , Expression } ] )
+-> SuperClass의 method를 가져와서 사용하는 부분에 해당함.
+
+49. SwitchCase:
+  		case Expression  :
+  		default :
+ 
+  Switch case allows multiple expressions and '->' as part of Java 12 preview feature (JEP 325)
+ 		case [ Expression { , Expression } ]  { : | ->}
+ 		default { : | ->}
+-> Switch case에 해당하는 부분.
+
+50. SwitchStatement:
+ 		switch ( Expression )
+  			{ { SwitchCase | Statement } }
+  SwitchCase:
+ 		case Expression  :
+ 		default :
+-> Switch 구문에 해당하는 각각의 조건과 case, 그리고 그에 해당하는 값들을 가지고 있는 노드.
+
+51. SynchronizedStatement:
+     synchronized ( Expression ) Block
+-> Synchronized를 사용하는 부분에 해당하는 노드.
+
+52. ThisExpression:
+      [ ClassName . ] this
+-> 주로 constructor에서 많이 사용. this keyword가 사용되는 부분에 해당함.
+
+53. ThrowStatement:
+     throw Expression ;
+-> 예외처리에 해당하는 부분.
+
+54. TryStatement:
+      try [ ( Resources ) ]
+          Block
+          [ { CatchClause } ]
+          [ finally Block ]
+-> try-catch 부분에서 전체 모든 부분을 총괄하는 개념. 
+
+55. TypeDeclaration:
+  		ClassDeclaration
+  		InterfaceDeclaration
+  ClassDeclaration:
+       [ Javadoc ] { ExtendedModifier } class Identifier
+ 			[ < TypeParameter { , TypeParameter } > ]
+ 			[ extends Type ]
+ 			[ implements Type { , Type } ]
+ 			[ permits Type { , Type } ]
+ 			{ { ClassBodyDeclaration | ; } }
+  InterfaceDeclaration:
+       [ Javadoc ] { ExtendedModifier } interface Identifier
+ 			[ < TypeParameter { , TypeParameter } > ]
+ 			[ extends Type { , Type } ]
+ 			[ permits Type { , Type } ]
+  			{ { InterfaceBodyDeclaration | ; } }
+-> Class 및 Interface의 선언 부분에 해당함.
+
+56. TypeDeclarationStatement:
+     TypeDeclaration
+     EnumDeclaration
+-> method 내부에서 class, interface, enum type을 선언해서 사용하는 경우에 해당함.
+
+57. TypeLiteral:
+      ( Type | void ) . class
+-> Java에서 class, interface, array, primitive type에 대한 .class 형식의 접근을 나타냄.
+
+58. VariableDeclarationExpression:
+     { ExtendedModifier } Type VariableDeclarationFragment
+          { , VariableDeclarationFragment }
+-> ex) final int s = 10; int x = 10, y = 20; 이 2개의 코드 모두 해당함.
+   VariableDeclarationFragment를 포함하는 노드. 변수 선언 식의 전체 부분에 해당하는 노드. x = 10, y = 20 이 부분은 VariableDeclarationFragment에 해당함.
+
+59. VariableDeclarationFragment:
+     Identifier { Dimension } [ = Expression ]
+-> 변수의 이름과 array일 경우 dimension, 그리고 우변의 expression이 나타나는 형태. 일반적으로 VariableDeclarationStatement, FieldDeclaration, VariableDeclarationExpression과 같은 상위 노드에서 발견됨.
+   ex) 초기값이 없는 변수 선언 int x; / int x = 10; 초기값 존재 / int[] arr; 초기값 없는 배열 등과 같이 변수 선언의 구체적인 부분, 즉 이름과 초기값을 나타내는 역할을 수행함.
+
+60. VariableDeclarationStatement:
+     { ExtendedModifier } Type VariableDeclarationFragment
+         { , VariableDeclarationFragment } ;
+-> 이 부분은 아예 문장에 해당함. (; 존재) 따라서 모든 선언 부분은 다 이 노드에 해당한다고 할 수 있음.
+
+61. WhileStatement:
+     while ( Expression ) Statement
+-> While문의 조건과 body 부분을 포함하는 노드.
+
+62. InstanceofExpression:
+     Expression instanceof Type
+-> 해당 객체가 어떤 type인지 확인하는 instanceof keyword 사용 부분.
+
+63. LineComment -> 주석에 해당하는 부분. 사용 X
+
+64. BlockComment -> 동일하게 주석에 해당하는 부분. 사용 X
+
+65. TagElement:
+      [ @ Identifier ] { DocElement }
+  DocElement:
+      TextElement
+      Name
+      MethodRef
+      MemberRef
+      { TagElement }
+-> 자바독 내부에 존재하는 태그에 대한 부분. 사용 X
+
+66. TextElement:
+      Sequence of characters not including a close comment delimiter */
+-> 자바독 내부에 존재. 사용 X
+
+67. MemberRef:
+  		[ Name ] # Identifier
+-> 자바독 내부에 존재. 사용 X
+
+68. MethodRef:
+      [ Name ] # Identifier
+          ( [ MethodRefParameter | { , MethodRefParameter } ] )
+-> 자바독 내부에 존재. 사용 X
+
+69. MethodRefParameter:
+  		Type [ ... ] [ Identifier ]
+-> 자바독 내부에 존재. 사용 X
+
+70. EnhancedForStatement:
+     for ( FormalParameter : Expression )
+  			Statement
+-> EnhancedForStatement에 해당하는 부분.
+
+71. EnumDeclaration:
+      [ Javadoc ] { ExtendedModifier } enum Identifier
+          [ implements Type { , Type } ]
+          {
+          [ EnumConstantDeclaration { , EnumConstantDeclaration } ] [ , ]
+          [ ; { ClassBodyDeclaration | ; } ]
+          }
+-> 자바의 열거형을 나타내는 노드. 사용할 지는 더 생각 해봐야 할 듯.
+
+72. EnumConstantDeclaration:
+      [ Javadoc ] { ExtendedModifier } Identifier
+          [ ( [ Expression { , Expression } ] ) ]
+          [ AnonymousClassDeclaration ]
+-> 열거형 노드에서 개별 상수를 나타내는 표현
+
+73. TypeParameter:
+     { ExtendedModifier } Identifier [ extends Type { & Type } ]
+-> generic의 선언 부분에서 사용됨. TypeParameter가 상속하는 바운드를 나타냄.
+
+74. ParameterizedType:
+     Type < Type { , Type } >
+-> generic type의 구체적인 instance 생성 부분에서 사용되는 노드
+
+75. QualifiedType:
+     Type . { Annotation } SimpleName
+-> 중첩된 클래스나 인터페이스를 참조할 때 주로 사용됨.
+
+76. WildcardType:
+     { Annotation } ? [ ( extends | super) Type ]
+-> generic에서 ? 와일드 카드 기호를 사용할 때를 나타내는 노드.
+
+77. NormalAnnotation:
+    @ TypeName ( [ MemberValuePair { , MemberValuePair } ] )
+-> Java에서 주로 사용되는 일반적인 형태의 어노테이션을 의미함. 어노테이션 부분은 모두 이 노드에 속한다고 생각할 수 있음.
+
+78. MarkerAnnotation:
+    @ TypeName
+-> MarkerAnnotation이 사용되는 표현을 나타내는 노드.
+
+79. SingleMemberAnnotation:
+    @ TypeName ( Expression  )
+-> 어노테이션을 다루는 다른 형태의 노드.
+
+80. MemberValuePair:
+    SimpleName = Expression
+-> 어노테이션에서 주로 사용되고, 어노테이션에서 key-value 쌍을 다루는 부분에 속함.
+
+81. AnnotationTypeDeclaration:
+    [ Javadoc ] { ExtendedModifier } @ interface Identifier
+ 		{ { AnnotationTypeBodyDeclaration | ; } }
+  AnnotationTypeBodyDeclaration:
+    AnnotationTypeMemberDeclaration
+    FieldDeclaration
+    TypeDeclaration
+    EnumDeclaration
+    AnnotationTypeDeclaration
+-> 어노테이션을 정의할 때 주로 사용됨.
+
+82. AnnotationTypeMemberDeclaration:
+    [ Javadoc ] { ExtendedModifier }
+        Type Identifier ( ) [ default Expression ] ;
+-> 해당 노드도 Annotation과 관련있는 노드.
+
+83. Modifier:
+     public
+     protected
+     private
+     static
+     abstract
+     final
+     native
+     synchronized
+     transient
+     volatile
+     strictfp
+     default
+     sealed
+     non-sealed
+-> 위의 열거된 modifier를 나타내는 노드.
+
+84. UnionType:
+     Type | Type { | Type }
+-> 예외처리를 진행할 때 사용됨. 원래는 catch블록을 여러개 만들어서 따로 처리를 해주었어야 하나, 이 type을 사용하여 한 번에 많은 예외처리 type을 지정해 주는 것이 가능해짐.
+
+85. Dimension:
+  	{ Annotation } []
+-> ArrayType에서 사용되는 노드. 차원을 나타내는 [] 기호가 해당됨.
+
+86. LambdaExpression:
+     Identifier -> Body
+     ( [ Identifier { , Identifier } ] ) -> Body
+     ( [ FormalParameter { , FormalParameter } ] ) -> Body
+-> 람다 표현식에서 사용되는 노드.
+
+87. IntersectionType:
+     Type & Type { & Type }
+-> generic type의 경계를 지정할 때, 여러 개를 나타내는 경우에 해당하는 노드
+
+88. NameQualifiedType:
+     Name . { Annotation } SimpleName
+-> 다른 패키지의 클래스를 사용하는 경우에 해당함.
+
+89. CreationReference:
+      Type ::
+          [ < Type { , Type } > ]
+          new
+-> 보통 Constructor를 참조하는 경우에 많이 사용됨 ex) String::new / ArrayList::new
+
+90. ExpressionMethodReference:
+      Expression ::
+          [ < Type { , Type } > ]
+          Identifier
+-> 객체 또는 표현식을 참조하는 경우에 많이 사용됨
+
+91. SuperMethodReference:
+      [ ClassName . ] super ::
+          [ < Type { , Type } > ]
+          Identifier
+-> SuperClass의 method를 참조하는 경우에 사용되는 노드
+
+92. TypeMethodReference:
+      Type ::
+          [ < Type { , Type } > ]
+          Identifier
+-> Method 참조의 한 형태를 표현하는 노드
+
+93. ModuleDeclaration:
+   [ Javadoc ] { Annotation } [ open ] module Name {
+         { RequiresDirective | ExportsDirective | OpensDirective | UsesDirective | ProvidesDirective }
+   }
+-> 모듈 시스템에 사용되는 노드. moudule { } 형식으로 선언되어 사용됨.
+
+94. RequiresDirective:
+      requires { ModuleModifier } Name ;
+-> requires 부분에서 사용됨.(module system 내부에 존재함)
+
+95. ExportsDirective:
+      exports PackageName [ to  ModuleName {, ModuleName } ]
+-> 해당 노드도 module system에서 주로 사용됨
+
+96. OpensDirective:
+      opens PackageName [ to  ModuleName {, ModuleName } ] ;
+-> module system에서 주로 사용됨
+
+97. UsesDirective:
+      uses Name ;
+-> module system에서 주로 사용됨
+
+98. ProvidesDirective:
+      provides Name with Name {, Name } ;
+-> module system에서 주로 사용됨
+
+99. ModuleModifier:
+     static
+     transitive
+-> module system에서 주로 사용됨
+
+100. SwitchExpression:
+ 		switch ( Expression )
+  			{ { SwitchCase | Statement } }
+  SwitchCase:
+ 		case [ Expression { , Expression } ]  { : | ->}
+ 		default { : | ->}
+-> Switch에 사용됨. 하지만 새로운 형태의 switch 구문임.
+
+101. YieldStatement:
+ 		Yield { Identifier/Expression }
+-> SwitchExpression node 안에서 사용되는 새로운 구문. case 블록 내부에서 값을 반환할 때 주로 사용됨. return과 비슷한 형태로 사용된다고 생각할 수 있음.
+
+102. TextBlock
+-> 여러 개의 문자열을 나타내는 표현. 여러 줄의 문자열을 나타내기에 간편함. """ 3개의 쌍따옴표로 시작하고 """ 3개의 쌍따옴표로 끝남
+
+103. RecordDeclaration:
+      [ Javadoc ] { ExtendedModifier } record Identifier
+      		[ < TypeParameter > ]
+      		(
+           	[ FormalParameter { , FormalParameter } ]
+         	) { Dimension }
+      		[ implements Type { , Type } ]
+          	[ ; { RecordBodyDeclaration | ; } ]
+-> Java의 Record 형식을 나타냄. record는 불변 데이터 운반 객체에 대하여 간결한 구문을 제공함.
+
+103. ModuleQualifiedName:
+     Name . Name
+-> 모듈의 정규화 된 이름을 나타내는 노드.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

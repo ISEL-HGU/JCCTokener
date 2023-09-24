@@ -102,6 +102,7 @@ public class jCCParser {
             System.out.println("");
         }
 
+        System.out.println(jCCNodeList.size());
 
 
 
