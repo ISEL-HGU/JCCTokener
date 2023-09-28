@@ -1,6 +1,7 @@
 package isel.csee.jcctokener.parser;
 
 import isel.csee.jcctokener.generators.DataDependencyGenerator;
+import isel.csee.jcctokener.visitor.VariableVisitor;
 import isel.csee.jcctokener.visitor.jCCVisitor;
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.generators.SemanticVectorGenerator;
@@ -24,6 +25,7 @@ public class jCCParser {
     private List<jCCNode> jCCNodeList;
     private List<String> actionTokenList;
     private jCCVisitor jCCVisitor = new jCCVisitor();
+    private VariableVisitor variableVisitor = new VariableVisitor();
     private SemanticVectorGenerator semanticVectorGenerator;
     private DataDependencyGenerator dataDependencyGenerator;
 
@@ -51,60 +53,64 @@ public class jCCParser {
         parser.setBindingsRecovery(true);
 
         CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
+//
+//        compilationUnit.accept(new ASTVisitor() {
+//            @Override
+//            public boolean visit(MethodDeclaration node) { // method 단위로 끊어서 따로따로 값을 가져오게 됨
+//                node.accept(jCCVisitor);
+//                methodName = node.getName().getFullyQualifiedName();
+//                return super.visit(node);
+//            }
+//        });
 
-        compilationUnit.accept(new ASTVisitor() {
-            @Override
-            public boolean visit(MethodDeclaration node) { // method 단위로 끊어서 따로따로 값을 가져오게 됨
-                node.accept(jCCVisitor);
-                methodName = node.getName().getFullyQualifiedName();
-                return super.visit(node);
-            }
-        });
-
-//        compilationUnit.accept(jCCVisitor);
-
-
-        jCCNodeList = jCCVisitor.getjCCNodeList();
-        actionTokenList = jCCVisitor.getActionTokenList();
-
-
-        dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);
-        dataDependencyGenerator.generateDataDependency();
-        jCCNodeList = dataDependencyGenerator.getjCCNodeList();
-
-
-        semanticVectorGenerator = new SemanticVectorGenerator(jCCNodeList, 3);
-
-        semanticVectorGenerator.createVariableSemanticVector();
-        semanticVectorGenerator.createOperatorSemanticVector();
-        semanticVectorGenerator.createMethodSemanticVector();
-
-        jCCNodeList = semanticVectorGenerator.getjCCNodeList();
+        compilationUnit.accept(variableVisitor);
+        jCCNodeList = variableVisitor.getjCCNodeList();
 
         for(int i = 0; i < jCCNodeList.size(); i++) {
-            System.out.println(jCCNodeList.get(i).getVariableName());
-            System.out.print("Structure vector: ");
-            for(int k = 0; k < 25; k++) {
-                System.out.print(jCCNodeList.get(i).getStructureVector()[k] + " ");
-            }
-            System.out.println("");
-            System.out.println("Semantic Type: " + jCCNodeList.get(i).getSemanticType());
-            System.out.print("Related nodes: ");
-            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-                System.out.print(jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + "  ");
-            }
-            System.out.println("");
-            System.out.print("Semantic vector: ");
-            for(int k = 0; k < 25; k++) {
-                System.out.print(jCCNodeList.get(i).getSemanticVector()[k] + " ");
-            }
-            System.out.println("");
-            System.out.println("");
+            System.out.println("node: " + jCCNodeList.get(i).getVariableName());
         }
 
-        System.out.println(jCCNodeList.size());
-
-
+//        jCCNodeList = jCCVisitor.getjCCNodeList();
+//        actionTokenList = jCCVisitor.getActionTokenList();
+//
+//
+//        dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);
+//        dataDependencyGenerator.generateDataDependency();
+//        jCCNodeList = dataDependencyGenerator.getjCCNodeList();
+//
+//
+//        semanticVectorGenerator = new SemanticVectorGenerator(jCCNodeList, 3);
+//
+//        semanticVectorGenerator.createVariableSemanticVector();
+//        semanticVectorGenerator.createOperatorSemanticVector();
+//        semanticVectorGenerator.createMethodSemanticVector();
+//
+//        jCCNodeList = semanticVectorGenerator.getjCCNodeList();
+//
+//        for(int i = 0; i < jCCNodeList.size(); i++) {
+//            System.out.println(jCCNodeList.get(i).getVariableName());
+//            System.out.print("Structure vector: ");
+//            for(int k = 0; k < 25; k++) {
+//                System.out.print(jCCNodeList.get(i).getStructureVector()[k] + " ");
+//            }
+//            System.out.println("");
+//            System.out.println("Semantic Type: " + jCCNodeList.get(i).getSemanticType());
+//            System.out.print("Related nodes: ");
+//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
+//                System.out.print(jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + "  ");
+//            }
+//            System.out.println("");
+//            System.out.print("Semantic vector: ");
+//            for(int k = 0; k < 25; k++) {
+//                System.out.print(jCCNodeList.get(i).getSemanticVector()[k] + " ");
+//            }
+//            System.out.println("");
+//            System.out.println("");
+//        }
+//
+//        System.out.println(jCCNodeList.size());
+//
+//
 
     }
 

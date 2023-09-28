@@ -21,7 +21,7 @@ public class jCCTokener {
 //        jCCTokener.run(args);
 
 //        File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/app/src/main/resources/2023-1-java/SourceCodes");
-        File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/app/src/main/resources/test/isel/codes");
+        File file = new File("/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener/app/src/main/resources/test/isel/codes");
         File[] files = file.listFiles();
         List<StudentFileAnalyzer> studentFileAnalyzerList = new ArrayList<>();
 
