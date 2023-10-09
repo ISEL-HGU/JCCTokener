@@ -19,6 +19,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode arrayNode = new jCCNode();
 
             arrayNode.setVariableName(((SimpleName) arrayExpression).getIdentifier());
+            arrayNode.setNode(node);
 
             jCCNodeList.add(arrayNode);
         }
@@ -26,7 +27,8 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
         if(indexExpression instanceof SimpleName) {
             jCCNode indexNode = new jCCNode();
 
-            indexNode.setVariableName(((SimpleName) arrayExpression).getIdentifier());
+            indexNode.setVariableName(((SimpleName) indexExpression).getIdentifier());
+            indexNode.setNode(node);
 
             jCCNodeList.add(indexNode);
         }
@@ -54,6 +56,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode leftNode = new jCCNode();
 
             leftNode.setVariableName(((SimpleName) leftOperand).getIdentifier());
+            leftNode.setNode(node);
 
             jCCNodeList.add(leftNode);
         }
@@ -62,6 +65,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode rightNode = new jCCNode();
 
             rightNode.setVariableName(((SimpleName) rightOperand).getIdentifier());
+            rightNode.setNode(node);
 
             jCCNodeList.add(rightNode);
         }
@@ -76,6 +80,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode argumentNode = new jCCNode();
 
             argumentNode.setVariableName(argumentList.get(i).toString());
+            argumentNode.setNode(node);
 
             jCCNodeList.add(argumentNode);
         }
@@ -93,6 +98,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode conditionNode = new jCCNode();
 
             conditionNode.setVariableName(((SimpleName) conditionExpression).getIdentifier());
+            conditionNode.setNode(node);
 
             jCCNodeList.add(conditionNode);
         }
@@ -101,6 +107,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode trueNode = new jCCNode();
 
             trueNode.setVariableName(((SimpleName) trueExpression).getIdentifier());
+            trueNode.setNode(node);
 
             jCCNodeList.add(trueNode);
         }
@@ -109,6 +116,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode falseNode = new jCCNode();
 
             falseNode.setVariableName(((SimpleName) falseExpression).getIdentifier());
+            falseNode.setNode(node);
 
             jCCNodeList.add(falseNode);
         }
@@ -124,14 +132,15 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
 
     @Override
     public boolean visit(FieldAccess node) {
-        Expression filedExpression = node.getExpression();
+        Expression fieldExpression = node.getExpression();
         Expression fieldName = node.getName();
-        System.out.println("@@@@");
 
-        if(filedExpression instanceof SimpleName) {
+
+        if(fieldExpression instanceof SimpleName) {
             jCCNode fieldExpressionNode = new jCCNode();
 
-            fieldExpressionNode.setVariableName(((SimpleName) filedExpression).getIdentifier());
+            fieldExpressionNode.setVariableName(((SimpleName) fieldExpression).getIdentifier());
+            fieldExpressionNode.setNode(node);
 
             jCCNodeList.add(fieldExpressionNode);
         }
@@ -140,8 +149,33 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode fieldNameNode = new jCCNode();
 
             fieldNameNode.setVariableName(((SimpleName) fieldName).getIdentifier());
+            fieldNameNode.setNode(node);
 
             jCCNodeList.add(fieldNameNode);
+        }
+
+
+        return super.visit(node);
+    }
+
+    @Override
+    public boolean visit(QualifiedName node) {
+        if(node.getParent().getNodeType() != 35) { // Package 선언에 해당하지 않는 경우
+            Expression leftOperand = node.getQualifier();
+            Expression rightOperand = node.getName();
+
+            jCCNode leftNode = new jCCNode();
+            leftNode.setVariableName(((SimpleName) leftOperand).getIdentifier());
+            leftNode.setNode(node);
+            jCCNodeList.add(leftNode);
+
+
+            if(rightOperand instanceof SimpleName) { // SimpleName으로 한정하는 것이 맞으려나?
+                jCCNode rightNode = new jCCNode();
+                rightNode.setVariableName(((SimpleName) rightOperand).getIdentifier());
+                rightNode.setNode(node);
+                jCCNodeList.add(rightNode);
+            }
         }
 
 
@@ -154,10 +188,12 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
         Expression rightOperand = node.getRightOperand();
         List extendedOperandList = node.extendedOperands();
 
+
         if(leftOperand instanceof SimpleName) {
             jCCNode leftOperandNode = new jCCNode();
 
             leftOperandNode.setVariableName(((SimpleName) leftOperand).getIdentifier());
+            leftOperandNode.setNode(node);
 
             jCCNodeList.add(leftOperandNode);
         }
@@ -166,6 +202,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode rightOperandNode = new jCCNode();
 
             rightOperandNode.setVariableName(((SimpleName) rightOperand).getIdentifier());
+            rightOperandNode.setNode(node);
 
             jCCNodeList.add(rightOperandNode);
         }
@@ -175,6 +212,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
                 jCCNode extendedOperandNode = new jCCNode();
 
                 extendedOperandNode.setVariableName(((SimpleName) extendedOperandList.get(i)).getIdentifier());
+                extendedOperandNode.setNode(node);
 
                 jCCNodeList.add(extendedOperandNode);
             }
@@ -189,23 +227,24 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
         SimpleName methodName = node.getName();
         List argumentList = node.arguments();
 
+
+
+
         if(methodInstance instanceof SimpleName) {
             jCCNode methodInstanceNode = new jCCNode();
 
             methodInstanceNode.setVariableName(((SimpleName) methodInstance).getIdentifier());
+            methodInstanceNode.setNode(node);
 
             jCCNodeList.add(methodInstanceNode);
         }
-
-        jCCNode methodNameNode = new jCCNode();
-        methodNameNode.setVariableName(((SimpleName) methodName).getIdentifier());
-        jCCNodeList.add(methodNameNode);
 
         for(int i = 0; i < argumentList.size(); i++) {
             if(argumentList.get(i) instanceof SimpleName) {
                 jCCNode argumentNode = new jCCNode();
 
                 argumentNode.setVariableName(((SimpleName) argumentList.get(i)).getIdentifier());
+                argumentNode.setNode(node);
 
                 jCCNodeList.add(argumentNode);
             }
@@ -222,6 +261,7 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             jCCNode returnNode = new jCCNode();
 
             returnNode.setVariableName(((SimpleName) returnExpression).getIdentifier());
+            returnNode.setNode(node);
 
             jCCNodeList.add(returnNode);
         }
@@ -245,16 +285,21 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
         SimpleName variableName = node.getName();
         Expression initializeExpression = node.getInitializer();
 
+
         if(initializeExpression instanceof SimpleName) {
             jCCNode initialNode = new jCCNode();
 
+
             initialNode.setVariableName(((SimpleName) initializeExpression).getIdentifier());
+            initialNode.setNode(node);
 
             jCCNodeList.add(initialNode);
         }
 
         jCCNode variableNode = new jCCNode();
         variableNode.setVariableName(((SimpleName) variableName).getIdentifier());
+        variableNode.setNode(node);
+
         jCCNodeList.add(variableNode);
 
         return super.visit(node);

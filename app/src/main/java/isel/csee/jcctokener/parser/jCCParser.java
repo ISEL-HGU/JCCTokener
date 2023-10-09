@@ -1,6 +1,8 @@
 package isel.csee.jcctokener.parser;
 
 import isel.csee.jcctokener.generators.DataDependencyGenerator;
+import isel.csee.jcctokener.visitor.MethodVisitor;
+import isel.csee.jcctokener.visitor.OperatorVisitor;
 import isel.csee.jcctokener.visitor.VariableVisitor;
 import isel.csee.jcctokener.visitor.jCCVisitor;
 import isel.csee.jcctokener.node.jCCNode;
@@ -29,6 +31,48 @@ public class jCCParser {
     private SemanticVectorGenerator semanticVectorGenerator;
     private DataDependencyGenerator dataDependencyGenerator;
 
+    public static long testParseCode(String sourceCodes) { // test function
+        char[] contents = sourceCodes.toCharArray();
+        ASTParser parser;
+        List<jCCNode> jCCNodeList;
+        VariableVisitor variableVisitor = new VariableVisitor();
+
+        parser = ASTParser.newParser(AST.JLS_Latest); // JLS15는 java source code version 의미
+        parser.setSource(contents); // setSource - 파싱 할 소스코드를 정해주는 method
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        // setKind method - ASTParser 파싱 타입을 정해주는 method
+        // K_COMPILATION_UNIT - 컴파일 단위를 나타내는 상수, 일반적인 소스코드 단일 파일을 의미(일반적으로 사용)
+        // K_CLASS_BODY_DECLARATIONS - 클래스 본문 선언을 나타내는 상수, 클래스 내부 선언들을 파싱
+        // K_STATEMENTS - 문장을 나타내는 상수, 코드 블록 내의 문장들을 파싱
+        // K_EXPRESSION - 표현식을 나타내는 상수, 단일 표현식을 파싱
+
+        Map<String, String> options = JavaCore.getOptions();
+        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+        options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_7);
+        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+
+        parser.setResolveBindings(true);
+        parser.setCompilerOptions(options);
+
+        parser.setIgnoreMethodBodies(false);
+        parser.setBindingsRecovery(true);
+
+        CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
+
+
+        compilationUnit.accept(variableVisitor);
+        jCCNodeList = variableVisitor.getjCCNodeList();
+
+        OperatorVisitor operatorVisitor = new OperatorVisitor(jCCNodeList);
+        compilationUnit.accept(operatorVisitor);
+        jCCNodeList = operatorVisitor.getjCCNodeList();
+
+        MethodVisitor methodVisitor = new MethodVisitor(jCCNodeList);
+        compilationUnit.accept(methodVisitor);
+        jCCNodeList = methodVisitor.getjCCNodeList();
+        return 0;
+    }
+
     public void parseCodes() throws IOException {
         char[] contents = sourceCodes.toCharArray();
 
@@ -53,22 +97,27 @@ public class jCCParser {
         parser.setBindingsRecovery(true);
 
         CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
-//
-//        compilationUnit.accept(new ASTVisitor() {
-//            @Override
-//            public boolean visit(MethodDeclaration node) { // method 단위로 끊어서 따로따로 값을 가져오게 됨
-//                node.accept(jCCVisitor);
-//                methodName = node.getName().getFullyQualifiedName();
-//                return super.visit(node);
-//            }
-//        });
+
 
         compilationUnit.accept(variableVisitor);
         jCCNodeList = variableVisitor.getjCCNodeList();
 
+        OperatorVisitor operatorVisitor = new OperatorVisitor(jCCNodeList);
+        compilationUnit.accept(operatorVisitor);
+        jCCNodeList = operatorVisitor.getjCCNodeList();
+
+        MethodVisitor methodVisitor = new MethodVisitor(jCCNodeList);
+        compilationUnit.accept(methodVisitor);
+        jCCNodeList = methodVisitor.getjCCNodeList();
+
+
+
         for(int i = 0; i < jCCNodeList.size(); i++) {
+            System.out.println(jCCNodeList.get(i).getNode());
             System.out.println("node: " + jCCNodeList.get(i).getVariableName());
+            System.out.println("");
         }
+
 
 //        jCCNodeList = jCCVisitor.getjCCNodeList();
 //        actionTokenList = jCCVisitor.getActionTokenList();

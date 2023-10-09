@@ -6,10 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="d8bb7d85-7976-405d-a6eb-a4005bfb93fb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/jCCTokener.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/jCCTokener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/MethodVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/MethodVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/OperatorVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/OperatorVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/VariableVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/VariableVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/Test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,8 +37,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JUnit5 Test Class" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -48,7 +49,11 @@
     <setting file="jar:///Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/lib/src.zip!/java.base/java/io/IOException.java" root0="SKIP_INSPECTION" />
     <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/ASTVisitor.java" root0="SKIP_INSPECTION" />
     <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/Assignment.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/Expression.java" root0="SKIP_INSPECTION" />
     <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/InfixExpression.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/VariableDeclaration.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/VariableDeclarationExpression.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0/635b99f0fdb8d696876d04d1a9624d8040d07b39/org.eclipse.jdt.core-3.24.0-sources.jar!/org/eclipse/jdt/core/dom/VariableDeclarationFragment.java" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -71,7 +76,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
     "dart.analysis.tool.window.visible": "false",
-    "last_directory_selection": "/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/app/src/test/java/isel/csee/jcctokener/parser",
+    "last_directory_selection": "/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener/app/src/test/java/isel/csee/jcctokener/parser",
     "last_opened_file_path": "/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -97,7 +102,7 @@
       <recent name="isel.csee.jcctokener.parser" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.jCCTokener (1)">
+  <component name="RunManager" selected="Gradle.jCCParserTest.testParseCode">
     <configuration name="jCCTokener (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="isel.csee.jcctokener.jCCTokener" />
       <module name="JCCTokener.app.main" />
@@ -148,8 +153,33 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="jCCParserTest.testParseCode" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/app" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:test" />
+            <option value="--tests" />
+            <option value="&quot;isel.csee.jcctokener.parser.jCCParserTest.testParseCode&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.jCCParserTest.testParseCode" />
         <item itemvalue="Gradle.StudentFileParserTest.parseStudentFile" />
         <item itemvalue="Application.jCCTokener (1)" />
         <item itemvalue="Application.jCCTokener" />
@@ -189,7 +219,8 @@
       <workItem from="1695464990144" duration="2139000" />
       <workItem from="1695467141861" duration="14979000" />
       <workItem from="1695705859786" duration="1188000" />
-      <workItem from="1695778013564" duration="10261000" />
+      <workItem from="1695778013564" duration="27010000" />
+      <workItem from="1696522120329" duration="2590000" />
     </task>
     <servers />
   </component>
