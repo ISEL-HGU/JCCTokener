@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 /*
@@ -25,7 +26,7 @@ public class jCCParser {
     private ASTParser parser;
     private String methodName;
     private List<jCCNode> jCCNodeList;
-    private List<String> actionTokenList;
+    private List<String> actionTokenList = new ArrayList<>();
     private jCCVisitor jCCVisitor = new jCCVisitor();
     private VariableVisitor variableVisitor = new VariableVisitor();
     private SemanticVectorGenerator semanticVectorGenerator;

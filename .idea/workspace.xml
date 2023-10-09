@@ -7,10 +7,10 @@
     <list default="true" id="d8bb7d85-7976-405d-a6eb-a4005bfb93fb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/MethodVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/MethodVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/OperatorVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/OperatorVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/VariableVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/VariableVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/types/NodeType.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/types/NodeType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/DataTypeVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/DataTypeVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/TaxFruit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/test/java/isel/csee/jcctokener/parser/jCCParserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/isel/csee/jcctokener/parser/jCCParserTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -220,7 +220,7 @@
       <workItem from="1695467141861" duration="14979000" />
       <workItem from="1695705859786" duration="1188000" />
       <workItem from="1695778013564" duration="27010000" />
-      <workItem from="1696522120329" duration="2590000" />
+      <workItem from="1696522120329" duration="7429000" />
     </task>
     <servers />
   </component>

@@ -1,7 +1,6 @@
 package isel.codes;
 
-public class Test {
-
+public class TaxFruit {
     public String test(int tax, int[] fruitsPrice, String[] fruitsName) { // 세금에 따라서 과일 가격을 sout 해줌
         int percent;
         int a = 10;

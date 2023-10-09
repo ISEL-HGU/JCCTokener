@@ -29,10 +29,11 @@ public class NodeType {
     private static final int type24 = 23;
     private static final int type25 = 24;
 
-    public static double[] searchType(ASTNode astNode, double[] arr) { // parent로 해주는 이유는 방문하는 노드가 SimpleName node이기 때문
+    public static double[] searchType(ASTNode astNode, double[] arr) {
+        // IfCondition과 IfBody를 따로 가져오는 node type이 존재하지 않기 때문에 parent를 사용해서 비교를 진행
         if(astNode.getParent() instanceof IfStatement && ((IfStatement) astNode.getParent()).getExpression() == astNode) { // Type 1 (If Condition)
             arr[type1] += 1;
-        } // 여기서는 parent가 IfStatement이고 parent의 조건이 해당 astNode인 경우를 의미함
+        }
 
         if(astNode.getParent() instanceof IfStatement && ((IfStatement) astNode.getParent()).getThenStatement() == astNode) { // type 2 (If Body)
             arr[type2] += 1;
@@ -40,32 +41,28 @@ public class NodeType {
 
         if(astNode.getParent() instanceof IfStatement && ((IfStatement) astNode.getParent()).getElseStatement() == astNode) { // type 2 (Else Body)
             arr[type2] += 1;
-
         }
+
 
         if(astNode instanceof MethodDeclaration && ((MethodDeclaration) astNode).isConstructor() == false) { // type 3 (Method Definition)
             arr[type3] += 1;
+        } // methodDeclaration node이지만 constructor가 아닌 경우에 해당함
 
-        }
 
         if(astNode.getParent() instanceof ForStatement && ((ForStatement) astNode.getParent()).getExpression() == astNode) { // type 4 (For Loop Condition)
-            arr[type4] += 1;
-
+            arr[type4] += 1; // For loop condition 자체의 노드가 존재하지 않아, parent 사용
         }
 
         if(astNode.getParent() instanceof EnhancedForStatement && ((EnhancedForStatement) astNode.getParent()).getExpression() == astNode) { // type 4 (Enhanced For Loop Condition)
-            arr[type4] += 1;
-
+            arr[type4] += 1; // Enhanced For loop Condition 자체를 제공하는 노드 존재 x, parent 사용
         }
 
         if(astNode.getParent() instanceof WhileStatement && ((WhileStatement) astNode.getParent()).getExpression() == astNode) { // type 4 (While Loop Condition)
-            arr[type4] += 1;
-
+            arr[type4] += 1; // While loop condition 자체를 제공하는 노드 X, parent 사용
         }
 
         if(astNode.getParent() instanceof ForStatement && ((ForStatement) astNode.getParent()).getBody() == astNode) { // type 5 (For Loop Body)
             arr[type5] += 1;
-
         }
 
         if(astNode.getParent() instanceof EnhancedForStatement && ((EnhancedForStatement) astNode.getParent()).getBody() == astNode) { // type 5 (Enhanced For Loop Body)
@@ -254,7 +251,6 @@ public class NodeType {
 
         if(astNode instanceof MethodDeclaration && ((MethodDeclaration) astNode).isConstructor() == true) { // type 25 (Class Creator)
             arr[type25] += 1;
-
         }
 
         if(astNode instanceof ArrayCreation) { // type 25 (Array Creator)
