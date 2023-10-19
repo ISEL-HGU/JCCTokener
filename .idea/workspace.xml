@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="d8bb7d85-7976-405d-a6eb-a4005bfb93fb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/types/NodeType.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/types/NodeType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/DataTypeVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/DataTypeVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/TaxFruit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/isel/csee/jcctokener/parser/jCCParserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/isel/csee/jcctokener/parser/jCCParserTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/OperatorVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/OperatorVisitor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,28 +67,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "dart.analysis.tool.window.visible": "false",
-    "last_directory_selection": "/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener/app/src/test/java/isel/csee/jcctokener/parser",
-    "last_opened_file_path": "/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "show.migrate.to.gradle.popup": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;last_directory_selection&quot;: &quot;/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener/app/src/test/java/isel/csee/jcctokener/parser&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -220,7 +218,9 @@
       <workItem from="1695467141861" duration="14979000" />
       <workItem from="1695705859786" duration="1188000" />
       <workItem from="1695778013564" duration="27010000" />
-      <workItem from="1696522120329" duration="7429000" />
+      <workItem from="1696522120329" duration="9257000" />
+      <workItem from="1697078833881" duration="316000" />
+      <workItem from="1697731193623" duration="3448000" />
     </task>
     <servers />
   </component>

@@ -6,7 +6,7 @@ import org.eclipse.jdt.core.dom.*;
 import java.util.List;
 
 public class DataTypeVisitor extends ASTVisitor {
-    // ArrayType node도 type을 가질 수 있지만, 아래 두 method로 커버가 가능하다고 생각 되어 생략
+
     private List<String> actionTokenList;
 
     @Override

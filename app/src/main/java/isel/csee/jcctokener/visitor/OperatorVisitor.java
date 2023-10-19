@@ -39,6 +39,14 @@ public class OperatorVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(VariableDeclarationFragment node) {
+        String operator = "=";
+
+        jCCNode operatorNode = new jCCNode();
+
+        operatorNode.setVariableName(operator);
+        operatorNode.setNode(node);
+
+        jCCNodeList.add(operatorNode);
 
         return super.visit(node);
     }
