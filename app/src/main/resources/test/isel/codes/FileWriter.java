@@ -1,7 +1,7 @@
 package isel.codes;
 
 public class FileWriter {
-    public String createFile() { // 세금에 따라서 과일 가격을 sout 해줌
+    public String createFile() {
         String filename = "example.txt";
 
         try {

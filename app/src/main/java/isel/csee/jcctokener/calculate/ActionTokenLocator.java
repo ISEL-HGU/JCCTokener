@@ -1,6 +1,6 @@
 package isel.csee.jcctokener.calculate;
 
-import isel.csee.jcctokener.parser.StudentFileAnalyzer;
+import isel.csee.jcctokener.parser.StudentFileData;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -17,22 +17,22 @@ import java.util.List;
 String을 key value로 하는 HashMap을 사용하는 게 더 낫지 싶기도 하고
  */
 public class ActionTokenLocator {
-    private List<StudentFileAnalyzer> studentFileAnalyzerList;
+    private List<StudentFileData> studentFileDataList;
     private HashMap<String, List<HashValueRepository>> hashValueMap = new HashMap<>(); // 모든 파일에 대한 hash / k-token이 다 들어가있는 list / filePath를 가져와서 사용해야 할 듯
 
     private int kValue = 3;
 
     public void sortAllActionTokens() { // 이 method는 모든 studentFileAnalyzer에 대해서 실행 / locate 부분의 일부만 진행?
-        for(int i = 0; i < studentFileAnalyzerList.size(); i++) { // lexical order 정렬
-            studentFileAnalyzerList.get(i).setActionTokenList(sortActionTokens(studentFileAnalyzerList.get(i).getActionTokenList()));
-            studentFileAnalyzerList.get(i).setHashValueRepositoryList(createAllKTokens(kValue, studentFileAnalyzerList.get(i).getActionTokenList(), studentFileAnalyzerList.get(i).getFilePath()));
+        for(int i = 0; i < studentFileDataList.size(); i++) { // lexical order 정렬
+            studentFileDataList.get(i).setActionTokenList(sortActionTokens(studentFileDataList.get(i).getActionTokenList()));
+            studentFileDataList.get(i).setHashValueRepositoryList(createAllKTokens(kValue, studentFileDataList.get(i).getActionTokenList(), studentFileDataList.get(i).getFilePath()));
         }
         // 이 method는 한 번 실행이 되기만 하면 되는 구조
     }
 
-    public List<HashValueRepository> locateActionToken(StudentFileAnalyzer studentFileAnalyzer) { // 하나의 파일에 대해 다른 모든 파일들을 비교해주는 과정
-        studentFileAnalyzer.setActionTokenList(sortActionTokens(studentFileAnalyzer.getActionTokenList())); // actionToken을 sort해서 다시 저장
-        List<HashValueRepository> targetList = createTargetKTokens(kValue, studentFileAnalyzer.getActionTokenList(), studentFileAnalyzer.getFilePath()); // target node에 대해서 분석한 파일
+    public List<HashValueRepository> locateActionToken(StudentFileData studentFileData) { // 하나의 파일에 대해 다른 모든 파일들을 비교해주는 과정
+        studentFileData.setActionTokenList(sortActionTokens(studentFileData.getActionTokenList())); // actionToken을 sort해서 다시 저장
+        List<HashValueRepository> targetList = createTargetKTokens(kValue, studentFileData.getActionTokenList(), studentFileData.getFilePath()); // target node에 대해서 분석한 파일
         List<HashValueRepository> relateFileList = new ArrayList<>();
 
         for(int i = 0; i < targetList.size(); i++) {
@@ -133,16 +133,16 @@ public class ActionTokenLocator {
         return returnValue;
     }
 
-    public ActionTokenLocator(List<StudentFileAnalyzer> studentFileAnalyzerList) {
-        this.studentFileAnalyzerList = studentFileAnalyzerList;
+    public ActionTokenLocator(List<StudentFileData> studentFileDataList) {
+        this.studentFileDataList = studentFileDataList;
     }
 
-    public List<StudentFileAnalyzer> getStudentFileAnalyzerList() {
-        return studentFileAnalyzerList;
+    public List<StudentFileData> getStudentFileAnalyzerList() {
+        return studentFileDataList;
     }
 
-    public void setStudentFileAnalyzerList(List<StudentFileAnalyzer> studentFileAnalyzerList) {
-        this.studentFileAnalyzerList = studentFileAnalyzerList;
+    public void setStudentFileAnalyzerList(List<StudentFileData> studentFileDataList) {
+        this.studentFileDataList = studentFileDataList;
     }
 
     public HashMap<String, List<HashValueRepository>> getHashValueMap() {

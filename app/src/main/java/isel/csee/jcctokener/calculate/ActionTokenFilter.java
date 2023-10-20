@@ -1,32 +1,31 @@
 package isel.csee.jcctokener.calculate;
 
-import isel.csee.jcctokener.parser.StudentFileAnalyzer;
+import isel.csee.jcctokener.parser.StudentFileData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ActionTokenFilter {
-    private List<StudentFileAnalyzer> studentFileAnalyzerList; // 같은 hash value를 가지는 값들의 HashMap
-    private StudentFileAnalyzer targetFile; // 비교하고자 하는 값
+    private List<StudentFileData> studentFileDataList; // 같은 hash value를 가지는 값들의 HashMap
+    private StudentFileData targetFile; // 비교하고자 하는 값
     private double actionTokenRatioReferencePoint;
     private double tokenRationReferencePoint;
 
-    public List<StudentFileAnalyzer> filterActionTokens() {
-        List<StudentFileAnalyzer> filterationList = new ArrayList<>();
+    public List<StudentFileData> filterActionTokens() {
+        List<StudentFileData> filterationList = new ArrayList<>();
 
-        for(int i = 0; i < studentFileAnalyzerList.size(); i++) {
-            double count = countSameActionTokens(targetFile, studentFileAnalyzerList.get(i));
-            double max = Math.max((double) targetFile.getHashValueRepositoryList().size(), (double) studentFileAnalyzerList.get(i).getHashValueRepositoryList().size());
-            double min = Math.min((double) targetFile.getHashValueRepositoryList().size(), (double) studentFileAnalyzerList.get(i).getHashValueRepositoryList().size());
+        for(int i = 0; i < studentFileDataList.size(); i++) {
+            double count = countSameActionTokens(targetFile, studentFileDataList.get(i));
+            double max = Math.max((double) targetFile.getHashValueRepositoryList().size(), (double) studentFileDataList.get(i).getHashValueRepositoryList().size());
+            double min = Math.min((double) targetFile.getHashValueRepositoryList().size(), (double) studentFileDataList.get(i).getHashValueRepositoryList().size());
             double actionTokenRation = count / min;
             double tokenRation = min / max;
 
             if(actionTokenRation >= actionTokenRatioReferencePoint && tokenRation >= tokenRationReferencePoint) {
-                if(filterationList.contains(studentFileAnalyzerList.get(i))) {
+                if(filterationList.contains(studentFileDataList.get(i))) {
 
                 } else {
-                    filterationList.add(studentFileAnalyzerList.get(i));
+                    filterationList.add(studentFileDataList.get(i));
                 }
 
             }
@@ -35,7 +34,7 @@ public class ActionTokenFilter {
         return filterationList;
     }
 
-    public int countSameActionTokens(StudentFileAnalyzer firstAnalyzer, StudentFileAnalyzer secondAnalyzer) {
+    public int countSameActionTokens(StudentFileData firstAnalyzer, StudentFileData secondAnalyzer) {
         int count = 0;
 
         for(int i = 0; i < firstAnalyzer.getHashValueRepositoryList().size(); i++) {
@@ -49,18 +48,18 @@ public class ActionTokenFilter {
         return count;
     }
 
-    public ActionTokenFilter(List<StudentFileAnalyzer> studentFileAnalyzerList, StudentFileAnalyzer targetFile, double actionTokenRatioReferencePoint, double tokenRationReferencePoint) {
-        this.studentFileAnalyzerList = studentFileAnalyzerList;
+    public ActionTokenFilter(List<StudentFileData> studentFileDataList, StudentFileData targetFile, double actionTokenRatioReferencePoint, double tokenRationReferencePoint) {
+        this.studentFileDataList = studentFileDataList;
         this.targetFile = targetFile;
         this.actionTokenRatioReferencePoint = actionTokenRatioReferencePoint;
         this.tokenRationReferencePoint = tokenRationReferencePoint;
     }
 
-    public List<StudentFileAnalyzer> getStudentFileAnalyzerList() {
-        return studentFileAnalyzerList;
+    public List<StudentFileData> getStudentFileAnalyzerList() {
+        return studentFileDataList;
     }
 
-    public void setStudentFileAnalyzerList(List<StudentFileAnalyzer> studentFileAnalyzerList) {
-        this.studentFileAnalyzerList = studentFileAnalyzerList;
+    public void setStudentFileAnalyzerList(List<StudentFileData> studentFileDataList) {
+        this.studentFileDataList = studentFileDataList;
     }
 }

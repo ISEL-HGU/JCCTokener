@@ -1,10 +1,8 @@
 package isel.csee.jcctokener.generators;
 
 import isel.csee.jcctokener.node.jCCNode;
-import isel.csee.jcctokener.types.NodeType;
 import org.eclipse.jdt.core.dom.*;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

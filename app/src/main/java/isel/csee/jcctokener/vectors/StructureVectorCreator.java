@@ -1,8 +1,8 @@
-package isel.csee.jcctokener.types;
+package isel.csee.jcctokener.vectors;
 
 import org.eclipse.jdt.core.dom.*;
 
-public class NodeType {
+public class StructureVectorCreator {
     private static final int type1 = 0;
     private static final int type2 = 1;
     private static final int type3 = 2;

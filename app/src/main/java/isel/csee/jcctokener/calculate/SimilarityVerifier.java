@@ -1,6 +1,6 @@
 package isel.csee.jcctokener.calculate;
 
-import isel.csee.jcctokener.parser.StudentFileAnalyzer;
+import isel.csee.jcctokener.parser.StudentFileData;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class SimilarityVerifier {
     private double decreaseStep;
 
-    public double verifySimilarity(StudentFileAnalyzer firstStudentFile, StudentFileAnalyzer secondStudentFile, int type) {
+    public double verifySimilarity(StudentFileData firstStudentFile, StudentFileData secondStudentFile, int type) {
         double totalSimilarity = 0;
         List<double[]> firstVectorCollection;
         List<double[]> secondVectorCollection;

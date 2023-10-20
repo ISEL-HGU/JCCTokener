@@ -1,7 +1,7 @@
 package isel.codes;
 
 public class Division {
-    public long test() { // 세금에 따라서 과일 가격을 sout 해줌
+    public long test() {
         int sum = 0;
         int[] numbers = {1, 2, 3, 4, 5};
 

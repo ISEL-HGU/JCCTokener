@@ -1,8 +1,7 @@
 package isel.csee.jcctokener;
 
-import isel.csee.jcctokener.calculate.SimilarityCalculator;
-import isel.csee.jcctokener.parser.StudentFileAnalyzer;
-import isel.csee.jcctokener.parser.StudentFileParser;
+import isel.csee.jcctokener.parser.StudentFileData;
+import isel.csee.jcctokener.parser.StudentFileFinder;
 import isel.csee.jcctokener.parser.jCCParser;
 
 import java.io.*;
@@ -19,17 +18,15 @@ public class jCCTokener {
         jCCTokener jCCTokener = new jCCTokener();
 
 //        jCCTokener.run(args);
-
-//        File file = new File("/Users/kimdong-gyu/Desktop/HGU/JChecker/JCCTokener/app/src/main/resources/2023-1-java/SourceCodes");
         File file = new File("/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener/app/src/main/resources/test/isel/codes");
         File[] files = file.listFiles();
-        List<StudentFileAnalyzer> studentFileAnalyzerList = new ArrayList<>();
+        List<StudentFileData> studentFileDataList = new ArrayList<>();
 
         for(int i = 0; i < files.length; i++) {
-            StudentFileParser studentFileParser = new StudentFileParser();
-            studentFileParser.parseStudentFile(files[i].getPath());
+            StudentFileFinder studentFileFinder = new StudentFileFinder();
+            studentFileFinder.parseStudentFile(files[i].getPath());
 
-            studentFileAnalyzerList.addAll(studentFileParser.getStudentFileAnalyzerList());
+            studentFileDataList.addAll(studentFileFinder.getStudentFileAnalyzerList());
         }
 //
 //        SimilarityCalculator similarityCalculator = new SimilarityCalculator(studentFileAnalyzerList);

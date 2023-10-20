@@ -3,7 +3,6 @@ package isel.csee.jcctokener.parser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -13,8 +12,8 @@ import java.util.List;
 
 ActionToken 만들어줘야 함 / parsing 하는 과정에서 따로 뽑아 와야 할 듯
  */
-public class StudentFileParser {
-    private List<StudentFileAnalyzer> studentFileAnalyzerList = new ArrayList<>();
+public class StudentFileFinder {
+    private List<StudentFileData> studentFileDataList = new ArrayList<>();
 
     public static int sum(int a, int b){
         return a + b;
@@ -30,28 +29,28 @@ public class StudentFileParser {
                     parseStudentFile(fileList[i].getPath());
                 } else {
                     if(fileList[i].getName().substring(fileList[i].getName().lastIndexOf(".") + 1).equals("java")) {
-                        StudentFileAnalyzer studentFileAnalyzer = new StudentFileAnalyzer(fileList[i].getPath());
-                        studentFileAnalyzer.analyzeStudentFile();
+                        StudentFileData studentFileData = new StudentFileData(fileList[i].getPath());
+                        studentFileData.analyzeStudentFile();
 
-                        studentFileAnalyzerList.add(studentFileAnalyzer);
+                        studentFileDataList.add(studentFileData);
                     }
                 }
             }
         } else {
-            if(file.isFile()) {
-                StudentFileAnalyzer studentFileAnalyzer = new StudentFileAnalyzer(fileInputPath);
-                studentFileAnalyzer.analyzeStudentFile();
+            if(file.isFile()) { // file을 찾은 경우에는 parsing 실행
+                StudentFileData studentFileData = new StudentFileData(fileInputPath);
+                studentFileData.analyzeStudentFile();
 
-                studentFileAnalyzerList.add(studentFileAnalyzer);
+                studentFileDataList.add(studentFileData);
             }
         }
     }
 
-    public List<StudentFileAnalyzer> getStudentFileAnalyzerList() {
-        return studentFileAnalyzerList;
+    public List<StudentFileData> getStudentFileAnalyzerList() {
+        return studentFileDataList;
     }
 
-    public void setStudentFileAnalyzerList(List<StudentFileAnalyzer> studentFileAnalyzerList) {
-        this.studentFileAnalyzerList = studentFileAnalyzerList;
+    public void setStudentFileAnalyzerList(List<StudentFileData> studentFileDataList) {
+        this.studentFileDataList = studentFileDataList;
     }
 }

@@ -2,7 +2,7 @@ package isel.csee.jcctokener.visitor;
 
 
 import isel.csee.jcctokener.node.jCCNode;
-import isel.csee.jcctokener.types.NodeType;
+import isel.csee.jcctokener.vectors.StructureVectorCreator;
 import org.eclipse.jdt.core.dom.*;
 
 
@@ -25,7 +25,7 @@ public class jCCVisitor extends ASTVisitor {
         }
 
         while(tempNode != null) {
-            structureVector = NodeType.searchType(tempNode, structureVector);
+            structureVector = StructureVectorCreator.searchType(tempNode, structureVector);
 
             if(tempNode instanceof MethodDeclaration) {
                 jCCNode.setMethodName(((MethodDeclaration) tempNode).getName().toString());
@@ -105,7 +105,7 @@ public class jCCVisitor extends ASTVisitor {
         tempNode = node;
 
         while(tempNode != null) {
-            structureVector = NodeType.searchType(tempNode, structureVector);
+            structureVector = StructureVectorCreator.searchType(tempNode, structureVector);
 
             if(tempNode instanceof MethodDeclaration) {
                 methodName = ((MethodDeclaration) tempNode).getName().toString();
