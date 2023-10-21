@@ -31,16 +31,16 @@ class jCCParserTest {
                 testString += ", ";
             }
             testString = testString.substring(0, testString.length()-2);
-            assertEquals("percent, a, b, returnValue, tax, a, percent, i, i, fruitsPrice, length, returnValue, percent, fruitsPrice, i, fruitsName, i, " +
-                    "a, tax, tax, b, percent, i, i, fruitsPrice, length, returnValue, percent, fruitsPrice, i, fruitsName, i, " +
-                    "percent, i, i, fruitsPrice, length, returnValue, percent, fruitsPrice, i, fruitsName, i, returnValue", testString);
+            assertEquals("percent, a, =, b, =, returnValue, =, tax, <, a, percent, =, i, =, i, <, fruitsPrice, length, returnValue, +=, percent, *, fruitsPrice, i, +, fruitsName," +
+                    " i, a, <=, tax, &&, tax, <, b, percent, =, i, =, i, <, fruitsPrice, length, returnValue, +=, percent, *, fruitsPrice, i, +, fruitsName," +
+                    " i, percent, =, i, =, i, <, fruitsPrice, length, returnValue, +=, percent, *, fruitsPrice, i, +, fruitsName, i, returnValue", testString);
 
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-//        assertEquals(0, jCCParser.testParseCode("test"));
+
     }
 
     @Test
@@ -49,11 +49,25 @@ class jCCParserTest {
             String source = new String(Files.readAllBytes(Paths.get("/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener/app/src/main/resources/test/isel/codes/Division.java")));
 
             jCCParser jCCParser = new jCCParser(source);
+
+
+            jCCParser.parseCodes();
+            List<jCCNode> jCCNodeList = jCCParser.getjCCNodeList();
+
+            String testString = "";
+
+            for(jCCNode node : jCCNodeList) {
+                testString += node.getVariableName();
+                testString += ", ";
+            }
+            testString = testString.substring(0, testString.length()-2);
+            assertEquals("sum, =, numbers, =, number, numbers, number, %, ==, sum, +=, doubleValue, number, sum, +=, number, number, map, put, number, map, put, number, map, put, number, " +
+                    "e, println, +, e, getMessage, sum", testString);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-//        assertEquals(0, jCCParser.testParseCode("test"));
     }
 
     @Test
@@ -62,10 +76,25 @@ class jCCParserTest {
             String source = new String(Files.readAllBytes(Paths.get("/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener/app/src/main/resources/test/isel/codes/FileWriter.java")));
 
             jCCParser jCCParser = new jCCParser(source);
+
+
+            jCCParser.parseCodes();
+            List<jCCNode> jCCNodeList = jCCParser.getjCCNodeList();
+
+            String testString = "";
+
+            for(jCCNode node : jCCNodeList) {
+                testString += node.getVariableName();
+                testString += ", ";
+            }
+            testString = testString.substring(0, testString.length()-2);
+            assertEquals("percent, a, =, b, =, returnValue, =, tax, <, a, percent, =, i, =, i, <, fruitsPrice, length, returnValue, +=, percent, *, fruitsPrice, i, +, fruitsName," +
+                    " i, a, <=, tax, &&, tax, <, b, percent, =, i, =, i, <, fruitsPrice, length, returnValue, +=, percent, *, fruitsPrice, i, +, fruitsName," +
+                    " i, percent, =, i, =, i, <, fruitsPrice, length, returnValue, +=, percent, *, fruitsPrice, i, +, fruitsName, i, returnValue", testString);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-//        assertEquals(0, jCCParser.testParseCode("test"));
+
     }
 }

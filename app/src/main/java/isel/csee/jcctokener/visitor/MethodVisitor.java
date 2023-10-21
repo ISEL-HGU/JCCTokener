@@ -13,7 +13,7 @@ public class MethodVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(MethodInvocation node) {
-        Expression methodNode = node.getName();
+        Expression methodNode = node.getName(); // 실제로 사용되는 method의 이름을 가져옴
 
         jCCNode methodNameNode = new jCCNode();
 

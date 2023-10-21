@@ -17,7 +17,7 @@ public class OperatorVisitor extends ASTVisitor {
 
         operatorNode.setVariableName(operator);
         operatorNode.setNode(node);
-//        operatorNode.setStartPosition(node.getStartPosition());
+        operatorNode.setStartPosition(node.getStartPosition() + node.getLeftHandSide().getLength());
 
         jCCNodeList.add(operatorNode);
 
@@ -33,7 +33,7 @@ public class OperatorVisitor extends ASTVisitor {
 
         operatorNode.setVariableName(operator);
         operatorNode.setNode(node);
-//        operatorNode.setStartPosition(node.getStartPosition());
+        operatorNode.setStartPosition(node.getStartPosition() + node.getLeftOperand().getLength());
 
         jCCNodeList.add(operatorNode);
 
@@ -49,7 +49,7 @@ public class OperatorVisitor extends ASTVisitor {
 
             operatorNode.setVariableName(operator);
             operatorNode.setNode(node);
-//            operatorNode.setStartPosition(node.getStartPosition());
+            operatorNode.setStartPosition(node.getStartPosition() + node.getName().getLength());
 
             jCCNodeList.add(operatorNode);
 

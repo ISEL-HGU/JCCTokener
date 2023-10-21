@@ -9,7 +9,7 @@ public class TaxFruit {
 
         if(tax < a) {
             percent = 30;
-            for(int i = 0; i < fruitsPrice.length; i++) { // fruitsPrice.length는 MethodInvocation node로 분류가 되어야 할 것 같은데, 왜 안되지
+            for(int i = 0; i < fruitsPrice.length; i++) { // fruitsPrice.length는 MethodInvocation node로 분류가 되어야 할 것 같은데, QualifiedName node로 분류가 진행됨
                 returnValue += (percent * fruitsPrice[i]) + fruitsName[i];
             }
         } else if (a <= tax && tax < b) {

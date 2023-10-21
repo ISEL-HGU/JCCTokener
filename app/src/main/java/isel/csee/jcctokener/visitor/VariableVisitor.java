@@ -77,6 +77,26 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
     }
 
     @Override
+    public boolean visit(EnhancedForStatement node) {
+        SingleVariableDeclaration parameter = node.getParameter();
+        Expression expression = node.getExpression();
+
+        jCCNode parameterNode = new jCCNode();
+        parameterNode.setVariableName(parameter.getName().toString());
+        parameterNode.setNode(node);
+        parameterNode.setStartPosition(parameter.getStartPosition());
+        jCCNodeList.add(parameterNode);
+
+        jCCNode initialNode = new jCCNode();
+        initialNode.setVariableName(expression.toString());
+        initialNode.setNode(node);
+        initialNode.setStartPosition(expression.getStartPosition());
+        jCCNodeList.add(initialNode);
+
+        return super.visit(node);
+    }
+
+    @Override
     public boolean visit(ClassInstanceCreation node) { // class를 instaance로 나타내는 부분 / new keyword 이후에 열거되는 우변에 해당하는 node
         List argumentList = node.arguments();
 
@@ -170,33 +190,60 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
     }
 
     @Override
-    public boolean visit(QualifiedName node) {
-        if(node.getParent().getNodeType() != 35) { // Package 선언에 해당하지 않는 경우
-            Expression leftOperand = node.getQualifier();
-            Expression rightOperand = node.getName();
+    public boolean visit(SwitchStatement node) { // switch의 조건에 해당하는 값을 가져옴
+        jCCNode switchCase = new jCCNode();
 
-            jCCNode leftNode = new jCCNode();
-            leftNode.setVariableName(((SimpleName) leftOperand).getIdentifier());
-            leftNode.setNode(node);
-            leftNode.setStartPosition(leftOperand.getStartPosition());
+        switchCase.setVariableName(node.getExpression().toString());
+        switchCase.setNode(node);
+        switchCase.setStartPosition(node.getStartPosition());
 
-            jCCNodeList.add(leftNode);
-
-
-            if(rightOperand instanceof SimpleName) { // SimpleName으로 한정하는 것이 맞으려나?
-                jCCNode rightNode = new jCCNode();
-                rightNode.setVariableName(((SimpleName) rightOperand).getIdentifier());
-                rightNode.setNode(node);
-                rightNode.setStartPosition(rightOperand.getStartPosition());
-
-
-                jCCNodeList.add(rightNode);
-            }
-        }
-
+        jCCNodeList.add(switchCase);
 
         return super.visit(node);
     }
+
+    @Override
+    public boolean visit(CatchClause node) { // catch 부분에 존재하는 error는 가지고 올 필요가 없어 보임
+        jCCNode catchNode = new jCCNode();
+
+        catchNode.setVariableName(node.getException().getName().toString());
+        catchNode.setNode(node);
+        catchNode.setStartPosition(node.getException().getName().getStartPosition());
+
+        jCCNodeList.add(catchNode);
+
+        return super.visit(node);
+    }
+
+    // QualifiedName node가 필요해지면 가져와서 사용
+//    @Override
+//    public boolean visit(QualifiedName node) { // Instance의 field에 접근할 경우에 사용해야 함
+//        if(node.getParent().getNodeType() != 35) { // Package 선언에 해당하지 않는 경우
+//            Expression leftOperand = node.getQualifier();
+//            Expression rightOperand = node.getName();
+//
+//            jCCNode leftNode = new jCCNode();
+//            leftNode.setVariableName(((SimpleName) leftOperand).getIdentifier());
+//            leftNode.setNode(node);
+//            leftNode.setStartPosition(leftOperand.getStartPosition());
+//
+//            jCCNodeList.add(leftNode);
+//
+//
+//            if(rightOperand instanceof SimpleName) { // SimpleName으로 한정하는 것이 맞으려나?
+//                jCCNode rightNode = new jCCNode();
+//                rightNode.setVariableName(((SimpleName) rightOperand).getIdentifier());
+//                rightNode.setNode(node);
+//                rightNode.setStartPosition(rightOperand.getStartPosition());
+//
+//
+//                jCCNodeList.add(rightNode);
+//            }
+//        }
+//
+//
+//        return super.visit(node);
+//    }
 
     @Override
     public boolean visit(InfixExpression node) {
@@ -244,13 +291,9 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
     @Override
     public boolean visit(MethodInvocation node) {
         Expression methodInstance = node.getExpression();
-        SimpleName methodName = node.getName();
         List argumentList = node.arguments();
 
-
-
-
-        if(methodInstance instanceof SimpleName) {
+        if(methodInstance instanceof SimpleName) { // method를 실행시키는 instance
             jCCNode methodInstanceNode = new jCCNode();
 
             methodInstanceNode.setVariableName(((SimpleName) methodInstance).getIdentifier());
@@ -258,16 +301,6 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
             methodInstanceNode.setStartPosition(methodInstance.getStartPosition());
 
             jCCNodeList.add(methodInstanceNode);
-        }
-
-        if(methodName instanceof SimpleName) {
-            jCCNode methodNameNode = new jCCNode();
-
-            methodNameNode.setVariableName(((SimpleName) methodName).getIdentifier());
-            methodNameNode.setNode(node);
-            methodNameNode.setStartPosition(methodName.getStartPosition());
-
-            jCCNodeList.add(methodNameNode);
         }
 
         for(int i = 0; i < argumentList.size(); i++) {
