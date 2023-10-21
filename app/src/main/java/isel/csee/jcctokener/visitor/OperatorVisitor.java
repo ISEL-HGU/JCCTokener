@@ -17,6 +17,7 @@ public class OperatorVisitor extends ASTVisitor {
 
         operatorNode.setVariableName(operator);
         operatorNode.setNode(node);
+//        operatorNode.setStartPosition(node.getStartPosition());
 
         jCCNodeList.add(operatorNode);
 
@@ -25,12 +26,14 @@ public class OperatorVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(InfixExpression node) {
-        String operator = node.getOperator().toString();
+        String operator = node.getOperator().toString(); // node의 시작 부분을 operator의 position으로 가져옴
+
 
         jCCNode operatorNode = new jCCNode();
 
         operatorNode.setVariableName(operator);
         operatorNode.setNode(node);
+//        operatorNode.setStartPosition(node.getStartPosition());
 
         jCCNodeList.add(operatorNode);
 
@@ -39,14 +42,19 @@ public class OperatorVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(VariableDeclarationFragment node) {
-        String operator = "=";
+        if(node.getInitializer() != null) {
+            String operator = "=";
 
-        jCCNode operatorNode = new jCCNode();
+            jCCNode operatorNode = new jCCNode();
 
-        operatorNode.setVariableName(operator);
-        operatorNode.setNode(node);
+            operatorNode.setVariableName(operator);
+            operatorNode.setNode(node);
+//            operatorNode.setStartPosition(node.getStartPosition());
 
-        jCCNodeList.add(operatorNode);
+            jCCNodeList.add(operatorNode);
+
+            return super.visit(node);
+        }
 
         return super.visit(node);
     }

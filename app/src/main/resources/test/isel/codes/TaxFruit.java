@@ -1,7 +1,7 @@
 package isel.codes;
 
 public class TaxFruit {
-    public String test(int tax, int[] fruitsPrice, String[] fruitsName) { // 세금에 따라서 과일 가격을 sout 해줌
+    public String test(int tax, int[] fruitsPrice, String[] fruitsName) { // 세금에 따라서 과일 가격을 sout 해줌 / parameter에 해당하는 부분을 추가해서 생각 해주는 것이 좋다고 판단이 됨
         int percent;
         int a = 10;
         int b = 20;

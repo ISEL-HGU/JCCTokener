@@ -18,16 +18,24 @@ public class jCCTokener {
         jCCTokener jCCTokener = new jCCTokener();
 
 //        jCCTokener.run(args);
-        File file = new File("/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener/app/src/main/resources/test/isel/codes");
+        File file = new File("/Users/kimdong-gyu/Desktop/HGU/jCCTokener/JCCTokener/app/src/main/resources/test/isel/codes/Division.java");
         File[] files = file.listFiles();
         List<StudentFileData> studentFileDataList = new ArrayList<>();
 
-        for(int i = 0; i < files.length; i++) {
+        if(file.isDirectory()) {
+            for(int i = 0; i < files.length; i++) {
+                StudentFileFinder studentFileFinder = new StudentFileFinder();
+                studentFileFinder.parseStudentFile(files[i].getPath());
+
+                studentFileDataList.addAll(studentFileFinder.getStudentFileAnalyzerList());
+            }
+        } else {
             StudentFileFinder studentFileFinder = new StudentFileFinder();
-            studentFileFinder.parseStudentFile(files[i].getPath());
+            studentFileFinder.parseStudentFile(file.getPath());
 
             studentFileDataList.addAll(studentFileFinder.getStudentFileAnalyzerList());
         }
+
 //
 //        SimilarityCalculator similarityCalculator = new SimilarityCalculator(studentFileAnalyzerList);
 //        similarityCalculator.calculateSimilarity();

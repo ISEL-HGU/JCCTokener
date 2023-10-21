@@ -13,11 +13,15 @@ public class MethodVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(MethodInvocation node) {
-        Expression methodNode = node.getExpression();
+        Expression methodNode = node.getName();
 
         jCCNode methodNameNode = new jCCNode();
+
         methodNameNode.setVariableName(((SimpleName) methodNode).getIdentifier());
         methodNameNode.setNode(node);
+        methodNameNode.setStartPosition(methodNode.getStartPosition());
+
+
         jCCNodeList.add(methodNameNode);
 
 

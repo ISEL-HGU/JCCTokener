@@ -5,7 +5,7 @@ public class Division {
         int sum = 0;
         int[] numbers = {1, 2, 3, 4, 5};
 
-        for(int number : numbers) {
+        for(int number : numbers) { // enhanced For loop에서 이 condition 부분은 어떻게 가져올 것인가?
             try {
                 if (number % 2 == 0) {
                     sum += doubleValue(number);

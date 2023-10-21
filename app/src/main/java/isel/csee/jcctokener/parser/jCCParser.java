@@ -11,9 +11,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 /*
 lexical order로 정렬은 이미 되어있는 상황 - startPosition
 
@@ -31,49 +30,6 @@ public class jCCParser {
     private VariableVisitor variableVisitor = new VariableVisitor();
     private SemanticVectorGenerator semanticVectorGenerator;
     private DataDependencyGenerator dataDependencyGenerator;
-
-    public static long testParseCode(String sourceCodes) { // test function
-        char[] contents = sourceCodes.toCharArray();
-        ASTParser parser;
-        List<jCCNode> jCCNodeList;
-        VariableVisitor variableVisitor = new VariableVisitor();
-
-        parser = ASTParser.newParser(AST.JLS_Latest); // JLS15는 java source code version 의미
-        parser.setSource(contents); // setSource - 파싱 할 소스코드를 정해주는 method
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        // setKind method - ASTParser 파싱 타입을 정해주는 method
-        // K_COMPILATION_UNIT - 컴파일 단위를 나타내는 상수, 일반적인 소스코드 단일 파일을 의미(일반적으로 사용)
-        // K_CLASS_BODY_DECLARATIONS - 클래스 본문 선언을 나타내는 상수, 클래스 내부 선언들을 파싱
-        // K_STATEMENTS - 문장을 나타내는 상수, 코드 블록 내의 문장들을 파싱
-        // K_EXPRESSION - 표현식을 나타내는 상수, 단일 표현식을 파싱
-
-        Map<String, String> options = JavaCore.getOptions();
-        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
-        options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_7);
-        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-
-        parser.setResolveBindings(true);
-        parser.setCompilerOptions(options);
-
-        parser.setIgnoreMethodBodies(false);
-        parser.setBindingsRecovery(true);
-
-        CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
-
-
-        compilationUnit.accept(variableVisitor);
-        jCCNodeList = variableVisitor.getjCCNodeList();
-
-        OperatorVisitor operatorVisitor = new OperatorVisitor(jCCNodeList);
-        compilationUnit.accept(operatorVisitor);
-        jCCNodeList = operatorVisitor.getjCCNodeList();
-
-        MethodVisitor methodVisitor = new MethodVisitor(jCCNodeList);
-        compilationUnit.accept(methodVisitor);
-        jCCNodeList = methodVisitor.getjCCNodeList();
-        return 0;
-    }
-
     public void parseCodes() throws IOException {
         char[] contents = sourceCodes.toCharArray();
 
@@ -110,6 +66,14 @@ public class jCCParser {
         MethodVisitor methodVisitor = new MethodVisitor(jCCNodeList);
         compilationUnit.accept(methodVisitor);
         jCCNodeList = methodVisitor.getjCCNodeList();
+
+        Collections.sort(jCCNodeList, new Comparator<jCCNode>() {
+            @Override
+            public int compare(jCCNode o1, jCCNode o2) {
+                return Integer.compare(o1.getStartPosition(), o2.getStartPosition());
+            }
+        });
+
 
 
 
