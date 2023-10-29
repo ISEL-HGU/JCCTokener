@@ -6,9 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="d8bb7d85-7976-405d-a6eb-a4005bfb93fb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/MethodVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/MethodVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/OperatorVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/OperatorVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/node/jCCNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/node/jCCNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/parser/jCCParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/vectors/StructureVectorCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/generators/StructureVectorGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/DataTypeVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/DataTypeVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/VariableVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/VariableVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/jCCVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/isel/csee/jcctokener/visitor/jCCVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/TaxFruit.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/resources/test/isel/codes/TaxFruit.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/test/java/isel/csee/jcctokener/parser/jCCParserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/isel/csee/jcctokener/parser/jCCParserTest.java" afterDir="false" />
     </list>
@@ -37,8 +40,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="JUnit5 Test Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -102,31 +105,7 @@
       <recent name="isel.csee.jcctokener.parser" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.jCCParserTest.testTaxFruit">
-    <configuration name="StudentFileParserTest.parseStudentFile" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/app" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":app:test" />
-            <option value="--tests" />
-            <option value="&quot;isel.csee.jcctokener.parser.StudentFileParserTest.parseStudentFile&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Gradle.jCCParserTest">
     <configuration name="jCCParserTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -165,6 +144,30 @@
             <option value=":app:test" />
             <option value="--tests" />
             <option value="&quot;isel.csee.jcctokener.parser.jCCParserTest.testDivision&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="jCCParserTest.testFileWriter" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/app" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:test" />
+            <option value="--tests" />
+            <option value="&quot;isel.csee.jcctokener.parser.jCCParserTest.testFileWriter&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -225,11 +228,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.jCCParserTest.testTaxFruit" />
         <item itemvalue="Gradle.jCCParserTest" />
+        <item itemvalue="Gradle.jCCParserTest.testFileWriter" />
+        <item itemvalue="Gradle.jCCParserTest.testTaxFruit" />
         <item itemvalue="Gradle.jCCParserTest.testDivision" />
         <item itemvalue="Gradle.jCCParserTest.testParseCode" />
-        <item itemvalue="Gradle.StudentFileParserTest.parseStudentFile" />
       </list>
     </recent_temporary>
   </component>
@@ -269,7 +272,12 @@
       <workItem from="1695778013564" duration="27010000" />
       <workItem from="1696522120329" duration="9257000" />
       <workItem from="1697078833881" duration="316000" />
-      <workItem from="1697731193623" duration="18840000" />
+      <workItem from="1697731193623" duration="19662000" />
+      <workItem from="1697986829413" duration="230000" />
+      <workItem from="1697987078462" duration="1942000" />
+      <workItem from="1698048962380" duration="598000" />
+      <workItem from="1698061119387" duration="5798000" />
+      <workItem from="1698498144261" duration="2342000" />
     </task>
     <servers />
   </component>

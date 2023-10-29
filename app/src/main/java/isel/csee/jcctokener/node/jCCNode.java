@@ -11,7 +11,6 @@ public class jCCNode {
     private String methodName;
     private String variableName;
     private ASTNode node;
-    private boolean updatePossibility;
     private int startPosition;
     private int semanticType;
     private double[] structureVector;
@@ -87,13 +86,6 @@ public class jCCNode {
         this.nodeType = nodeType;
     }
 
-    public boolean isUpdatePossibility() {
-        return updatePossibility;
-    }
-
-    public void setUpdatePossibility(boolean updatePossibility) {
-        this.updatePossibility = updatePossibility;
-    }
 
     public int getStartPosition() {
         return startPosition;

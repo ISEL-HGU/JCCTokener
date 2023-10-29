@@ -88,9 +88,8 @@ class jCCParserTest {
                 testString += ", ";
             }
             testString = testString.substring(0, testString.length()-2);
-            assertEquals("percent, a, =, b, =, returnValue, =, tax, <, a, percent, =, i, =, i, <, fruitsPrice, length, returnValue, +=, percent, *, fruitsPrice, i, +, fruitsName," +
-                    " i, a, <=, tax, &&, tax, <, b, percent, =, i, =, i, <, fruitsPrice, length, returnValue, +=, percent, *, fruitsPrice, i, +, fruitsName," +
-                    " i, percent, =, i, =, i, <, fruitsPrice, length, returnValue, +=, percent, *, fruitsPrice, i, +, fruitsName, i, returnValue", testString);
+            assertEquals("filename, =, writeFile, filename, content, =, readFile, filename, content, isEmpty, line, content, split, line, println, println, +, line, " +
+                    "println, e, println, +, e, getMessage, filename", testString);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

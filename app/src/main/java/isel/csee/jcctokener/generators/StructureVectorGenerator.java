@@ -1,8 +1,11 @@
-package isel.csee.jcctokener.vectors;
+package isel.csee.jcctokener.generators;
 
+import isel.csee.jcctokener.node.jCCNode;
 import org.eclipse.jdt.core.dom.*;
 
-public class StructureVectorCreator {
+import java.util.List;
+
+public class StructureVectorGenerator {
     private static final int type1 = 0;
     private static final int type2 = 1;
     private static final int type3 = 2;
@@ -28,6 +31,7 @@ public class StructureVectorCreator {
     private static final int type23 = 22;
     private static final int type24 = 23;
     private static final int type25 = 24;
+    private List<jCCNode> jCCNodeList;
 
     public static double[] searchType(ASTNode astNode, double[] arr) {
         // IfCondition과 IfBody를 따로 가져오는 node type이 존재하지 않기 때문에 parent를 사용해서 비교를 진행
@@ -262,5 +266,31 @@ public class StructureVectorCreator {
         }
 
         return arr;
+    }
+
+    public void createStructureVector() {
+        for(jCCNode jCCNode : jCCNodeList) {
+            ASTNode node = jCCNode.getNode();
+            double[] structureVector = jCCNode.getStructureVector();
+
+            while (!(node instanceof TypeDeclaration)) { // Class의 선언이 나오기 전까지 반복해서 작업을 수행함
+                structureVector = searchType(node, structureVector);
+                node = node.getParent();
+            }
+
+            jCCNode.setStructureVector(structureVector);
+        }
+    }
+
+    public StructureVectorGenerator(List<jCCNode> jCCNodeList) {
+        this.jCCNodeList = jCCNodeList;
+    }
+
+    public List<jCCNode> getjCCNodeList() {
+        return jCCNodeList;
+    }
+
+    public void setjCCNodeList(List<jCCNode> jCCNodeList) {
+        this.jCCNodeList = jCCNodeList;
     }
 }

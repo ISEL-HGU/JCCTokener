@@ -1,10 +1,7 @@
 package isel.csee.jcctokener.parser;
 
 import isel.csee.jcctokener.generators.DataDependencyGenerator;
-import isel.csee.jcctokener.visitor.MethodVisitor;
-import isel.csee.jcctokener.visitor.OperatorVisitor;
-import isel.csee.jcctokener.visitor.VariableVisitor;
-import isel.csee.jcctokener.visitor.jCCVisitor;
+import isel.csee.jcctokener.visitor.*;
 import isel.csee.jcctokener.node.jCCNode;
 import isel.csee.jcctokener.generators.SemanticVectorGenerator;
 import org.eclipse.jdt.core.JavaCore;
@@ -27,7 +24,6 @@ public class jCCParser {
     private List<jCCNode> jCCNodeList;
     private List<String> actionTokenList = new ArrayList<>();
     private jCCVisitor jCCVisitor = new jCCVisitor();
-    private VariableVisitor variableVisitor = new VariableVisitor();
     private SemanticVectorGenerator semanticVectorGenerator;
     private DataDependencyGenerator dataDependencyGenerator;
     public void parseCodes() throws IOException {
@@ -55,76 +51,28 @@ public class jCCParser {
 
         CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 
-
+        VariableVisitor variableVisitor = new VariableVisitor(); // type1에 해당하는 노드 추출
         compilationUnit.accept(variableVisitor);
         jCCNodeList = variableVisitor.getjCCNodeList();
 
-        OperatorVisitor operatorVisitor = new OperatorVisitor(jCCNodeList);
+        OperatorVisitor operatorVisitor = new OperatorVisitor(jCCNodeList); // type2에 해당하는 노드 추출
         compilationUnit.accept(operatorVisitor);
         jCCNodeList = operatorVisitor.getjCCNodeList();
 
-        MethodVisitor methodVisitor = new MethodVisitor(jCCNodeList);
+        MethodVisitor methodVisitor = new MethodVisitor(jCCNodeList); // type3에 해당하는 노드 추출
         compilationUnit.accept(methodVisitor);
         jCCNodeList = methodVisitor.getjCCNodeList();
 
-        Collections.sort(jCCNodeList, new Comparator<jCCNode>() {
+        Collections.sort(jCCNodeList, new Comparator<jCCNode>() { // sorting
             @Override
             public int compare(jCCNode o1, jCCNode o2) {
                 return Integer.compare(o1.getStartPosition(), o2.getStartPosition());
             }
         });
 
-
-
-
-        for(int i = 0; i < jCCNodeList.size(); i++) {
-            System.out.println(jCCNodeList.get(i).getNode());
-            System.out.println("node: " + jCCNodeList.get(i).getVariableName());
-            System.out.println("");
-        }
-
-
-//        jCCNodeList = jCCVisitor.getjCCNodeList();
-//        actionTokenList = jCCVisitor.getActionTokenList();
-//
-//
-//        dataDependencyGenerator = new DataDependencyGenerator(jCCNodeList);
-//        dataDependencyGenerator.generateDataDependency();
-//        jCCNodeList = dataDependencyGenerator.getjCCNodeList();
-//
-//
-//        semanticVectorGenerator = new SemanticVectorGenerator(jCCNodeList, 3);
-//
-//        semanticVectorGenerator.createVariableSemanticVector();
-//        semanticVectorGenerator.createOperatorSemanticVector();
-//        semanticVectorGenerator.createMethodSemanticVector();
-//
-//        jCCNodeList = semanticVectorGenerator.getjCCNodeList();
-//
-//        for(int i = 0; i < jCCNodeList.size(); i++) {
-//            System.out.println(jCCNodeList.get(i).getVariableName());
-//            System.out.print("Structure vector: ");
-//            for(int k = 0; k < 25; k++) {
-//                System.out.print(jCCNodeList.get(i).getStructureVector()[k] + " ");
-//            }
-//            System.out.println("");
-//            System.out.println("Semantic Type: " + jCCNodeList.get(i).getSemanticType());
-//            System.out.print("Related nodes: ");
-//            for(int k = 0; k < jCCNodeList.get(i).getIndexListOfEdges().size(); k++) {
-//                System.out.print(jCCNodeList.get(jCCNodeList.get(i).getIndexListOfEdges().get(k)).getVariableName() + "  ");
-//            }
-//            System.out.println("");
-//            System.out.print("Semantic vector: ");
-//            for(int k = 0; k < 25; k++) {
-//                System.out.print(jCCNodeList.get(i).getSemanticVector()[k] + " ");
-//            }
-//            System.out.println("");
-//            System.out.println("");
-//        }
-//
-//        System.out.println(jCCNodeList.size());
-//
-//
+        DataTypeVisitor dataTypeVisitor = new DataTypeVisitor(actionTokenList); // Action Token에 해당하는 노드 추출
+        compilationUnit.accept(dataTypeVisitor);
+        actionTokenList = dataTypeVisitor.getActionTokenList();
 
     }
 

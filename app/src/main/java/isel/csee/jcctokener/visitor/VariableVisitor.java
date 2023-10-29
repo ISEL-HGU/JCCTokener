@@ -87,11 +87,14 @@ public class VariableVisitor extends ASTVisitor { // 중복으로 방문이 이�
         parameterNode.setStartPosition(parameter.getStartPosition());
         jCCNodeList.add(parameterNode);
 
-        jCCNode initialNode = new jCCNode();
-        initialNode.setVariableName(expression.toString());
-        initialNode.setNode(node);
-        initialNode.setStartPosition(expression.getStartPosition());
-        jCCNodeList.add(initialNode);
+        if(expression instanceof SimpleName) {
+            jCCNode initialNode = new jCCNode();
+            initialNode.setVariableName(expression.toString());
+            initialNode.setNode(node);
+            initialNode.setStartPosition(expression.getStartPosition());
+            jCCNodeList.add(initialNode);
+        }
+
 
         return super.visit(node);
     }

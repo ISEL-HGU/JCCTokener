@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.dom.*;
 
 import java.util.List;
 
-public class DataTypeVisitor extends ASTVisitor {
+public class DataTypeVisitor extends ASTVisitor { // Action Token을 만들 때 사용됨
 
     private List<String> actionTokenList;
 
@@ -30,6 +30,7 @@ public class DataTypeVisitor extends ASTVisitor {
     public boolean visit(MethodInvocation node) {
         String methodName = node.getExpression().toString();
 
+        actionTokenList.add(methodName);
         return super.visit(node);
     }
 
